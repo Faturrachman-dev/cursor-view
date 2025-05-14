@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """
 Extract Cursor chat history from both workspaceStorage *and* session‑specific
@@ -82,9 +81,43 @@ def _iter_bubble_messages(session_db: pathlib.Path) -> Iterable[Tuple[int, Dict[
             bubble = json.loads(val)
         except Exception:
             continue
-        text = bubble.get("text", "").strip()
+            
+        # First get regular text content
+        text = (bubble.get("text") or bubble.get("richText") or bubble.get("code") or 
+               bubble.get("codeSnippet") or bubble.get("content") or bubble.get("markdown") or "").strip()
+        
+        # Extract code blocks and add them to the text
+        if "codeBlocks" in bubble and isinstance(bubble["codeBlocks"], list):
+            code_blocks = []
+            for block in bubble["codeBlocks"]:
+                if isinstance(block, dict):
+                    code_content = block.get("content", "")
+                    lang_id = block.get("languageId", "")
+                    
+                    if code_content:
+                        # Format as markdown code block with language
+                        formatted_block = f"```{lang_id}\n{code_content}\n```\n"
+                        code_blocks.append(formatted_block)
+            
+            # Add code blocks to the text
+            if code_blocks:
+                if text:
+                    text += "\n\n" + "\n".join(code_blocks)
+                else:
+                    text = "\n".join(code_blocks)
+        
+        # Check for nested content structure
+        if not text and bubble.get("parts"):
+            for part in bubble.get("parts", []):
+                if isinstance(part, dict):
+                    part_text = (part.get("text") or part.get("code") or part.get("content") or "").strip()
+                    if part_text:
+                        text = part_text
+                        break
+        
         if not text:
             continue
+            
         role = "user" if bubble.get("type") == 1 else "assistant"
         yield rowid, {"role": role, "content": text}
     con.close()

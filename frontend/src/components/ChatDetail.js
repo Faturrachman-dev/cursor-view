@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
   Container,
   Typography,
@@ -36,6 +38,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import DataObjectIcon from '@mui/icons-material/DataObject';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import WarningIcon from '@mui/icons-material/Warning';
+import CodeIcon from '@mui/icons-material/Code';
 import { colors } from '../App';
 
 const ChatDetail = () => {
@@ -428,49 +431,127 @@ const ChatDetail = () => {
                   p: 2.5, 
                   ml: message.role === 'user' ? 0 : 5,
                   mr: message.role === 'assistant' ? 0 : 5,
-                  backgroundColor:alpha(colors.highlightColor, 0.04),
+                  backgroundColor: alpha(colors.highlightColor, 0.04),
                   borderLeft: '4px solid',
                   borderColor: message.role === 'user' ? colors.highlightColor : colors.secondary.main,
                   borderRadius: 2
                 }}
               >
-                <Box sx={{ 
-                  '& pre': { 
-                    maxWidth: '100%', 
-                    overflowX: 'auto',
-                    backgroundColor: message.role === 'user' 
-                      ? alpha(colors.primary.main, 0.07) 
-                      : colors.highlightColor,
-                    borderRadius: 1,
-                    p: 2
-                  },
-                  '& code': { 
-                    display: 'inline-block', 
-                    maxWidth: '100%', 
-                    overflowX: 'auto',
-                    backgroundColor: message.role === 'user' 
-                      ? alpha(colors.primary.main, 0.07) 
-                      : colors.highlightColor,
-                    borderRadius: 0.5,
-                    px: 0.8,
-                    py: 0.2
-                  },
-                  '& img': { maxWidth: '100%' },
-                  '& ul, & ol': { pl: 3 },
-                  '& a': { 
-                    color: message.role === 'user' ? colors.highlightColor : colors.secondary.main,
-                    textDecoration: 'none',
-                    '&:hover': { textDecoration: 'none' }
-                  }
-                }}>
-                  {typeof message.content === 'string' ? (
-                    <ReactMarkdown>
-                      {message.content}
-                    </ReactMarkdown>
-                  ) : (
-                    <Typography>Content unavailable</Typography>
-                  )}
-                </Box>
+                {/* Render regular text content */}
+                {message.content && (
+                  <Box sx={{ 
+                    '& pre': { 
+                      maxWidth: '100%', 
+                      overflowX: 'auto',
+                      backgroundColor: message.role === 'user' 
+                        ? alpha(colors.primary.main, 0.07) 
+                        : colors.highlightColor,
+                      borderRadius: 1,
+                      p: 2
+                    },
+                    '& code': { 
+                      display: 'inline-block', 
+                      maxWidth: '100%', 
+                      overflowX: 'auto',
+                      backgroundColor: message.role === 'user' 
+                        ? alpha(colors.primary.main, 0.07) 
+                        : colors.highlightColor,
+                      borderRadius: 0.5,
+                      px: 0.8,
+                      py: 0.2
+                    },
+                    '& img': { maxWidth: '100%' },
+                    '& ul, & ol': { pl: 3 },
+                    '& a': { 
+                      color: message.role === 'user' ? colors.highlightColor : colors.secondary.main,
+                      textDecoration: 'none',
+                      '&:hover': { textDecoration: 'none' }
+                    }
+                  }}>
+                    {typeof message.content === 'string' ? (
+                      <ReactMarkdown>
+                        {message.content}
+                      </ReactMarkdown>
+                    ) : (
+                      <Typography>Content unavailable</Typography>
+                    )}
+                  </Box>
+                )}
+                
+                {/* Render separate code blocks when available */}
+                {message.codeBlocks && message.codeBlocks.length > 0 && (
+                  <Box sx={{ mt: message.content ? 2 : 0 }}>
+                    {message.codeBlocks.map((codeBlock, blockIndex) => (
+                      <Box 
+                        key={blockIndex} 
+                        sx={{ 
+                          mt: blockIndex > 0 ? 3 : 0,
+                          position: 'relative'
+                        }}
+                      >
+                        {/* Language label */}
+                        {codeBlock.language && (
+                          <Chip
+                            icon={<CodeIcon />}
+                            label={codeBlock.language}
+                            size="small"
+                            sx={{
+                              position: 'absolute',
+                              top: -10,
+                              right: 8,
+                              zIndex: 1,
+                              color: 'white',
+                              backgroundColor: colors.highlightColor,
+                              fontFamily: "'JetBrains Mono', monospace",
+                              fontSize: '0.75rem',
+                              fontWeight: 500,
+                              '& .MuiChip-icon': { 
+                                color: 'white',
+                                fontSize: '0.9rem' 
+                              }
+                            }}
+                          />
+                        )}
+                        
+                        {/* Code block with syntax highlighting */}
+                        <Box 
+                          sx={{ 
+                            borderRadius: 1,
+                            overflow: 'hidden',
+                            border: '1px solid',
+                            borderColor: alpha(colors.highlightColor, 0.3),
+                            '& pre': {
+                              margin: 0,
+                              fontSize: '0.85rem',
+                              fontFamily: "'JetBrains Mono', monospace",
+                            }
+                          }}
+                        >
+                          <SyntaxHighlighter
+                            language={codeBlock.language || 'text'}
+                            style={atomOneDark}
+                            showLineNumbers={true}
+                            customStyle={{
+                              margin: 0,
+                              borderRadius: 0,
+                              background: message.role === 'user' 
+                                ? alpha(colors.primary.main, 0.07) 
+                                : alpha(colors.highlightColor, 0.15),
+                            }}
+                          >
+                            {codeBlock.content}
+                          </SyntaxHighlighter>
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+                
+                {/* Show a message if no content is available */}
+                {(!message.content || message.content === '') && 
+                 (!message.codeBlocks || message.codeBlocks.length === 0) && (
+                  <Typography>Content unavailable</Typography>
+                )}
               </Paper>
             </Box>
           ))}

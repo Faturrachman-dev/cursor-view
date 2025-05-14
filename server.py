@@ -17,6 +17,8 @@ from typing import Dict, Any, Iterable
 from pathlib import Path
 from flask import Flask, Response, jsonify, send_from_directory, request
 from flask_cors import CORS
+import markdown
+import html
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, 
@@ -49,8 +51,8 @@ def j(cur: sqlite3.Cursor, table: str, key: str):
             logger.debug(f"Failed to parse JSON for {key}: {e}")
     return None
 
-def iter_bubbles_from_disk_kv(db: pathlib.Path) -> Iterable[tuple[str,str,str,str]]:
-    """Yield (composerId, role, text, db_path) from cursorDiskKV table."""
+def iter_bubbles_from_disk_kv(db: pathlib.Path) -> Iterable[tuple[str,str,str,str,list]]:
+    """Yield (composerId, role, text, db_path, code_blocks) from cursorDiskKV table."""
     try:
         con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
         cur = con.cursor()
@@ -72,21 +74,50 @@ def iter_bubbles_from_disk_kv(db: pathlib.Path) -> Iterable[tuple[str,str,str,st
             if v is None:
                 continue
                 
-            b = json.loads(v)
-        except Exception as e:
-            logger.debug(f"Failed to parse bubble JSON for key {k}: {e}")
-            continue
+            bubble = json.loads(v)
+            composer_id = k.split(":")[1] if ":" in k else ""
+            if not composer_id:
+                continue
         
-        txt = (b.get("text") or b.get("richText") or "").strip()
-        if not txt:         continue
-        role = "user" if b.get("type") == 1 else "assistant"
-        composerId = k.split(":")[1]  # Format is bubbleId:composerId:bubbleId
-        yield composerId, role, txt, db_path_str
-    
-    con.close()
+            # Extract regular text
+            text = (bubble.get("text", "") or bubble.get("richText", "") or bubble.get("code", "") or 
+                  bubble.get("codeSnippet", "") or bubble.get("content", "") or bubble.get("markdown", "") or "").strip()
+            
+            # Extract code blocks as separate entities
+            code_blocks = []
+            if "codeBlocks" in bubble and isinstance(bubble["codeBlocks"], list):
+                for block in bubble["codeBlocks"]:
+                    if isinstance(block, dict):
+                        code_content = block.get("content", "")
+                        lang_id = block.get("languageId", "")
+                        
+                        if code_content:
+                            code_blocks.append({
+                                "content": code_content,
+                                "language": lang_id
+                            })
+            
+            # Extract nested content
+            if not text and bubble.get("parts"):
+                for part in bubble.get("parts", []):
+                    if isinstance(part, dict):
+                        part_text = part.get("text", "") or part.get("code", "") or part.get("content", "")
+                        if part_text and part_text.strip():
+                            text = part_text.strip()
+                            break
+                            
+            # Skip bubbles with no content
+            if not text and not code_blocks:
+                continue
 
-def iter_chat_from_item_table(db: pathlib.Path) -> Iterable[tuple[str,str,str,str]]:
-    """Yield (composerId, role, text, db_path) from ItemTable."""
+            role = "user" if bubble.get("type") == 1 else "assistant"
+            yield composer_id, role, text, db_path_str, code_blocks
+            
+        except Exception as e:
+            logger.debug(f"Error processing bubble: {e}")
+
+def iter_chat_from_item_table(db: pathlib.Path) -> Iterable[tuple[str,str,str,str,list]]:
+    """Yield (composerId, role, text, db_path, code_blocks) from ItemTable."""
     try:
         con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
         cur = con.cursor()
@@ -101,52 +132,33 @@ def iter_chat_from_item_table(db: pathlib.Path) -> Iterable[tuple[str,str,str,st
                     if not bubble_type:
                         continue
                     
-                    # Extract text from various possible fields
-                    text = ""
-                    if "text" in bubble:
-                        text = bubble["text"]
-                    elif "content" in bubble:
-                        text = bubble["content"]
+                                                # Extract regular text
+                    text = (bubble.get("text", "") or bubble.get("richText", "") or bubble.get("code", "") or 
+                          bubble.get("codeSnippet", "") or bubble.get("content", "") or bubble.get("markdown", "") or "").strip()
                     
-                    if text and isinstance(text, str):
-                        role = "user" if bubble_type == "user" else "assistant"
-                        yield tab_id, role, text, str(db)
-        
-        # Check for composer data
-        composer_data = j(cur, "ItemTable", "composer.composerData")
-        if composer_data:
-            for comp in composer_data.get("allComposers", []):
-                comp_id = comp.get("composerId", "unknown")
-                messages = comp.get("messages", [])
-                for msg in messages:
-                    role = msg.get("role", "unknown")
-                    content = msg.get("content", "")
-                    if content:
-                        yield comp_id, role, content, str(db)
-        
-        # Also check for aiService entries
-        for key_prefix in ["aiService.prompts", "aiService.generations"]:
-            try:
-                cur.execute("SELECT key, value FROM ItemTable WHERE key LIKE ?", (f"{key_prefix}%",))
-                for k, v in cur.fetchall():
-                    try:
-                        data = json.loads(v)
-                        if isinstance(data, list):
-                            for item in data:
-                                if "id" in item and "text" in item:
-                                    role = "user" if "prompts" in key_prefix else "assistant"
-                                    yield item.get("id", "unknown"), role, item.get("text", ""), str(db)
-                    except json.JSONDecodeError:
+                    # Extract code blocks as separate entities
+                    code_blocks = []
+                    if "codeBlocks" in bubble and isinstance(bubble["codeBlocks"], list):
+                        for block in bubble["codeBlocks"]:
+                            if isinstance(block, dict):
+                                code_content = block.get("content", "")
+                                lang_id = block.get("languageId", "")
+                                
+                                if code_content:
+                                    code_blocks.append({
+                                        "content": code_content,
+                                        "language": lang_id
+                                    })
+                    
+                    # Skip bubbles with no content
+                    if not text and not code_blocks:
                         continue
-            except sqlite3.Error:
-                continue
     
-    except sqlite3.DatabaseError as e:
-        logger.debug(f"Database error in ItemTable with {db}: {e}")
-        return
-    finally:
-        if 'con' in locals():
-            con.close()
+                    role = "user" if bubble_type == 1 else "assistant"
+                    yield tab_id, role, text, str(db), code_blocks
+
+    except Exception as e:
+        logger.debug(f"Error in iter_chat_from_item_table: {e}")
 
 def iter_composer_data(db: pathlib.Path) -> Iterable[tuple[str,dict,str]]:
     """Yield (composerId, composerData, db_path) from cursorDiskKV table."""
@@ -478,9 +490,13 @@ def extract_chats() -> list[Dict[str,Any]]:
         
         # Extract chat data from workspace's state.vscdb
         msg_count = 0
-        for cid, role, text, db_path in iter_chat_from_item_table(db):
+        for cid, role, text, db_path, code_blocks in iter_chat_from_item_table(db):
             # Add the message
-            sessions[cid]["messages"].append({"role": role, "content": text})
+            sessions[cid]["messages"].append({
+                "role": role, 
+                "content": text,
+                "codeBlocks": code_blocks if code_blocks else []
+            })
             # Make sure to record the database path
             if "db_path" not in sessions[cid]:
                 sessions[cid]["db_path"] = db_path
@@ -498,8 +514,12 @@ def extract_chats() -> list[Dict[str,Any]]:
         logger.debug(f"Processing global storage: {global_db}")
         # Extract bubbles from cursorDiskKV
         msg_count = 0
-        for cid, role, text, db_path in iter_bubbles_from_disk_kv(global_db):
-            sessions[cid]["messages"].append({"role": role, "content": text})
+        for cid, role, text, db_path, code_blocks in iter_bubbles_from_disk_kv(global_db):
+            sessions[cid]["messages"].append({
+                "role": role, 
+                "content": text,
+                "codeBlocks": code_blocks if code_blocks else []
+            })
             # Record the database path
             if "db_path" not in sessions[cid]:
                 sessions[cid]["db_path"] = db_path
@@ -538,7 +558,24 @@ def extract_chats() -> list[Dict[str,Any]]:
                     role = "user" if msg_type == 1 else "assistant"
                     content = msg.get("text", "")
                     if content and isinstance(content, str):
-                        sessions[cid]["messages"].append({"role": role, "content": content})
+                        # Check for code blocks in the message
+                        code_blocks = []
+                        if "codeBlocks" in msg and isinstance(msg["codeBlocks"], list):
+                            for block in msg["codeBlocks"]:
+                                if isinstance(block, dict):
+                                    code_content = block.get("content", "")
+                                    lang_id = block.get("languageId", "")
+                                    if code_content:
+                                        code_blocks.append({
+                                            "content": code_content,
+                                            "language": lang_id
+                                        })
+                        
+                        sessions[cid]["messages"].append({
+                            "role": role, 
+                            "content": content,
+                            "codeBlocks": code_blocks
+                        })
                         msg_count += 1
                 
                 if msg_count > 0:
@@ -573,7 +610,25 @@ def extract_chats() -> list[Dict[str,Any]]:
                         
                         if content and isinstance(content, str):
                             role = "user" if bubble.get("type") == "user" else "assistant"
-                            sessions[tab_id]["messages"].append({"role": role, "content": content})
+                            
+                            # Extract code blocks from this bubble
+                            code_blocks = []
+                            if "codeBlocks" in bubble and isinstance(bubble["codeBlocks"], list):
+                                for block in bubble["codeBlocks"]:
+                                    if isinstance(block, dict):
+                                        code_content = block.get("content", "")
+                                        lang_id = block.get("languageId", "")
+                                        if code_content:
+                                            code_blocks.append({
+                                                "content": code_content,
+                                                "language": lang_id
+                                            })
+                            
+                            sessions[tab_id]["messages"].append({
+                                "role": role, 
+                                "content": content,
+                                "codeBlocks": code_blocks
+                            })
                             msg_count += 1
                 logger.debug(f"  - Extracted {msg_count} messages from global chat data")
             con.close()
@@ -768,11 +823,28 @@ def format_chat_for_frontend(chat):
         messages = chat.get('messages', [])
         if not isinstance(messages, list):
             messages = []
+            
+        # Preserve code blocks in the messages
+        formatted_messages = []
+        for msg in messages:
+            if not isinstance(msg, dict):
+                continue
+            
+            formatted_msg = {
+                'role': msg.get('role', 'user'),
+                'content': msg.get('content', '')
+            }
+            
+            # Preserve codeBlocks if they exist
+            if 'codeBlocks' in msg and isinstance(msg['codeBlocks'], list):
+                formatted_msg['codeBlocks'] = msg['codeBlocks']
+            
+            formatted_messages.append(formatted_msg)
         
         # Create properly formatted chat object
         return {
             'project': project,
-            'messages': messages,
+            'messages': formatted_messages,
             'date': date,
             'session_id': session_id,
             'workspace_id': workspace_id,
@@ -894,120 +966,358 @@ def generate_standalone_html(chat):
         # Get project info
         project_name = chat.get('project', {}).get('name', 'Unknown Project')
         project_path = chat.get('project', {}).get('rootPath', 'Unknown Path')
-        logger.info(f"Project: {project_name}, Path: {project_path}, Date: {date_display}")
         
-        # Build the HTML content
-        messages_html = ""
-        messages = chat.get('messages', [])
-        logger.info(f"Found {len(messages)} messages for the chat.")
+        # Create HTML template with modern styling
+        html_content = """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>%s - Cursor Chat</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+            <script>hljs.highlightAll();</script>
+        </head>
+        <body>
+            <div class="chat-header">
+                <div class="project-info">
+                    <h1>%s</h1>
+                    <div class="metadata">
+                        <div class="date">%s</div>
+                        <div class="path">%s</div>
+                    </div>
+                </div>
+            </div>
+        """ % (
+            project_name, # title
+            project_name, # h1
+            date_display, # date
+            project_path  # project path
+        )
         
-        if not messages:
-            logger.warning("No messages found in the chat object to generate HTML.")
-            messages_html = "<p>No messages found in this conversation.</p>"
-        else:
-            for i, msg in enumerate(messages):
-                role = msg.get('role', 'unknown')
-                content = msg.get('content', '')
-                logger.debug(f"Processing message {i+1}/{len(messages)} - Role: {role}, Content length: {len(content)}")
-                
-                if not content or not isinstance(content, str):
-                    logger.warning(f"Message {i+1} has invalid content: {content}")
-                    content = "Content unavailable"
-                
-                # Simple HTML escaping
-                escaped_content = content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-                
-                # Convert markdown code blocks (handle potential nesting issues simply)
-                processed_content = ""
-                in_code_block = False
-                for line in escaped_content.split('\n'):
-                    if line.strip().startswith("```"):
-                        if not in_code_block:
-                            processed_content += "<pre><code>"
-                            in_code_block = True
-                            # Remove the first ``` marker
-                            line = line.strip()[3:] 
-                        else:
-                            processed_content += "</code></pre>\n"
-                            in_code_block = False
-                            line = "" # Skip the closing ``` line
-                    
-                    if in_code_block:
-                         # Inside code block, preserve spacing and add line breaks
-                        processed_content += line + "\n" 
-                    else:
-                        # Outside code block, use <br> for newlines
-                        processed_content += line + "<br>"
-                
-                # Close any unclosed code block at the end
-                if in_code_block:
-                    processed_content += "</code></pre>"
-                
-                avatar = "👤" if role == "user" else "🤖"
-                name = "You" if role == "user" else "Cursor Assistant"
-                bg_color = "#f0f7ff" if role == "user" else "#f0fff7"
-                border_color = "#3f51b5" if role == "user" else "#00796b"
-                
-                messages_html += f"""
-                <div class="message" style="margin-bottom: 20px;">
-                    <div class="message-header" style="display: flex; align-items: center; margin-bottom: 8px;">
-                        <div class="avatar" style="width: 32px; height: 32px; border-radius: 50%; background-color: {border_color}; color: white; display: flex; justify-content: center; align-items: center; margin-right: 10px;">
-                            {avatar}
+        # Prepare messages with code blocks properly formatted
+        formatted_messages = []
+        for msg in chat.get('messages', []):
+            role = msg.get('role', 'unknown')
+            content = msg.get('content', '')
+            
+            # Format code blocks if they exist separately
+            code_blocks_html = ""
+            if 'codeBlocks' in msg and msg['codeBlocks']:
+                for code_block in msg['codeBlocks']:
+                    language = code_block.get('language', '') or 'text'
+                    code_content = code_block.get('content', '')
+                    if code_content:
+                        # Escape HTML in code
+                        code_content = html.escape(code_content)
+                        
+                        code_blocks_html += f"""
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="language-label">{language}</span>
+                            </div>
+                            <pre><code class="language-{language}">{code_content}</code></pre>
                         </div>
-                        <div class="sender" style="font-weight: bold;">{name}</div>
+                        """
+            
+                formatted_messages.append({
+                    'role': role,
+                    'content': content,
+                    'code_blocks_html': code_blocks_html
+                })
+
+        # Add messages template
+        html_content += """
+            <div class="chat-container">
+        """
+        
+        # Add each message
+        for msg in formatted_messages:
+            role_display = "You" if msg['role'] == 'user' else "Cursor Assistant"
+            role_class = msg['role']
+            
+            # Convert markdown in regular content
+            content_html = ""
+            if msg['content']:
+                try:
+                    content_html = markdown.markdown(msg['content'])
+                except Exception:
+                    content_html = f"<p>{html.escape(msg['content'])}</p>"
+            
+            html_content += f"""
+                <div class="message {role_class}-message">
+                    <div class="message-header">
+                        <div class="avatar {role_class}-avatar">
+                            {role_display}
+                        </div>
                     </div>
-                    <div class="message-content" style="padding: 15px; border-radius: 8px; background-color: {bg_color}; border-left: 4px solid {border_color}; margin-left: {0 if role == 'user' else '40px'}; margin-right: {0 if role == 'assistant' else '40px'};">
-                        {processed_content} 
+                    <div class="message-content">
+            """
+            
+            # Add text content if present
+            if content_html:
+                html_content += f"""
+                        <div class="text-content">
+                            {content_html}
                     </div>
+                """
+            
+            # Add code blocks if present
+            if msg['code_blocks_html']:
+                html_content += f"""
+                        <div class="code-blocks">
+                            {msg['code_blocks_html']}
                 </div>
                 """
 
-        # Create the complete HTML document
-        html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cursor Chat - {project_name}</title>
-    <style>
-        body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 20px auto; padding: 20px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }}
-        h1, h2, h3 {{ color: #2c3e50; }}
-        .header {{ background: linear-gradient(90deg, #f0f7ff 0%, #f0fff7 100%); color: white; padding: 15px 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; }}
-        .chat-info {{ display: flex; flex-wrap: wrap; gap: 10px 20px; margin-bottom: 20px; background-color: #f9f9f9; padding: 12px 15px; border-radius: 8px; font-size: 0.9em; }}
-        .info-item {{ display: flex; align-items: center; }}
-        .info-label {{ font-weight: bold; margin-right: 5px; color: #555; }}
-        pre {{ background-color: #eef; padding: 15px; border-radius: 5px; overflow-x: auto; border: 1px solid #ddd; font-family: 'Courier New', Courier, monospace; font-size: 0.9em; white-space: pre-wrap; word-wrap: break-word; }}
-        code {{ background-color: transparent; padding: 0; border-radius: 0; font-family: inherit; }}
-        .message-content pre code {{ background-color: transparent; }}
-        .message-content {{ word-wrap: break-word; overflow-wrap: break-word; }}
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>Cursor Chat: {project_name}</h1>
+            html_content += """
     </div>
-    <div class="chat-info">
-        <div class="info-item"><span class="info-label">Project:</span> <span>{project_name}</span></div>
-        <div class="info-item"><span class="info-label">Path:</span> <span>{project_path}</span></div>
-        <div class="info-item"><span class="info-label">Date:</span> <span>{date_display}</span></div>
-        <div class="info-item"><span class="info-label">Session ID:</span> <span>{chat.get('session_id', 'Unknown')}</span></div>
     </div>
-    <h2>Conversation History</h2>
-    <div class="messages">
-{messages_html}
-    </div>
-    <div style="margin-top: 30px; font-size: 12px; color: #999; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
-        <a href="https://github.com/saharmor/cursor-view" target="_blank" rel="noopener noreferrer">Exported from Cursor View</a>
-    </div>
-</body>
-</html>"""
+            """
         
-        logger.info(f"Finished generating HTML. Total length: {len(html)}")
-        return html
+        html_content += """
+    </div>
+        """
+        
+        # Add CSS styling
+        html_content += """
+        <style>
+            /* Base styles */
+            :root {
+                --user-color: #00bbff;
+                --assistant-color: #FF6B35;
+                --background-color: #151617;
+                --card-background: #1E1E1E;
+                --text-color: #FFFFFF;
+                --secondary-text: #B3B3B3;
+                --border-color: #3E3E3E;
+                --code-bg: #282c34;
+            }
+            
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            
+            body {
+                font-family: 'Inter', sans-serif;
+                line-height: 1.6;
+                color: var(--text-color);
+                background-color: var(--background-color);
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            
+            /* Header */
+            .chat-header {
+                background: linear-gradient(90deg, var(--user-color) 0%, rgba(0, 187, 255, 0.7) 100%);
+                color: white;
+                border-radius: 12px;
+                padding: 20px;
+                margin-bottom: 30px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            }
+            
+            .project-info h1 {
+                font-size: 24px;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+            
+            .metadata {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                font-size: 14px;
+            }
+            
+            .date, .path {
+                background-color: rgba(255,255,255,0.2);
+                border-radius: 4px;
+                padding: 3px 8px;
+                display: inline-block;
+            }
+            
+            /* Messages */
+            .chat-container {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+            
+            .message {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .message-header {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                font-weight: 500;
+                color: white;
+            }
+            
+            .user-avatar {
+                background-color: var(--user-color);
+            }
+            
+            .assistant-avatar {
+                background-color: var(--assistant-color);
+            }
+            
+            .message-content {
+                background-color: var(--card-background);
+                border-radius: 10px;
+                padding: 16px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                border-left: 4px solid;
+            }
+            
+            .user-message .message-content {
+                border-color: var(--user-color);
+                margin-right: 40px;
+            }
+            
+            .assistant-message .message-content {
+                border-color: var(--assistant-color);
+                margin-left: 40px;
+            }
+            
+            .text-content {
+                margin-bottom: 16px;
+            }
+            
+            .text-content:last-child {
+                margin-bottom: 0;
+            }
+            
+            /* Code blocks */
+            .code-block {
+                margin: 16px 0;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            }
+            
+            .code-block:first-child {
+                margin-top: 0;
+            }
+            
+            .code-block:last-child {
+                margin-bottom: 0;
+            }
+            
+            .code-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 12px;
+                background-color: #2d333b;
+                border-bottom: 1px solid #444;
+            }
+            
+            .language-label {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 12px;
+                color: #d7dae0;
+                border-radius: 4px;
+                padding: 2px 8px;
+                background-color: rgba(255,255,255,0.1);
+            }
+            
+            pre {
+                margin: 0;
+                padding: 16px;
+                overflow-x: auto;
+                background-color: var(--code-bg);
+            }
+            
+            code {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 14px;
+                line-height: 1.5;
+            }
+            
+            /* Markdown content styling */
+            .text-content h1, .text-content h2, .text-content h3, 
+            .text-content h4, .text-content h5, .text-content h6 {
+                margin-top: 1em;
+                margin-bottom: 0.5em;
+            }
+            
+            .text-content p {
+                margin-bottom: 1em;
+            }
+            
+            .text-content ul, .text-content ol {
+                margin-bottom: 1em;
+                padding-left: 1.5em;
+            }
+            
+            .text-content a {
+                color: var(--user-color);
+                text-decoration: none;
+            }
+            
+            .text-content a:hover {
+                text-decoration: underline;
+            }
+            
+            .text-content img {
+                max-width: 100%;
+                border-radius: 4px;
+            }
+            
+            .text-content code {
+                font-family: 'JetBrains Mono', monospace;
+                background-color: rgba(255,255,255,0.1);
+                padding: 2px 4px;
+                border-radius: 4px;
+                font-size: 0.9em;
+            }
+            
+            /* Responsive */
+            @media (max-width: 768px) {
+                body {
+                    padding: 12px;
+                }
+                
+                .user-message .message-content {
+                    margin-right: 10px;
+                }
+                
+                .assistant-message .message-content {
+                    margin-left: 10px;
+                }
+            }
+        </style>
+</body>
+        </html>
+        """
+        
+        return html_content
+        
     except Exception as e:
-        logger.error(f"Error generating HTML for session {chat.get('session_id', 'N/A')}: {e}", exc_info=True)
-        # Return an HTML formatted error message
-        return f"<html><body><h1>Error generating chat export</h1><p>Error: {e}</p></body></html>"
+        logger.error(f"Error generating HTML: {e}")
+        return f"<html><body><h1>Error generating HTML</h1><p>{str(e)}</p></body></html>"
 
 # Serve React app
 @app.route('/', defaults={'path': ''})
