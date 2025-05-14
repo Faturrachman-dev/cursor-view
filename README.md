@@ -4,7 +4,7 @@ Cursor View is a local tool to view, search, and export all your Cursor AI chat 
 
 **Privacy Note**: All data processing happens locally on your machine. No data is sent to any external servers.
 
-<img width="761" alt="Screenshot 2025-05-01 at 8 22 43 AM-min" src="https://github.com/user-attachments/assets/39dbfa63-8630-4287-903c-f87833a9b435" />
+<img width="761" alt="Screenshot 2025-05-01 at 8 22 43 AM-min" src="https://github.com/user-attachments/assets/39dbfa63-8630-4287-903c-f87833a9b435" />
 
 ## Setup & Running
 
@@ -32,3 +32,20 @@ Cursor View is a local tool to view, search, and export all your Cursor AI chat 
 - Export chats as JSON or standalone HTML
 - Organize chats by project
 - View timestamps of conversations
+- Properly rendered code blocks with syntax highlighting
+- Support for multiple programming languages in code blocks
+
+## About Code Block Support ( faturrachman-dev forks 14-05-2025 )
+
+Cursor View now properly extracts and displays code blocks from your Cursor chat conversations. The application:
+
+1. Extracts code blocks from the SQLite database
+2. Preserves language information for proper syntax highlighting
+3. Renders code blocks separately from regular markdown text
+4. Supports exports with formatted code blocks in both HTML and JSON formats
+
+## Development
+
+The application consists of two parts:
+- A Python backend that extracts and processes chat data from Cursor's databases
+- A React frontend that displays the chats in a user-friendly interface
