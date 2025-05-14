@@ -182,3 +182,4 @@ local_chats/*
 .cursor/rules/python-version.mdc
 frontend/node_modules/*
 cursor_chats.json
+node_modules/

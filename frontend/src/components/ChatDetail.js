@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
   Container,
   Typography,
@@ -39,7 +39,48 @@ import DataObjectIcon from '@mui/icons-material/DataObject';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import WarningIcon from '@mui/icons-material/Warning';
 import CodeIcon from '@mui/icons-material/Code';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { colors } from '../App';
+
+// Helper function to normalize language identifiers
+const normalizeLanguage = (languageId) => {
+  // Default to plaintext if no language is provided
+  if (!languageId) return 'text';
+  
+  // Map Cursor/VSCode language IDs to Prism supported languages
+  const languageMap = {
+    'plaintext': 'text',
+    'markdown': 'markdown',
+    'javascript': 'javascript',
+    'typescript': 'typescript',
+    'python': 'python',
+    'java': 'java',
+    'csharp': 'csharp',
+    'c': 'c',
+    'cpp': 'cpp',
+    'html': 'html',
+    'css': 'css',
+    'json': 'json',
+    'go': 'go',
+    'rust': 'rust',
+    'php': 'php',
+    'ruby': 'ruby',
+    'swift': 'swift',
+    'kotlin': 'kotlin',
+    'sql': 'sql',
+    'shell': 'bash',
+    'bash': 'bash',
+    'powershell': 'powershell',
+    'yaml': 'yaml',
+    'xml': 'xml',
+  };
+  
+  // Clean up the language ID (lowercase, remove spaces, etc.)
+  const normalizedId = languageId.toLowerCase().trim();
+  
+  // Return the mapped language or the original if not found
+  return languageMap[normalizedId] || normalizedId;
+};
 
 const ChatDetail = () => {
   const { sessionId } = useParams();
@@ -55,9 +96,24 @@ const ChatDetail = () => {
     const fetchChat = async () => {
       try {
         const response = await axios.get(`/api/chat/${sessionId}`);
+        console.log('FULL CHAT RESPONSE DATA:', JSON.stringify(response.data).slice(0, 500) + '...');
+        
+        // Debug check for codeBlocks in messages
+        if (response.data && response.data.messages) {
+          console.log('Messages count:', response.data.messages.length);
+          response.data.messages.forEach((msg, i) => {
+            console.log(`Message ${i} - has codeBlocks:`, !!msg.codeBlocks, 
+              msg.codeBlocks ? `(${msg.codeBlocks.length})` : '');
+            if (msg.codeBlocks && msg.codeBlocks.length > 0) {
+              console.log(`Message ${i} - first codeBlock:`, JSON.stringify(msg.codeBlocks[0]));
+            }
+          });
+        }
+        
         setChat(response.data);
         setLoading(false);
       } catch (err) {
+        console.error('Error fetching chat:', err);
         setError(err.message);
         setLoading(false);
       }
@@ -74,6 +130,30 @@ const ChatDetail = () => {
       setDontShowExportWarning(warningPreference.split('=')[1] === 'true');
     }
   }, [sessionId]);
+
+  // Add a useEffect hook to check for code blocks after the component renders
+  useEffect(() => {
+    if (chat && Array.isArray(chat.messages)) {
+      // Count code blocks in all messages
+      let codeBlockCount = 0;
+      const messagesWithCodeBlocks = chat.messages.filter(msg => 
+        msg.codeBlocks && Array.isArray(msg.codeBlocks) && msg.codeBlocks.length > 0
+      );
+      
+      messagesWithCodeBlocks.forEach(msg => {
+        codeBlockCount += msg.codeBlocks.length;
+      });
+      
+      console.log(`RENDER CHECK: Found ${messagesWithCodeBlocks.length} messages with code blocks (${codeBlockCount} total blocks)`);
+      
+      // Log some details about the first code block for debugging
+      if (messagesWithCodeBlocks.length > 0 && messagesWithCodeBlocks[0].codeBlocks.length > 0) {
+        const firstBlock = messagesWithCodeBlocks[0].codeBlocks[0];
+        console.log(`First code block language: "${firstBlock.language || 'none'}"`);
+        console.log(`First code block content starts with: "${firstBlock.content.substring(0, 50)}..."`);
+      }
+    }
+  }, [chat]);
 
   // Handle format dialog selection
   const handleFormatDialogOpen = () => {
@@ -408,6 +488,14 @@ const ChatDetail = () => {
         <Box sx={{ mb: 4 }}>
           {messages.map((message, index) => (
             <Box key={index} sx={{ mb: 3.5 }}>
+              {/* Debug info - more explicit */}
+              {console.log(`Rendering message ${index}:`)}
+              {console.log(`- Role: ${message.role}`)}
+              {console.log(`- Content length: ${message.content ? message.content.length : 0}`)}
+              {console.log(`- codeBlocks exists: ${!!message.codeBlocks}`)}
+              {console.log(`- codeBlocks is array: ${Array.isArray(message.codeBlocks)}`)}
+              {console.log(`- codeBlocks length: ${message.codeBlocks && Array.isArray(message.codeBlocks) ? message.codeBlocks.length : 'N/A'}`)}
+              
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
                 <Avatar
                   sx={{
@@ -445,7 +533,7 @@ const ChatDetail = () => {
                       overflowX: 'auto',
                       backgroundColor: message.role === 'user' 
                         ? alpha(colors.primary.main, 0.07) 
-                        : colors.highlightColor,
+                        : alpha(colors.highlightColor, 0.15),
                       borderRadius: 1,
                       p: 2
                     },
@@ -455,10 +543,12 @@ const ChatDetail = () => {
                       overflowX: 'auto',
                       backgroundColor: message.role === 'user' 
                         ? alpha(colors.primary.main, 0.07) 
-                        : colors.highlightColor,
+                        : alpha(colors.highlightColor, 0.15),
                       borderRadius: 0.5,
                       px: 0.8,
-                      py: 0.2
+                      py: 0.2,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: '0.85rem'
                     },
                     '& img': { maxWidth: '100%' },
                     '& ul, & ol': { pl: 3 },
@@ -469,7 +559,34 @@ const ChatDetail = () => {
                     }
                   }}>
                     {typeof message.content === 'string' ? (
-                      <ReactMarkdown>
+                      <ReactMarkdown
+                        components={{
+                          code({node, inline, className, children, ...props}) {
+                            const match = /language-(\w+)/.exec(className || '')
+                            return !inline && match ? (
+                              <SyntaxHighlighter
+                                language={normalizeLanguage(match[1])}
+                                style={atomDark}
+                                showLineNumbers={true}
+                                customStyle={{
+                                  margin: '0.5em 0',
+                                  borderRadius: '4px',
+                                  background: message.role === 'user' 
+                                    ? alpha(colors.primary.main, 0.07) 
+                                    : alpha(colors.highlightColor, 0.15),
+                                }}
+                                {...props}
+                              >
+                                {String(children).replace(/\n$/, '')}
+                              </SyntaxHighlighter>
+                            ) : (
+                              <code className={className} {...props}>
+                                {children}
+                              </code>
+                            )
+                          }
+                        }}
+                      >
                         {message.content}
                       </ReactMarkdown>
                     ) : (
@@ -479,7 +596,7 @@ const ChatDetail = () => {
                 )}
                 
                 {/* Render separate code blocks when available */}
-                {message.codeBlocks && message.codeBlocks.length > 0 && (
+                {message.codeBlocks && Array.isArray(message.codeBlocks) && message.codeBlocks.length > 0 && (
                   <Box sx={{ mt: message.content ? 2 : 0 }}>
                     {message.codeBlocks.map((codeBlock, blockIndex) => (
                       <Box 
@@ -492,28 +609,27 @@ const ChatDetail = () => {
                         {/* Language label */}
                         {codeBlock.language && (
                           <Chip
-                            icon={<CodeIcon />}
                             label={codeBlock.language}
                             size="small"
                             sx={{
                               position: 'absolute',
-                              top: -10,
-                              right: 8,
+                              top: '8px',
+                              right: '8px',
                               zIndex: 1,
-                              color: 'white',
-                              backgroundColor: colors.highlightColor,
+                              backgroundColor: message.role === 'user' 
+                                ? alpha(colors.primary.main, 0.1) 
+                                : alpha(colors.highlightColor, 0.2),
+                              color: message.role === 'user' 
+                                ? colors.primary.main 
+                                : colors.highlightColor,
                               fontFamily: "'JetBrains Mono', monospace",
-                              fontSize: '0.75rem',
-                              fontWeight: 500,
-                              '& .MuiChip-icon': { 
-                                color: 'white',
-                                fontSize: '0.9rem' 
-                              }
+                              fontSize: '0.7rem',
+                              height: '22px'
                             }}
                           />
                         )}
                         
-                        {/* Code block with syntax highlighting */}
+                        {/* Code content */}
                         <Box 
                           sx={{ 
                             borderRadius: 1,
@@ -528,8 +644,8 @@ const ChatDetail = () => {
                           }}
                         >
                           <SyntaxHighlighter
-                            language={codeBlock.language || 'text'}
-                            style={atomOneDark}
+                            language={normalizeLanguage(codeBlock.language || 'text')}
+                            style={atomDark}
                             showLineNumbers={true}
                             customStyle={{
                               margin: 0,
@@ -537,9 +653,10 @@ const ChatDetail = () => {
                               background: message.role === 'user' 
                                 ? alpha(colors.primary.main, 0.07) 
                                 : alpha(colors.highlightColor, 0.15),
+                              padding: '32px 16px 16px 16px', // Extra padding on top for the language label
                             }}
                           >
-                            {codeBlock.content}
+                            {codeBlock.content || ''}
                           </SyntaxHighlighter>
                         </Box>
                       </Box>

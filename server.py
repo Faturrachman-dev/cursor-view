@@ -826,6 +826,8 @@ def format_chat_for_frontend(chat):
             
         # Preserve code blocks in the messages
         formatted_messages = []
+        code_blocks_count = 0
+        
         for msg in messages:
             if not isinstance(msg, dict):
                 continue
@@ -837,9 +839,22 @@ def format_chat_for_frontend(chat):
             
             # Preserve codeBlocks if they exist
             if 'codeBlocks' in msg and isinstance(msg['codeBlocks'], list):
-                formatted_msg['codeBlocks'] = msg['codeBlocks']
+                # Filter out empty code blocks or invalid ones
+                valid_code_blocks = []
+                for block in msg['codeBlocks']:
+                    if isinstance(block, dict) and 'content' in block and block['content']:
+                        # Ensure language is valid or set to a default
+                        if 'language' not in block or not block['language']:
+                            block['language'] = 'text'
+                        valid_code_blocks.append(block)
+                
+                if valid_code_blocks:
+                    formatted_msg['codeBlocks'] = valid_code_blocks
+                    code_blocks_count += len(valid_code_blocks)
             
             formatted_messages.append(formatted_msg)
+        
+        logger.debug(f"Formatted {len(formatted_messages)} messages with {code_blocks_count} code blocks for frontend")
         
         # Create properly formatted chat object
         return {
@@ -1024,7 +1039,7 @@ def generate_standalone_html(chat):
                         </div>
                         """
             
-                formatted_messages.append({
+            formatted_messages.append({
                     'role': role,
                     'content': content,
                     'code_blocks_html': code_blocks_html
