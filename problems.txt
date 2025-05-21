@@ -1,4 +1,0 @@
-- see the image, its kinda not formatted correctly, and also the blue highlights of the codes i
-- even on the html export its still not formatted correctly, but the code highlights with black background is great tho, look at the image
-- but i want to focus on the json export tho, because its cleaner and easy for you to digest. @cursor-chat-66277016.json 
-- and btw i realized the commands that you're executing is not viewed on the cursor-view, does the chat extraction also shows commands too, other than codeBlocks?

@@ -183,3 +183,5 @@ local_chats/*
 frontend/node_modules/*
 cursor_chats.json
 node_modules/
+# SpecStory explanation file
+.specstory/.what-is-this.md

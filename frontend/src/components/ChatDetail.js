@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -41,6 +41,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import CodeIcon from '@mui/icons-material/Code';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { colors } from '../App';
+import PsychologyIcon from '@mui/icons-material/Psychology';
 
 // Helper function to normalize language identifiers
 const normalizeLanguage = (languageId) => {
@@ -84,6 +85,8 @@ const normalizeLanguage = (languageId) => {
 
 const ChatDetail = () => {
   const { sessionId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [chat, setChat] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -91,6 +94,78 @@ const ChatDetail = () => {
   const [formatDialogOpen, setFormatDialogOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState('html');
   const [dontShowExportWarning, setDontShowExportWarning] = useState(false);
+
+  // Custom styles for tool calls and thinking blocks
+  const styles = {
+    thinkingBlock: {
+      backgroundColor: alpha('#2d3748', 0.6),
+      borderRadius: 1,
+      border: '1px solid',
+      borderColor: '#4a5568',
+      marginTop: 2,
+      padding: 2
+    },
+    thinkingHeader: {
+      display: 'flex',
+      alignItems: 'center',
+      marginBottom: 1
+    },
+    thinkingLabel: {
+      color: '#a0aec0',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 0.5,
+      fontFamily: "'JetBrains Mono', monospace",
+      fontSize: '0.75rem',
+    },
+    thinkingContent: {
+      whiteSpace: 'pre-wrap',
+      fontFamily: "'JetBrains Mono', monospace",
+      fontSize: '0.85rem',
+      overflow: 'auto',
+      color: '#e2e8f0'
+    },
+    toolCallBlock: {
+      marginTop: 2,
+      borderRadius: 1,
+      overflow: 'hidden',
+      border: '1px solid',
+      borderColor: alpha('#66b3ff', 0.3),
+    },
+    toolCallHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 1.5,
+      backgroundColor: alpha('#2b4562', 0.7),
+      borderBottom: '1px solid',
+      borderBottomColor: alpha('#66b3ff', 0.2),
+      borderLeft: '4px solid',
+    },
+    toolName: {
+      fontFamily: "'JetBrains Mono', monospace",
+      fontWeight: 500,
+      fontSize: '0.85rem',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 1
+    },
+    toolParams: {
+      padding: 1.5,
+      borderBottom: '1px solid',
+      borderBottomColor: alpha('#66b3ff', 0.2)
+    },
+    toolResult: {
+      padding: 1.5
+    },
+    toolSectionHeader: {
+      color: alpha('#9cdefd', 0.7),
+      fontWeight: 'medium',
+      display: 'block',
+      marginBottom: 1,
+      fontSize: '0.75rem',
+    }
+  };
 
   useEffect(() => {
     const fetchChat = async () => {
@@ -664,9 +739,139 @@ const ChatDetail = () => {
                   </Box>
                 )}
                 
+                {/* Display AI Thinking if available */}
+                {message.thinking_html ? (
+                  <Box
+                    sx={{
+                      mt: 2,
+                      borderRadius: 1,
+                      overflow: 'hidden',
+                    }}
+                    dangerouslySetInnerHTML={{ __html: message.thinking_html }}
+                  />
+                ) : message.thinking && message.thinking.text && (
+                  <Box sx={styles.thinkingBlock}>
+                    <Box sx={styles.thinkingHeader}>
+                      <Typography 
+                        variant="caption" 
+                        fontWeight="medium"
+                        sx={styles.thinkingLabel}
+                      >
+                        <PsychologyIcon fontSize="small" /> 
+                        AI Thought Process
+                      </Typography>
+                    </Box>
+                    <Typography 
+                      variant="body2" 
+                      component="pre"
+                      sx={styles.thinkingContent}
+                    >
+                      {message.thinking.text}
+                    </Typography>
+                  </Box>
+                )}
+                
+                {/* Display Tool Call HTML if available */}
+                {message.tool_call_html ? (
+                  <Box
+                    sx={{
+                      mt: 2,
+                      borderRadius: 1,
+                      overflow: 'hidden',
+                    }}
+                    dangerouslySetInnerHTML={{ __html: message.tool_call_html }}
+                  />
+                ) : message.tool_former_data && Object.keys(message.tool_former_data).length > 0 && (
+                  <Box sx={styles.toolCallBlock}>
+                    {/* Tool Header */}
+                    <Box
+                      sx={{
+                        ...styles.toolCallHeader,
+                        borderLeftColor: message.tool_former_data.status === 'completed' ? '#48BB78' 
+                          : message.tool_former_data.status === 'error' ? '#F56565' 
+                          : '#ECC94B'
+                      }}
+                    >
+                      <Typography sx={styles.toolName}>
+                        <CodeIcon fontSize="small" />
+                        Called Tool: {message.tool_former_data.name || 'Unknown Tool'}
+                      </Typography>
+                      <Typography variant="body2">
+                        {message.tool_former_data.status === 'completed' ? '✅' 
+                          : message.tool_former_data.status === 'error' ? '❌' 
+                          : '⏳'}
+                      </Typography>
+                    </Box>
+                    
+                    {/* Tool Parameters */}
+                    {(message.tool_former_data.params || message.tool_former_data.rawArgs) && (
+                      <Box sx={styles.toolParams}>
+                        <Typography
+                          variant="caption"
+                          fontWeight="medium"
+                          sx={styles.toolSectionHeader}
+                        >
+                          Parameters:
+                        </Typography>
+                        
+                        <Box sx={{ maxHeight: '200px', overflow: 'auto' }}>
+                          <SyntaxHighlighter
+                            language="json"
+                            style={atomDark}
+                            customStyle={{
+                              margin: 0,
+                              padding: '12px',
+                              borderRadius: '4px',
+                              backgroundColor: alpha('#1a202c', 0.6),
+                              fontSize: '0.8rem'
+                            }}
+                          >
+                            {typeof (message.tool_former_data.params || message.tool_former_data.rawArgs) === 'string' 
+                              ? (message.tool_former_data.params || message.tool_former_data.rawArgs)
+                              : JSON.stringify(message.tool_former_data.params || message.tool_former_data.rawArgs, null, 2)}
+                          </SyntaxHighlighter>
+                        </Box>
+                      </Box>
+                    )}
+                    
+                    {/* Tool Result */}
+                    {message.tool_former_data.result && (
+                      <Box sx={styles.toolResult}>
+                        <Typography
+                          variant="caption"
+                          fontWeight="medium"
+                          sx={styles.toolSectionHeader}
+                        >
+                          Result:
+                        </Typography>
+                        
+                        <Box sx={{ maxHeight: '200px', overflow: 'auto' }}>
+                          <SyntaxHighlighter
+                            language="json"
+                            style={atomDark}
+                            customStyle={{
+                              margin: 0,
+                              padding: '12px',
+                              borderRadius: '4px',
+                              backgroundColor: alpha('#1a202c', 0.6),
+                              fontSize: '0.8rem'
+                            }}
+                          >
+                            {typeof message.tool_former_data.result === 'string' 
+                              ? message.tool_former_data.result
+                              : JSON.stringify(message.tool_former_data.result, null, 2)}
+                          </SyntaxHighlighter>
+                        </Box>
+                      </Box>
+                    )}
+                  </Box>
+                )}
+                
                 {/* Show a message if no content is available */}
                 {(!message.content || message.content === '') && 
-                 (!message.codeBlocks || message.codeBlocks.length === 0) && (
+                 (!message.codeBlocks || message.codeBlocks.length === 0) && 
+                 (!message.thinking || !message.thinking.text) &&
+                 (!message.tool_former_data || Object.keys(message.tool_former_data).length === 0) && (
                   <Typography>Content unavailable</Typography>
                 )}
               </Paper>

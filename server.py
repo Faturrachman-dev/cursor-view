@@ -20,10 +20,24 @@ from flask_cors import CORS
 import markdown
 import html
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, 
-                   format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# Configure logging to write to a file
+log_directory = Path("logs")
+log_directory.mkdir(exist_ok=True)
+log_file = log_directory / "cursor_view.log"
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(log_file),
+        logging.StreamHandler()  # Keep console logging but at INFO level
+    ]
+)
+# Set console handler to INFO level, while file handler remains at DEBUG
+logging.getLogger().handlers[1].setLevel(logging.INFO)
+
 logger = logging.getLogger(__name__)
+logger.info(f"Logging to file: {log_file}")
 
 app = Flask(__name__, static_folder='frontend/build')
 CORS(app)
@@ -51,8 +65,8 @@ def j(cur: sqlite3.Cursor, table: str, key: str):
             logger.debug(f"Failed to parse JSON for {key}: {e}")
     return None
 
-def iter_bubbles_from_disk_kv(db: pathlib.Path) -> Iterable[tuple[str,str,str,str,list]]:
-    """Yield (composerId, role, text, db_path, code_blocks) from cursorDiskKV table."""
+def iter_bubbles_from_disk_kv(db: pathlib.Path, detailed_logging=False, target_session_id=None) -> Iterable[tuple[str,str,str,str,list,bool,dict,dict,int]]:
+    """Yield (composerId, role, text, db_path, code_blocks, is_thought, thinking, tool_former_data, capability_type) from cursorDiskKV table."""
     try:
         con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
         cur = con.cursor()
@@ -78,7 +92,14 @@ def iter_bubbles_from_disk_kv(db: pathlib.Path) -> Iterable[tuple[str,str,str,st
             composer_id = k.split(":")[1] if ":" in k else ""
             if not composer_id:
                 continue
+                
+            # Only debug this session if it matches the target_session_id or if no target specified
+            should_log_details = detailed_logging and (target_session_id is None or composer_id == target_session_id)
         
+            # Log the raw bubble data for diagnostics only when detailed logging is enabled for this session
+            if should_log_details:
+                logger.debug(f"Raw bubble data for composer {composer_id}: {json.dumps(bubble, indent=2)}")
+            
             # Extract regular text
             text = (bubble.get("text", "") or bubble.get("richText", "") or bubble.get("code", "") or 
                   bubble.get("codeSnippet", "") or bubble.get("content", "") or bubble.get("markdown", "") or "").strip()
@@ -105,19 +126,25 @@ def iter_bubbles_from_disk_kv(db: pathlib.Path) -> Iterable[tuple[str,str,str,st
                         if part_text and part_text.strip():
                             text = part_text.strip()
                             break
+            
+            # Extract additional fields
+            is_thought = bubble.get("isThought", False)
+            thinking = bubble.get("thinking", {})
+            tool_former_data = bubble.get("toolFormerData", {})
+            capability_type = bubble.get("capabilityType", None)
                             
-            # Skip bubbles with no content
-            if not text and not code_blocks:
+            # Skip bubbles with no content - but allow thought or tool data bubbles even without text
+            if not text and not code_blocks and not is_thought and not tool_former_data:
                 continue
 
             role = "user" if bubble.get("type") == 1 else "assistant"
-            yield composer_id, role, text, db_path_str, code_blocks
+            yield composer_id, role, text, db_path_str, code_blocks, is_thought, thinking, tool_former_data, capability_type
             
         except Exception as e:
             logger.debug(f"Error processing bubble: {e}")
 
-def iter_chat_from_item_table(db: pathlib.Path) -> Iterable[tuple[str,str,str,str,list]]:
-    """Yield (composerId, role, text, db_path, code_blocks) from ItemTable."""
+def iter_chat_from_item_table(db: pathlib.Path, detailed_logging=False, target_session_id=None) -> Iterable[tuple[str,str,str,str,list,bool,dict,dict,int]]:
+    """Yield (composerId, role, text, db_path, code_blocks, is_thought, thinking, tool_former_data, capability_type) from ItemTable."""
     try:
         con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
         cur = con.cursor()
@@ -127,12 +154,20 @@ def iter_chat_from_item_table(db: pathlib.Path) -> Iterable[tuple[str,str,str,st
         if chat_data and "tabs" in chat_data:
             for tab in chat_data.get("tabs", []):
                 tab_id = tab.get("tabId", "unknown")
+                
+                # Only debug this tab if it matches the target_session_id or if no target specified
+                should_log_details = detailed_logging and (target_session_id is None or tab_id == target_session_id)
+                
                 for bubble in tab.get("bubbles", []):
                     bubble_type = bubble.get("type")
                     if not bubble_type:
                         continue
                     
-                                                # Extract regular text
+                    # Log the raw bubble data for diagnostics only when detailed logging is enabled for this session
+                    if should_log_details:
+                        logger.debug(f"Raw bubble data from ItemTable for tab {tab_id}: {json.dumps(bubble, indent=2)}")
+                    
+                    # Extract regular text
                     text = (bubble.get("text", "") or bubble.get("richText", "") or bubble.get("code", "") or 
                           bubble.get("codeSnippet", "") or bubble.get("content", "") or bubble.get("markdown", "") or "").strip()
                     
@@ -150,17 +185,23 @@ def iter_chat_from_item_table(db: pathlib.Path) -> Iterable[tuple[str,str,str,st
                                         "language": lang_id
                                     })
                     
-                    # Skip bubbles with no content
-                    if not text and not code_blocks:
+                    # Extract additional fields
+                    is_thought = bubble.get("isThought", False)
+                    thinking = bubble.get("thinking", {})
+                    tool_former_data = bubble.get("toolFormerData", {})
+                    capability_type = bubble.get("capabilityType", None)
+                    
+                    # Skip bubbles with no content - but allow thought or tool data bubbles even without text
+                    if not text and not code_blocks and not is_thought and not tool_former_data:
                         continue
     
                     role = "user" if bubble_type == 1 else "assistant"
-                    yield tab_id, role, text, str(db), code_blocks
+                    yield tab_id, role, text, str(db), code_blocks, is_thought, thinking, tool_former_data, capability_type
 
     except Exception as e:
         logger.debug(f"Error in iter_chat_from_item_table: {e}")
 
-def iter_composer_data(db: pathlib.Path) -> Iterable[tuple[str,dict,str]]:
+def iter_composer_data(db: pathlib.Path, detailed_logging=False, target_session_id=None) -> Iterable[tuple[str,dict,str]]:
     """Yield (composerId, composerData, db_path) from cursorDiskKV table."""
     try:
         con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
@@ -185,6 +226,14 @@ def iter_composer_data(db: pathlib.Path) -> Iterable[tuple[str,dict,str]]:
                 
             composer_data = json.loads(v)
             composer_id = k.split(":")[1]
+            
+            # Only debug this composer if it matches the target_session_id or if no target specified
+            should_log_details = detailed_logging and (target_session_id is None or composer_id == target_session_id)
+            
+            # Log the raw composer data for diagnostics only when detailed logging is enabled for this session
+            if should_log_details:
+                logger.debug(f"Raw composer data for composer {composer_id}: {json.dumps(composer_data, indent=2)}")
+            
             yield composer_id, composer_data, db_path_str
             
         except Exception as e:
@@ -409,79 +458,28 @@ def global_storage_path(base: pathlib.Path) -> pathlib.Path:
 ################################################################################
 # Extraction pipeline
 ################################################################################
-def extract_chats() -> list[Dict[str,Any]]:
+def extract_chats(detailed_logging=False, target_session_id=None) -> list[Dict[str,Any]]:
+    """Extract all chat sessions from disk."""
+    # Set up root directory and create sessions dictionary
     root = cursor_root()
-    logger.debug(f"Using Cursor root: {root}")
-
-    # Diagnostic: Check for AI-related keys in the first workspace
-    if os.environ.get("CURSOR_CHAT_DIAGNOSTICS"):
-        try:
-            first_ws = next(workspaces(root))
-            if first_ws:
-                ws_id, db = first_ws
-                logger.debug(f"\n--- DIAGNOSTICS for workspace {ws_id} ---")
-                con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
-                cur = con.cursor()
-                
-                # List all tables
-                cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
-                tables = [row[0] for row in cur.fetchall()]
-                logger.debug(f"Tables in workspace DB: {tables}")
-                
-                # Search for AI-related keys
-                if "ItemTable" in tables:
-                    for pattern in ['%ai%', '%chat%', '%composer%', '%prompt%', '%generation%']:
-                        cur.execute("SELECT key FROM ItemTable WHERE key LIKE ?", (pattern,))
-                        keys = [row[0] for row in cur.fetchall()]
-                        if keys:
-                            logger.debug(f"Keys matching '{pattern}': {keys}")
-                
-                con.close()
-                
-            # Check global storage
-            global_db = global_storage_path(root)
-            if global_db:
-                logger.debug(f"\n--- DIAGNOSTICS for global storage ---")
-                con = sqlite3.connect(f"file:{global_db}?mode=ro", uri=True)
-                cur = con.cursor()
-                
-                # List all tables
-                cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
-                tables = [row[0] for row in cur.fetchall()]
-                logger.debug(f"Tables in global DB: {tables}")
-                
-                # Search for AI-related keys in ItemTable
-                if "ItemTable" in tables:
-                    for pattern in ['%ai%', '%chat%', '%composer%', '%prompt%', '%generation%']:
-                        cur.execute("SELECT key FROM ItemTable WHERE key LIKE ?", (pattern,))
-                        keys = [row[0] for row in cur.fetchall()]
-                        if keys:
-                            logger.debug(f"Keys matching '{pattern}': {keys}")
-                
-                # Check for keys in cursorDiskKV
-                if "cursorDiskKV" in tables:
-                    cur.execute("SELECT DISTINCT substr(key, 1, instr(key, ':') - 1) FROM cursorDiskKV")
-                    prefixes = [row[0] for row in cur.fetchall()]
-                    logger.debug(f"Key prefixes in cursorDiskKV: {prefixes}")
-                
-                con.close()
-            
-            logger.debug("\n--- END DIAGNOSTICS ---\n")
-        except Exception as e:
-            logger.debug(f"Error in diagnostics: {e}")
-
-    # map lookups
-    ws_proj  : Dict[str,Dict[str,Any]] = {}
-    comp_meta: Dict[str,Dict[str,Any]] = {}
-    comp2ws  : Dict[str,str]           = {}
-    sessions : Dict[str,Dict[str,Any]] = defaultdict(lambda: {"messages":[]})
+    if not root:
+        logger.error(f"Could not find Cursor Data directory")
+        return []
+    
+    sessions = defaultdict(lambda: {"messages": []})
+    ws_proj = {}
+    comp_meta = {}
+    comp2ws = {}
+    
+    logger.info(f"Extracting chats from {root}")
 
     # 1. Process workspace DBs first
     logger.debug("Processing workspace databases...")
     ws_count = 0
     for ws_id, db in workspaces(root):
         ws_count += 1
-        logger.debug(f"Processing workspace {ws_id} - {db}")
+        if detailed_logging:
+            logger.debug(f"Processing workspace {ws_id} - {db}")
         proj, meta = workspace_info(db)
         ws_proj[ws_id] = proj
         for cid, m in meta.items():
@@ -490,178 +488,148 @@ def extract_chats() -> list[Dict[str,Any]]:
         
         # Extract chat data from workspace's state.vscdb
         msg_count = 0
-        for cid, role, text, db_path, code_blocks in iter_chat_from_item_table(db):
+        for cid, role, text, db_path, code_blocks, is_thought, thinking, tool_former_data, capability_type in iter_chat_from_item_table(db, detailed_logging, target_session_id):
             # Add the message
             sessions[cid]["messages"].append({
                 "role": role, 
                 "content": text,
-                "codeBlocks": code_blocks if code_blocks else []
+                "codeBlocks": code_blocks,
+                "is_thought": is_thought,
+                "thinking": thinking,
+                "tool_former_data": tool_former_data,
+                "capability_type": capability_type
             })
-            # Make sure to record the database path
-            if "db_path" not in sessions[cid]:
-                sessions[cid]["db_path"] = db_path
+            sessions[cid]["db_path"] = db_path
+            sessions[cid]["workspace_id"] = ws_id
+            sessions[cid]["session_id"] = cid
             msg_count += 1
-            if cid not in comp_meta:
-                comp_meta[cid] = {"title": f"Chat {cid[:8]}", "createdAt": None, "lastUpdatedAt": None}
-                comp2ws[cid] = ws_id
-        logger.debug(f"  - Extracted {msg_count} messages from workspace {ws_id}")
-    
-    logger.debug(f"Processed {ws_count} workspaces")
+        
+        if detailed_logging and msg_count > 0:
+            logger.debug(f"  - Found {msg_count} chat messages")
 
-    # 2. Process global storage
-    global_db = global_storage_path(root)
-    if global_db:
-        logger.debug(f"Processing global storage: {global_db}")
-        # Extract bubbles from cursorDiskKV
-        msg_count = 0
-        for cid, role, text, db_path, code_blocks in iter_bubbles_from_disk_kv(global_db):
+    logger.info(f"Processed {ws_count} workspaces")
+    
+    # 2. Process global storage DB
+    gs_path = global_storage_path(root)
+    if not gs_path:
+        logger.warning(f"Could not find global storage path")
+    else:
+        if detailed_logging:
+            logger.debug(f"Processing global storage DB: {gs_path}")
+        
+        # Extract chat data from global state.vscdb
+        msg_count_global = 0
+        
+        # First try DiskKV bubbles
+        for cid, role, text, db_path, code_blocks, is_thought, thinking, tool_former_data, capability_type in iter_bubbles_from_disk_kv(gs_path, detailed_logging, target_session_id):
+            # Add the message
             sessions[cid]["messages"].append({
                 "role": role, 
                 "content": text,
-                "codeBlocks": code_blocks if code_blocks else []
+                "codeBlocks": code_blocks,
+                "is_thought": is_thought,
+                "thinking": thinking,
+                "tool_former_data": tool_former_data,
+                "capability_type": capability_type
             })
-            # Record the database path
-            if "db_path" not in sessions[cid]:
-                sessions[cid]["db_path"] = db_path
-            msg_count += 1
-            if cid not in comp_meta:
-                comp_meta[cid] = {"title": f"Chat {cid[:8]}", "createdAt": None, "lastUpdatedAt": None}
-                comp2ws[cid] = "(global)"
-        logger.debug(f"  - Extracted {msg_count} messages from global cursorDiskKV bubbles")
+            sessions[cid]["db_path"] = db_path
+            sessions[cid]["session_id"] = cid
+            msg_count_global += 1
         
-        # Extract composer data
+        # Then try ItemTable
+        for cid, role, text, db_path, code_blocks, is_thought, thinking, tool_former_data, capability_type in iter_chat_from_item_table(gs_path, detailed_logging, target_session_id):
+            # Add the message
+            sessions[cid]["messages"].append({
+                "role": role, 
+                "content": text,
+                "codeBlocks": code_blocks,
+                "is_thought": is_thought,
+                "thinking": thinking,
+                "tool_former_data": tool_former_data,
+                "capability_type": capability_type
+            })
+            sessions[cid]["db_path"] = db_path
+            sessions[cid]["session_id"] = cid
+            msg_count_global += 1
+        
+        if detailed_logging and msg_count_global > 0:
+            logger.debug(f"  - Found {msg_count_global} chat messages in global storage")
+        
+        # Get composer data metadata from global storage DB
         comp_count = 0
-        for cid, data, db_path in iter_composer_data(global_db):
-            if cid not in comp_meta:
-                created_at = data.get("createdAt")
-                comp_meta[cid] = {
-                    "title": f"Chat {cid[:8]}",
-                    "createdAt": created_at,
-                    "lastUpdatedAt": created_at
-                }
-                comp2ws[cid] = "(global)"
-            
-            # Record the database path
-            if "db_path" not in sessions[cid]:
+        for cid, data, db_path in iter_composer_data(gs_path, detailed_logging, target_session_id):
+            if cid in sessions:
+                comp_meta[cid] = data
+                sessions[cid]["composer_data"] = data
                 sessions[cid]["db_path"] = db_path
-                
-            # Extract conversation from composer data
-            conversation = data.get("conversation", [])
-            if conversation:
-                msg_count = 0
-                for msg in conversation:
-                    msg_type = msg.get("type")
-                    if msg_type is None:
-                        continue
-                    
-                    # Type 1 = user, Type 2 = assistant
-                    role = "user" if msg_type == 1 else "assistant"
-                    content = msg.get("text", "")
-                    if content and isinstance(content, str):
-                        # Check for code blocks in the message
-                        code_blocks = []
-                        if "codeBlocks" in msg and isinstance(msg["codeBlocks"], list):
-                            for block in msg["codeBlocks"]:
-                                if isinstance(block, dict):
-                                    code_content = block.get("content", "")
-                                    lang_id = block.get("languageId", "")
-                                    if code_content:
-                                        code_blocks.append({
-                                            "content": code_content,
-                                            "language": lang_id
-                                        })
-                        
-                        sessions[cid]["messages"].append({
-                            "role": role, 
-                            "content": content,
-                            "codeBlocks": code_blocks
-                        })
-                        msg_count += 1
-                
-                if msg_count > 0:
-                    comp_count += 1
-                    logger.debug(f"  - Added {msg_count} messages from composer {cid[:8]}")
-        
-        if comp_count > 0:
-            logger.debug(f"  - Extracted data from {comp_count} composers in global cursorDiskKV")
-        
-        # Also try ItemTable in global DB
-        try:
-            con = sqlite3.connect(f"file:{global_db}?mode=ro", uri=True)
-            chat_data = j(con.cursor(), "ItemTable", "workbench.panel.aichat.view.aichat.chatdata")
-            if chat_data:
-                msg_count = 0
-                for tab in chat_data.get("tabs", []):
-                    tab_id = tab.get("tabId")
-                    if tab_id and tab_id not in comp_meta:
-                        comp_meta[tab_id] = {
-                            "title": f"Global Chat {tab_id[:8]}",
-                            "createdAt": None,
-                            "lastUpdatedAt": None
-                        }
-                        comp2ws[tab_id] = "(global)"
-                    
-                    for bubble in tab.get("bubbles", []):
-                        content = ""
-                        if "text" in bubble:
-                            content = bubble["text"]
-                        elif "content" in bubble:
-                            content = bubble["content"]
-                        
-                        if content and isinstance(content, str):
-                            role = "user" if bubble.get("type") == "user" else "assistant"
-                            
-                            # Extract code blocks from this bubble
-                            code_blocks = []
-                            if "codeBlocks" in bubble and isinstance(bubble["codeBlocks"], list):
-                                for block in bubble["codeBlocks"]:
-                                    if isinstance(block, dict):
-                                        code_content = block.get("content", "")
-                                        lang_id = block.get("languageId", "")
-                                        if code_content:
-                                            code_blocks.append({
-                                                "content": code_content,
-                                                "language": lang_id
-                                            })
-                            
-                            sessions[tab_id]["messages"].append({
-                                "role": role, 
-                                "content": content,
-                                "codeBlocks": code_blocks
-                            })
-                            msg_count += 1
-                logger.debug(f"  - Extracted {msg_count} messages from global chat data")
-            con.close()
-        except Exception as e:
-            logger.debug(f"Error processing global ItemTable: {e}")
-
-    # 3. Build final list
-    out = []
-    for cid, data in sessions.items():
-        if not data["messages"]:
+                comp_count += 1
+            
+        if detailed_logging and comp_count > 0:
+            logger.debug(f"  - Found {comp_count} composer metadata records")
+    
+    # 3. Add workspace project info to sessions
+    for cid, session in sessions.items():
+        if "workspace_id" in session and session["workspace_id"] in ws_proj:
+            session["project"] = ws_proj[session["workspace_id"]]
+        elif cid in comp2ws and comp2ws[cid] in ws_proj:
+            session["project"] = ws_proj[comp2ws[cid]]
+            session["workspace_id"] = comp2ws[cid]
+        else:
+            # Try to extract from git info
+            session["project"] = extract_project_from_git_repos(None, detailed_logging)
+    
+    # 4. Add metadata to sessions and sort messages
+    results = []
+    session_count = 0
+    for cid, session in sessions.items():
+        if target_session_id and cid != target_session_id:
             continue
-        ws_id = comp2ws.get(cid, "(unknown)")
-        project = ws_proj.get(ws_id, {"name": "(unknown)", "rootPath": "(unknown)"})
-        meta = comp_meta.get(cid, {"title": "(untitled)", "createdAt": None, "lastUpdatedAt": None})
+            
+        # Skip sessions with no messages
+        if not session["messages"]:
+            continue
         
-        # Create the output object with the db_path included
-        chat_data = {
-            "project": project,
-            "session": {"composerId": cid, **meta},
-            "messages": data["messages"],
-            "workspace_id": ws_id,
+        # Sort messages by date if available
+        session["messages"].sort(key=lambda m: m.get("date", 0) if isinstance(m.get("date"), (int, float)) else 0)
+        
+        # Add metadata
+        if cid in comp_meta:
+            metadata = comp_meta[cid]
+            
+            if "createdAt" in metadata:
+                try:
+                    created_at = metadata["createdAt"]
+                    if isinstance(created_at, str):
+                        session["date"] = int(datetime.datetime.fromisoformat(created_at.replace('Z', '+00:00')).timestamp())
+                    else:
+                        session["date"] = int(created_at / 1000)  # Convert ms to seconds
+                except Exception as e:
+                    if detailed_logging:
+                        logger.warning(f"Error parsing date: {e}")
+            
+            if "title" in metadata:
+                session["title"] = metadata["title"]
+        
+        # Format the result
+        result = {
+            "session_id": cid,
+            "messages": session["messages"],
+            "date": session.get("date", 0),
+            "title": session.get("title", "Untitled Chat"),
+            "project": session.get("project", {"name": "Unknown Project"}),
+            "workspace_id": session.get("workspace_id"),
+            "db_path": session.get("db_path"),
         }
         
-        # Add the database path if available
-        if "db_path" in data:
-            chat_data["db_path"] = data["db_path"]
-            
-        out.append(chat_data)
+        results.append(result)
+        session_count += 1
     
-    # Sort by last updated time if available
-    out.sort(key=lambda s: s["session"].get("lastUpdatedAt") or 0, reverse=True)
-    logger.debug(f"Total chat sessions extracted: {len(out)}")
-    return out
+    # Sort by date descending (newest first)
+    results.sort(key=lambda x: x.get("date", 0), reverse=True)
+    
+    logger.info(f"Extracted {session_count} chat sessions with messages")
+    
+    return results
 
 def extract_project_from_git_repos(workspace_id, debug=False):
     """
@@ -741,97 +709,16 @@ def extract_project_from_git_repos(workspace_id, debug=False):
     return None
 
 def format_chat_for_frontend(chat):
-    """Format the chat data to match what the frontend expects."""
+    """Format chat for frontend display, processing special elements like code blocks."""
     try:
-        # Generate a unique ID for this chat if it doesn't have one
-        session_id = str(uuid.uuid4())
-        if 'session' in chat and chat['session'] and isinstance(chat['session'], dict):
-            session_id = chat['session'].get('composerId', session_id)
-        
-        # Format date from createdAt timestamp or use current date
-        date = int(datetime.datetime.now().timestamp())
-        if 'session' in chat and chat['session'] and isinstance(chat['session'], dict):
-            created_at = chat['session'].get('createdAt')
-            if created_at and isinstance(created_at, (int, float)):
-                # Convert from milliseconds to seconds
-                date = created_at / 1000
-        
-        # Ensure project has expected fields
-        project = chat.get('project', {})
-        if not isinstance(project, dict):
-            project = {}
-            
-        # Get workspace_id from chat
-        workspace_id = chat.get('workspace_id', 'unknown')
-        
-        # Get the database path information
-        db_path = chat.get('db_path', 'Unknown database path')
-        
-        # If project name is a username or unknown, try to extract a better name from rootPath
-        if project.get('rootPath'):
-            current_name = project.get('name', '')
-            username = os.path.basename(os.path.expanduser('~'))
-            
-            # Check if project name is username or unknown or very generic
-            if (current_name == username or 
-                current_name == '(unknown)' or 
-                current_name == 'Root' or
-                # Check if rootPath is directly under /Users/username with no additional path components
-                (project.get('rootPath').startswith(f'/Users/{username}') and 
-                 project.get('rootPath').count('/') <= 3)):
-                
-                # Try to extract a better name from the path
-                project_name = extract_project_name_from_path(project.get('rootPath'), debug=False)
-                
-                # Only use the new name if it's meaningful
-                if (project_name and 
-                    project_name != 'Unknown Project' and 
-                    project_name != username and
-                    project_name not in ['Documents', 'Downloads', 'Desktop']):
-                    
-                    logger.debug(f"Improved project name from '{current_name}' to '{project_name}'")
-                    project['name'] = project_name
-                elif project.get('rootPath').startswith(f'/Users/{username}/Documents/codebase/'):
-                    # Special case for /Users/saharmor/Documents/codebase/X
-                    parts = project.get('rootPath').split('/')
-                    if len(parts) > 5:  # /Users/username/Documents/codebase/X
-                        project['name'] = parts[5]
-                        logger.debug(f"Set project name to specific codebase subdirectory: {parts[5]}")
-                    else:
-                        project['name'] = "cursor-view"  # Current project as default
-        
-        # If the project doesn't have a rootPath or it's very generic, enhance it with workspace_id
-        if not project.get('rootPath') or project.get('rootPath') == '/' or project.get('rootPath') == '/Users':
-            if workspace_id != 'unknown':
-                # Use workspace_id to create a more specific path
-                if not project.get('rootPath'):
-                    project['rootPath'] = f"/workspace/{workspace_id}"
-                elif project.get('rootPath') == '/' or project.get('rootPath') == '/Users':
-                    project['rootPath'] = f"{project['rootPath']}/workspace/{workspace_id}"
-        
-        # FALLBACK: If project name is still generic, try to extract it from git repositories
-        if project.get('name') in ['Home Directory', '(unknown)']:
-            git_project_name = extract_project_from_git_repos(workspace_id, debug=True)
-            if git_project_name:
-                logger.debug(f"Improved project name from '{project.get('name')}' to '{git_project_name}' using git repo")
-                project['name'] = git_project_name
-        
-        # Add workspace_id to the project data explicitly
-        project['workspace_id'] = workspace_id
-            
-        # Ensure messages exist and are properly formatted
-        messages = chat.get('messages', [])
-        if not isinstance(messages, list):
-            messages = []
-            
-        # Preserve code blocks in the messages
         formatted_messages = []
         code_blocks_count = 0
         
-        for msg in messages:
-            if not isinstance(msg, dict):
-                continue
-            
+        if not chat or "messages" not in chat:
+            logger.warning("Invalid chat data for formatting")
+            return {"messages": []}
+        
+        for msg in chat.get("messages", []):
             formatted_msg = {
                 'role': msg.get('role', 'user'),
                 'content': msg.get('content', '')
@@ -852,37 +739,119 @@ def format_chat_for_frontend(chat):
                     formatted_msg['codeBlocks'] = valid_code_blocks
                     code_blocks_count += len(valid_code_blocks)
             
+            # Add thinking and tool_former data for advanced UI features
+            if msg.get('is_thought'):
+                formatted_msg['is_thought'] = True
+            
+            if 'thinking' in msg and msg['thinking']:
+                formatted_msg['thinking'] = msg['thinking']
+                # Format the thinking HTML for display in the UI
+                if isinstance(msg['thinking'], dict) and 'text' in msg['thinking'] and msg['thinking']['text']:
+                    thinking_text = html.escape(msg['thinking']['text'])
+                    formatted_msg['thinking_html'] = f"""
+                    <div class="thinking-block">
+                        <div class="thinking-header">
+                            <span class="thinking-label">AI Thought Process</span>
+                        </div>
+                        <div class="thinking-content">
+                            {thinking_text}
+                        </div>
+                    </div>
+                    """
+
+            if 'tool_former_data' in msg and msg['tool_former_data']:
+                formatted_msg['tool_former_data'] = msg['tool_former_data']
+                # Format the tool call HTML for display in the UI
+                tool_former_data = msg['tool_former_data']
+                if isinstance(tool_former_data, dict):
+                    tool_name = tool_former_data.get('name', 'Unknown Tool')
+                    tool_status = tool_former_data.get('status', 'unknown')
+                    tool_params = tool_former_data.get('params') or tool_former_data.get('rawArgs', {})
+                    tool_result = tool_former_data.get('result', '')
+                    
+                    # Format parameters for HTML display
+                    params_html = ""
+                    if tool_params:
+                        try:
+                            if isinstance(tool_params, str):
+                                params_json = json.loads(tool_params)
+                            else:
+                                params_json = tool_params
+                            params_str = json.dumps(params_json, indent=2)
+                            params_html = f"""
+                            <div class="tool-params">
+                                <div class="tool-section-header">Parameters:</div>
+                                <pre><code class="language-json">{html.escape(params_str)}</code></pre>
+                            </div>
+                            """
+                        except:
+                            params_html = f"""
+                            <div class="tool-params">
+                                <div class="tool-section-header">Parameters:</div>
+                                <pre>{html.escape(str(tool_params))}</pre>
+                            </div>
+                            """
+                    
+                    # Format result for HTML display
+                    result_html = ""
+                    if tool_result:
+                        try:
+                            if isinstance(tool_result, str):
+                                # Try to parse as JSON
+                                result_json = json.loads(tool_result)
+                                result_str = json.dumps(result_json, indent=2)
+                            else:
+                                result_str = json.dumps(tool_result, indent=2)
+                            result_html = f"""
+                            <div class="tool-result">
+                                <div class="tool-section-header">Result:</div>
+                                <pre><code class="language-json">{html.escape(result_str)}</code></pre>
+                            </div>
+                            """
+                        except:
+                            result_html = f"""
+                            <div class="tool-result">
+                                <div class="tool-section-header">Result:</div>
+                                <pre>{html.escape(str(tool_result))}</pre>
+                            </div>
+                            """
+                    
+                    status_class = "success" if tool_status == "completed" else "error" if tool_status == "error" else "pending"
+                    status_icon = "✅" if tool_status == "completed" else "❌" if tool_status == "error" else "⏳"
+                    
+                    formatted_msg['tool_call_html'] = f"""
+                    <div class="tool-call-block">
+                        <div class="tool-call-header status-{status_class}">
+                            <span class="tool-name">Called Tool: {tool_name}</span>
+                            <span class="tool-status">{status_icon}</span>
+                        </div>
+                        {params_html}
+                        {result_html}
+                    </div>
+                    """
+            
             formatted_messages.append(formatted_msg)
         
         logger.debug(f"Formatted {len(formatted_messages)} messages with {code_blocks_count} code blocks for frontend")
         
-        # Create properly formatted chat object
         return {
-            'project': project,
-            'messages': formatted_messages,
-            'date': date,
-            'session_id': session_id,
-            'workspace_id': workspace_id,
-            'db_path': db_path  # Include the database path in the output
+            "messages": formatted_messages,
+            "title": chat.get("title", "Untitled Chat"),
+            "project": chat.get("project", {}),
+            "date": chat.get("date", 0),
+            "session_id": chat.get("session_id", "")
         }
     except Exception as e:
-        logger.error(f"Error formatting chat: {e}")
-        # Return a minimal valid object if there's an error
-        return {
-            'project': {'name': 'Error', 'rootPath': '/'},
-            'messages': [],
-            'date': int(datetime.datetime.now().timestamp()),
-            'session_id': str(uuid.uuid4()),
-            'workspace_id': 'error',
-            'db_path': 'Error retrieving database path'
-        }
+        logger.error(f"Error formatting chat for frontend: {e}")
+        return {"messages": []}
 
 @app.route('/api/chats', methods=['GET'])
 def get_chats():
     """Get all chat sessions."""
     try:
         logger.info(f"Received request for chats from {request.remote_addr}")
-        chats = extract_chats()
+        # Don't use detailed logging for the chat list view
+        chats = extract_chats(detailed_logging=False)
         logger.info(f"Retrieved {len(chats)} chats")
         
         # Format each chat for the frontend
@@ -907,14 +876,14 @@ def get_chat(session_id):
     """Get a specific chat session by ID."""
     try:
         logger.info(f"Received request for chat {session_id} from {request.remote_addr}")
-        chats = extract_chats()
+        # Use detailed logging ONLY for the specific session being viewed
+        chats = extract_chats(detailed_logging=True, target_session_id=session_id)
         
         for chat in chats:
-            # Check for a matching composerId safely
-            if 'session' in chat and chat['session'] and isinstance(chat['session'], dict):
-                if chat['session'].get('composerId') == session_id:
-                    formatted_chat = format_chat_for_frontend(chat)
-                    return jsonify(formatted_chat)
+            # Check for direct session_id match in the chat object
+            if chat.get('session_id') == session_id:
+                formatted_chat = format_chat_for_frontend(chat)
+                return jsonify(formatted_chat)
         
         logger.warning(f"Chat with ID {session_id} not found")
         return jsonify({"error": "Chat not found"}), 404
@@ -922,13 +891,137 @@ def get_chat(session_id):
         logger.error(f"Error in get_chat: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/chat/<session_id>', methods=['DELETE'])
+def delete_chat(session_id):
+    """Delete a specific chat session by ID."""
+    try:
+        logger.info(f"Received request to delete chat {session_id} from {request.remote_addr}")
+        
+        # Extract all chats to find the one we want to delete
+        chats = extract_chats(detailed_logging=False)
+        chat_to_delete = None
+        
+        for chat in chats:
+            # Check for a matching composerId safely
+            if 'session' in chat and chat['session'] and isinstance(chat['session'], dict):
+                if chat['session'].get('composerId') == session_id:
+                    chat_to_delete = chat
+                    break
+        
+        if not chat_to_delete:
+            logger.warning(f"Chat with ID {session_id} not found for deletion")
+            return jsonify({"error": "Chat not found"}), 404
+        
+        # Get db_path from the chat
+        db_path = chat_to_delete.get('db_path')
+        if not db_path:
+            return jsonify({"error": "Database path not found for this chat"}), 400
+        
+        # Get composer ID
+        composer_id = None
+        if 'session' in chat_to_delete and chat_to_delete['session'] and isinstance(chat_to_delete['session'], dict):
+            composer_id = chat_to_delete['session'].get('composerId')
+        
+        if not composer_id:
+            return jsonify({"error": "Composer ID not found for this chat"}), 400
+        
+        # Delete chat from database
+        success = delete_chat_from_db(db_path, composer_id)
+        
+        if success:
+            logger.info(f"Successfully deleted chat {session_id}")
+            return jsonify({"success": True, "message": "Chat deleted successfully"})
+        else:
+            logger.error(f"Failed to delete chat {session_id}")
+            return jsonify({"error": "Failed to delete chat"}), 500
+        
+    except Exception as e:
+        logger.error(f"Error in delete_chat: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+
+def delete_chat_from_db(db_path, composer_id):
+    """Delete a chat from the database.
+    
+    Args:
+        db_path (str): Path to the database file
+        composer_id (str): Composer ID of the chat to delete
+        
+    Returns:
+        bool: True if deletion was successful, False otherwise
+    """
+    try:
+        logger.info(f"Attempting to delete chat with composer ID {composer_id} from {db_path}")
+        
+        # Verify the database file exists
+        if not os.path.exists(db_path):
+            logger.error(f"Database file {db_path} does not exist")
+            return False
+        
+        # Connect to the database
+        con = sqlite3.connect(db_path)
+        cur = con.cursor()
+        
+        # Check if it's in cursorDiskKV table (global storage)
+        try:
+            # First check if the table exists
+            cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='cursorDiskKV'")
+            if cur.fetchone():
+                # Delete bubble data
+                cur.execute("DELETE FROM cursorDiskKV WHERE key LIKE ?", (f'bubbleId:{composer_id}%',))
+                # Delete composer data
+                cur.execute("DELETE FROM cursorDiskKV WHERE key = ?", (f'composerData:{composer_id}',))
+                logger.info(f"Deleted chat data from cursorDiskKV table, rows affected: {cur.rowcount}")
+        except sqlite3.Error as e:
+            logger.error(f"Error deleting from cursorDiskKV: {e}")
+        
+        # Check if it's in ItemTable (workspace or global)
+        try:
+            # First check if the table exists
+            cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='ItemTable'")
+            if cur.fetchone():
+                # For ItemTable, we need to modify the JSON data
+                cur.execute("SELECT key, value FROM ItemTable WHERE key = 'workbench.panel.aichat.view.aichat.chatdata'")
+                row = cur.fetchone()
+                
+                if row:
+                    key, value = row
+                    try:
+                        chat_data = json.loads(value)
+                        if "tabs" in chat_data:
+                            # Filter out the tab with matching ID
+                            original_tabs_length = len(chat_data["tabs"])
+                            chat_data["tabs"] = [tab for tab in chat_data["tabs"] if tab.get("tabId") != composer_id]
+                            
+                            if len(chat_data["tabs"]) < original_tabs_length:
+                                # Update the record with the modified JSON
+                                cur.execute(
+                                    "UPDATE ItemTable SET value = ? WHERE key = 'workbench.panel.aichat.view.aichat.chatdata'",
+                                    (json.dumps(chat_data),)
+                                )
+                                logger.info(f"Updated chat data in ItemTable, removed tab with ID {composer_id}")
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Error parsing JSON from ItemTable: {e}")
+        except sqlite3.Error as e:
+            logger.error(f"Error updating ItemTable: {e}")
+        
+        # Commit changes and close connection
+        con.commit()
+        con.close()
+        
+        logger.info(f"Successfully deleted chat with composer ID {composer_id} from {db_path}")
+        return True
+    
+    except Exception as e:
+        logger.error(f"Error in delete_chat_from_db: {e}", exc_info=True)
+        return False
+
 @app.route('/api/chat/<session_id>/export', methods=['GET'])
 def export_chat(session_id):
     """Export a specific chat session as standalone HTML or JSON."""
     try:
         logger.info(f"Received request to export chat {session_id} from {request.remote_addr}")
         export_format = request.args.get('format', 'html').lower()
-        chats = extract_chats()
+        chats = extract_chats(detailed_logging=False)
         
         for chat in chats:
             # Check for a matching composerId safely
@@ -1019,31 +1112,121 @@ def generate_standalone_html(chat):
         for msg in chat.get('messages', []):
             role = msg.get('role', 'unknown')
             content = msg.get('content', '')
+            is_thought = msg.get('is_thought', False)
+            thinking = msg.get('thinking', {})
+            tool_former_data = msg.get('tool_former_data', {})
             
-            # Format code blocks if they exist separately
-            code_blocks_html = ""
-            if 'codeBlocks' in msg and msg['codeBlocks']:
-                for code_block in msg['codeBlocks']:
-                    language = code_block.get('language', '') or 'text'
-                    code_content = code_block.get('content', '')
-                    if code_content:
-                        # Escape HTML in code
-                        code_content = html.escape(code_content)
-                        
-                        code_blocks_html += f"""
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span class="language-label">{language}</span>
-                            </div>
-                            <pre><code class="language-{language}">{code_content}</code></pre>
+            formatted_msg = {
+                'role': msg.get('role', 'user'),
+                'content': msg.get('content', '')
+            }
+            
+            # Preserve codeBlocks if they exist
+            if 'codeBlocks' in msg and isinstance(msg['codeBlocks'], list):
+                # Filter out empty code blocks or invalid ones
+                valid_code_blocks = []
+                for block in msg['codeBlocks']:
+                    if isinstance(block, dict) and 'content' in block and block['content']:
+                        # Ensure language is valid or set to a default
+                        if 'language' not in block or not block['language']:
+                            block['language'] = 'text'
+                        valid_code_blocks.append(block)
+                
+                if valid_code_blocks:
+                    formatted_msg['codeBlocks'] = valid_code_blocks
+            
+            # Add thinking and tool_former data for advanced UI features
+            if msg.get('is_thought'):
+                formatted_msg['is_thought'] = True
+            
+            if 'thinking' in msg and msg['thinking']:
+                formatted_msg['thinking'] = msg['thinking']
+                # Format the thinking HTML for display in the UI
+                if isinstance(msg['thinking'], dict) and 'text' in msg['thinking'] and msg['thinking']['text']:
+                    thinking_text = html.escape(msg['thinking']['text'])
+                    formatted_msg['thinking_html'] = f"""
+                    <div class="thinking-block">
+                        <div class="thinking-header">
+                            <span class="thinking-label">AI Thought Process</span>
                         </div>
-                        """
+                        <div class="thinking-content">
+                            {thinking_text}
+                        </div>
+                    </div>
+                    """
+
+            if 'tool_former_data' in msg and msg['tool_former_data']:
+                formatted_msg['tool_former_data'] = msg['tool_former_data']
+                # Format the tool call HTML for display in the UI
+                tool_former_data = msg['tool_former_data']
+                if isinstance(tool_former_data, dict):
+                    tool_name = tool_former_data.get('name', 'Unknown Tool')
+                    tool_status = tool_former_data.get('status', 'unknown')
+                    tool_params = tool_former_data.get('params') or tool_former_data.get('rawArgs', {})
+                    tool_result = tool_former_data.get('result', '')
+                    
+                    # Format parameters for HTML display
+                    params_html = ""
+                    if tool_params:
+                        try:
+                            if isinstance(tool_params, str):
+                                params_json = json.loads(tool_params)
+                            else:
+                                params_json = tool_params
+                            params_str = json.dumps(params_json, indent=2)
+                            params_html = f"""
+                            <div class="tool-params">
+                                <div class="tool-section-header">Parameters:</div>
+                                <pre><code class="language-json">{html.escape(params_str)}</code></pre>
+                            </div>
+                            """
+                        except:
+                            params_html = f"""
+                            <div class="tool-params">
+                                <div class="tool-section-header">Parameters:</div>
+                                <pre>{html.escape(str(tool_params))}</pre>
+                            </div>
+                            """
+                    
+                    # Format result for HTML display
+                    result_html = ""
+                    if tool_result:
+                        try:
+                            if isinstance(tool_result, str):
+                                # Try to parse as JSON
+                                result_json = json.loads(tool_result)
+                                result_str = json.dumps(result_json, indent=2)
+                            else:
+                                result_str = json.dumps(tool_result, indent=2)
+                            result_html = f"""
+                            <div class="tool-result">
+                                <div class="tool-section-header">Result:</div>
+                                <pre><code class="language-json">{html.escape(result_str)}</code></pre>
+                            </div>
+                            """
+                        except:
+                            result_html = f"""
+                            <div class="tool-result">
+                                <div class="tool-section-header">Result:</div>
+                                <pre>{html.escape(str(tool_result))}</pre>
+                            </div>
+                            """
+                    
+                    status_class = "success" if tool_status == "completed" else "error" if tool_status == "error" else "pending"
+                    status_icon = "✅" if tool_status == "completed" else "❌" if tool_status == "error" else "⏳"
+                    
+                    formatted_msg['tool_call_html'] = f"""
+                    <div class="tool-call-block">
+                        <div class="tool-call-header status-{status_class}">
+                            <span class="tool-name">Called Tool: {tool_name}</span>
+                            <span class="tool-status">{status_icon}</span>
+                        </div>
+                        {params_html}
+                        {result_html}
+                    </div>
+                    """
             
-            formatted_messages.append({
-                    'role': role,
-                    'content': content,
-                    'code_blocks_html': code_blocks_html
-                })
+            formatted_messages.append(formatted_msg)
 
         # Add messages template
         html_content += """
@@ -1067,8 +1250,9 @@ def generate_standalone_html(chat):
                 <div class="message {role_class}-message">
                     <div class="message-header">
                         <div class="avatar {role_class}-avatar">
-                            {role_display}
+                            {role_display[0]}
                         </div>
+                        <div class="header-text">{role_display}</div>
                     </div>
                     <div class="message-content">
             """
@@ -1078,24 +1262,58 @@ def generate_standalone_html(chat):
                 html_content += f"""
                         <div class="text-content">
                             {content_html}
-                    </div>
+                        </div>
                 """
             
             # Add code blocks if present
-            if msg['code_blocks_html']:
+            if 'codeBlocks' in msg and isinstance(msg['codeBlocks'], list) and msg['codeBlocks']:
+                code_blocks_html = ""
+                for code_block in msg['codeBlocks']:
+                    language = code_block.get('language', '') or 'text'
+                    code_content = code_block.get('content', '')
+                    if code_content:
+                        # Escape HTML in code
+                        code_content = html.escape(code_content)
+                        
+                        code_blocks_html += f"""
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="language-label">{language}</span>
+                            </div>
+                            <pre><code class="language-{language}">{code_content}</code></pre>
+                        </div>
+                        """
+                
+                if code_blocks_html:
+                    html_content += f"""
+                            <div class="code-blocks">
+                                {code_blocks_html}
+                            </div>
+                    """
+            
+            # Add thinking content if present
+            if msg['thinking_html']:
                 html_content += f"""
-                        <div class="code-blocks">
-                            {msg['code_blocks_html']}
-                </div>
+                        <div class="thinking-blocks">
+                            {msg['thinking_html']}
+                        </div>
                 """
-
+            
+            # Add tool call content if present
+            if msg['tool_call_html']:
+                html_content += f"""
+                        <div class="tool-call-blocks">
+                            {msg['tool_call_html']}
+                        </div>
+                """
+            
             html_content += """
-    </div>
-    </div>
+                    </div>
+                </div>
             """
         
         html_content += """
-    </div>
+            </div>
         """
         
         # Add CSS styling
@@ -1111,6 +1329,12 @@ def generate_standalone_html(chat):
                 --secondary-text: #B3B3B3;
                 --border-color: #3E3E3E;
                 --code-bg: #282c34;
+                --thinking-bg: #2d3748;
+                --thinking-border: #4a5568;
+                --tool-header-bg: #2b4562;
+                --tool-success-color: #48BB78;
+                --tool-error-color: #F56565;
+                --tool-pending-color: #ECC94B;
             }
             
             * {
@@ -1178,6 +1402,10 @@ def generate_standalone_html(chat):
                 gap: 10px;
             }
             
+            .header-text {
+                font-weight: 500;
+            }
+            
             .avatar {
                 width: 32px;
                 height: 32px;
@@ -1225,6 +1453,10 @@ def generate_standalone_html(chat):
             }
             
             /* Code blocks */
+            .code-blocks {
+                margin-top: 16px;
+            }
+            
             .code-block {
                 margin: 16px 0;
                 border-radius: 8px;
@@ -1256,6 +1488,105 @@ def generate_standalone_html(chat):
                 border-radius: 4px;
                 padding: 2px 8px;
                 background-color: rgba(255,255,255,0.1);
+            }
+            
+            /* Thinking blocks */
+            .thinking-blocks {
+                margin-top: 16px;
+            }
+            
+            .thinking-block {
+                background-color: var(--thinking-bg);
+                border: 1px solid var(--thinking-border);
+                border-radius: 8px;
+                margin-bottom: 16px;
+                overflow: hidden;
+            }
+            
+            .thinking-header {
+                background-color: rgba(0,0,0,0.2);
+                padding: 8px 12px;
+                border-bottom: 1px solid var(--thinking-border);
+            }
+            
+            .thinking-label {
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 12px;
+                color: #a0aec0;
+                display: flex;
+                align-items: center;
+            }
+            
+            .thinking-content {
+                padding: 12px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: 14px;
+                white-space: pre-wrap;
+                color: #e2e8f0;
+            }
+            
+            /* Tool call blocks */
+            .tool-call-blocks {
+                margin-top: 16px;
+            }
+            
+            .tool-call-block {
+                border-radius: 8px;
+                overflow: hidden;
+                border: 1px solid rgba(102, 179, 255, 0.3);
+                margin-bottom: 16px;
+                background-color: rgba(30, 41, 59, 0.8);
+            }
+            
+            .tool-call-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 12px;
+                border-bottom: 1px solid rgba(102, 179, 255, 0.2);
+                border-left: 4px solid;
+            }
+            
+            .status-success {
+                background-color: rgba(43, 69, 98, 0.7);
+                border-left-color: var(--tool-success-color);
+            }
+            
+            .status-error {
+                background-color: rgba(43, 69, 98, 0.7);
+                border-left-color: var(--tool-error-color);
+            }
+            
+            .status-pending {
+                background-color: rgba(43, 69, 98, 0.7);
+                border-left-color: var(--tool-pending-color);
+            }
+            
+            .tool-name {
+                font-family: 'JetBrains Mono', monospace;
+                font-weight: 500;
+                font-size: 14px;
+            }
+            
+            .tool-status {
+                font-size: 16px;
+            }
+            
+            .tool-params, .tool-result {
+                padding: 12px;
+                border-bottom: 1px solid rgba(102, 179, 255, 0.2);
+            }
+            
+            .tool-result {
+                border-bottom: none;
+            }
+            
+            .tool-section-header {
+                color: rgba(156, 220, 254, 0.7);
+                font-weight: 500;
+                font-size: 12px;
+                margin-bottom: 8px;
+                display: block;
             }
             
             pre {
@@ -1332,7 +1663,113 @@ def generate_standalone_html(chat):
         
     except Exception as e:
         logger.error(f"Error generating HTML: {e}")
+        logger.debug(f"Formatted {len(formatted_messages)} messages with {code_blocks_count} code blocks for frontend")
+        
+        # Create properly formatted chat object
+        return {
+            'project': project,
+            'messages': formatted_messages,
+            'date': date,
+            'session_id': session_id,
+            'workspace_id': workspace_id,
+            'db_path': db_path  # Include the database path in the output
+        }
+    except Exception as e:
+        logger.error(f"Error generating HTML: {e}")
         return f"<html><body><h1>Error generating HTML</h1><p>{str(e)}</p></body></html>"
+
+@app.route('/api/chat/<session_id>/raw', methods=['GET'])
+def get_raw_chat(session_id):
+    """Get raw chat data for diagnostic purposes."""
+    try:
+        logger.info(f"Received request for raw chat data {session_id} from {request.remote_addr}")
+        # Enable detailed logging ONLY for the specific session being viewed
+        chats = extract_chats(detailed_logging=True, target_session_id=session_id)
+        
+        # Find the chat with the matching session_id
+        target_chat = None
+        for chat in chats:
+            if 'session' in chat and chat['session'] and isinstance(chat['session'], dict):
+                if chat['session'].get('composerId') == session_id:
+                    target_chat = chat
+                    break
+        
+        if not target_chat:
+            logger.warning(f"Chat with ID {session_id} not found for raw data view")
+            return jsonify({"error": "Chat not found"}), 404
+        
+        # Check if we need to extract raw bubble data from the database
+        db_path = target_chat.get('db_path')
+        if not db_path:
+            return jsonify({"error": "Database path not found for this chat"}), 400
+        
+        # Connect to the database and get raw data
+        raw_bubbles = []
+        try:
+            con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+            cur = con.cursor()
+            
+            # Check for cursorDiskKV table
+            cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='cursorDiskKV'")
+            if cur.fetchone():
+                # Get raw bubble data
+                cur.execute("SELECT key, value FROM cursorDiskKV WHERE key LIKE ?", (f'bubbleId:{session_id}%',))
+                for k, v in cur.fetchall():
+                    if v is not None:
+                        try:
+                            bubble_data = json.loads(v)
+                            raw_bubbles.append({
+                                "key": k,
+                                "data": bubble_data
+                            })
+                        except Exception as e:
+                            logger.error(f"Error parsing JSON for bubble {k}: {e}")
+                
+                # Get composer data
+                cur.execute("SELECT value FROM cursorDiskKV WHERE key = ?", (f'composerData:{session_id}',))
+                row = cur.fetchone()
+                composer_data = None
+                if row and row[0]:
+                    try:
+                        composer_data = json.loads(row[0])
+                    except Exception as e:
+                        logger.error(f"Error parsing JSON for composer data: {e}")
+            
+            # Check ItemTable for this chat
+            item_table_data = None
+            cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='ItemTable'")
+            if cur.fetchone():
+                cur.execute("SELECT value FROM ItemTable WHERE key = 'workbench.panel.aichat.view.aichat.chatdata'")
+                row = cur.fetchone()
+                if row and row[0]:
+                    try:
+                        chat_data = json.loads(row[0])
+                        # Find the tab with this session ID
+                        if 'tabs' in chat_data:
+                            for tab in chat_data['tabs']:
+                                if tab.get('tabId') == session_id:
+                                    item_table_data = tab
+                                    break
+                    except Exception as e:
+                        logger.error(f"Error parsing JSON from ItemTable: {e}")
+            
+            con.close()
+            
+            return jsonify({
+                "session_id": session_id,
+                "raw_bubbles": raw_bubbles,
+                "composer_data": composer_data,
+                "item_table_data": item_table_data,
+                "formatted_messages": target_chat.get("messages", [])
+            })
+            
+        except Exception as e:
+            logger.error(f"Error getting raw data: {e}", exc_info=True)
+            return jsonify({"error": f"Error getting raw data: {str(e)}"}), 500
+        
+    except Exception as e:
+        logger.error(f"Error in get_raw_chat: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
 
 # Serve React app
 @app.route('/', defaults={'path': ''})

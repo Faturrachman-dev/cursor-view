@@ -29,6 +29,10 @@ import {
   Checkbox,
   DialogContentText,
   Switch,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
 import FolderIcon from '@mui/icons-material/Folder';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -40,7 +44,10 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import DeleteIcon from '@mui/icons-material/Delete';
 import WarningIcon from '@mui/icons-material/Warning';
+import CodeIcon from '@mui/icons-material/Code';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { colors } from '../App';
 
 const ChatList = () => {
@@ -54,6 +61,11 @@ const ChatList = () => {
   const [exportModalOpen, setExportModalOpen] = useState(false);
   const [dontShowExportWarning, setDontShowExportWarning] = useState(false);
   const [currentExportSession, setCurrentExportSession] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [currentDeleteSession, setCurrentDeleteSession] = useState(null);
+  const [deleteInProgress, setDeleteInProgress] = useState(false);
+  const [exportMenuAnchorEl, setExportMenuAnchorEl] = useState(null);
+  const [exportFormat, setExportFormat] = useState('html');
 
   const fetchChats = async () => {
     setLoading(true);
@@ -210,6 +222,36 @@ const ChatList = () => {
     setSearchQuery(event.target.value);
   };
 
+  // Function to handle export button click - now opens the menu
+  const handleExportClick = (e, sessionId) => {
+    // Prevent navigation to chat detail
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Set current session ID and open menu
+    setCurrentExportSession(sessionId);
+    setExportMenuAnchorEl(e.currentTarget);
+  };
+
+  // Function to handle export format selection
+  const handleExportFormatSelect = (format) => {
+    setExportFormat(format);
+    setExportMenuAnchorEl(null);
+    
+    // Check if warning should be shown
+    if (dontShowExportWarning) {
+      proceedWithExport(currentExportSession, format);
+    } else {
+      setExportModalOpen(true);
+    }
+  };
+
+  // Close export menu
+  const handleExportMenuClose = () => {
+    setExportMenuAnchorEl(null);
+    setCurrentExportSession(null);
+  };
+  
   // Handle export warning confirmation
   const handleExportWarningClose = (confirmed) => {
     setExportModalOpen(false);
@@ -223,36 +265,20 @@ const ChatList = () => {
     
     // If confirmed, proceed with export
     if (confirmed && currentExportSession) {
-      proceedWithExport(currentExportSession);
+      proceedWithExport(currentExportSession, exportFormat);
     }
     
-    // Reset current export session
-    setCurrentExportSession(null);
-  };
-
-  // Function to initiate export process
-  const handleExport = (e, sessionId) => {
-    // Prevent navigation to chat detail
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Check if warning should be shown
-    if (dontShowExportWarning) {
-      proceedWithExport(sessionId);
-    } else {
-      setCurrentExportSession(sessionId);
-      setExportModalOpen(true);
-    }
+    // Don't reset current export session yet, will be done after export completes
   };
 
   // Function to actually perform the export
-  const proceedWithExport = async (sessionId) => {
+  const proceedWithExport = async (sessionId, format) => {
     try {
-      console.log("Starting HTML export for session:", sessionId);
-      console.log(`Making API request to: /api/chat/${sessionId}/export`);
+      console.log(`Starting ${format.toUpperCase()} export for session:`, sessionId);
+      console.log(`Making API request to: /api/chat/${sessionId}/export?format=${format}`);
       
       const response = await axios.get(
-        `/api/chat/${sessionId}/export`,
+        `/api/chat/${sessionId}/export?format=${format}`,
         { responseType: 'blob' }
       );
 
@@ -263,12 +289,16 @@ const ChatList = () => {
         throw new Error('Received empty or invalid content from server');
       }
 
+      // Set correct MIME type based on format
+      const mimeType = format === 'json' ? 'application/json;charset=utf-8' : 'text/html;charset=utf-8';
+      const fileExtension = format === 'json' ? 'json' : 'html';
+      
       // Ensure the blob has the correct MIME type before saving
-      const typedBlob = blob.type ? blob : new Blob([blob], { type: 'text/html;charset=utf-8' });
+      const typedBlob = blob.type ? blob : new Blob([blob], { type: mimeType });
       console.log('Prepared typed blob, size:', typedBlob.size);
 
       // --- Download Logic Start ---
-      const filename = `cursor-chat-${sessionId.slice(0, 8)}.html`;
+      const filename = `cursor-chat-${sessionId.slice(0, 8)}.${fileExtension}`;
       const link = document.createElement('a');
       
       // Create an object URL for the (possibly re-typed) blob
@@ -313,6 +343,68 @@ const ChatList = () => {
         'No response received from server' : 
         error.message || 'Unknown error setting up request';
       alert(`Failed to export chat: ${errorMessage}`);
+    } finally {
+      // Reset export-related state
+      setCurrentExportSession(null);
+    }
+  };
+
+  // Function to initiate delete process
+  const handleDelete = (e, sessionId) => {
+    // Prevent navigation to chat detail
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setCurrentDeleteSession(sessionId);
+    setDeleteModalOpen(true);
+  };
+  
+  // Function to actually perform the deletion
+  const proceedWithDelete = async (sessionId) => {
+    setDeleteInProgress(true);
+    try {
+      console.log("Deleting session:", sessionId);
+      const response = await axios.delete(`/api/chat/${sessionId}`);
+      
+      if (response.data.success) {
+        // Remove the chat from state
+        const updatedChats = chats.filter(chat => chat.session_id !== sessionId);
+        setChats(updatedChats);
+        console.log("Chat deleted successfully");
+      } else {
+        throw new Error(response.data.error || "Failed to delete chat");
+      }
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+      if (error.response) {
+        console.error('Error Response Data:', error.response.data);
+        console.error('Error Response Status:', error.response.status);
+      } else if (error.request) {
+        console.error('Error Request:', error.request);
+      } else {
+        console.error('Error Message:', error.message);
+      }
+      
+      const errorMessage = error.response ? 
+        `Server error: ${error.response.status}` : 
+        error.request ? 
+        'No response received from server' : 
+        error.message || 'Unknown error';
+      alert(`Failed to delete chat: ${errorMessage}`);
+    } finally {
+      setDeleteInProgress(false);
+      setDeleteModalOpen(false);
+      setCurrentDeleteSession(null);
+    }
+  };
+  
+  // Handle delete dialog close
+  const handleDeleteDialogClose = (confirmed) => {
+    if (confirmed && currentDeleteSession) {
+      proceedWithDelete(currentDeleteSession);
+    } else {
+      setDeleteModalOpen(false);
+      setCurrentDeleteSession(null);
     }
   };
 
@@ -373,6 +465,33 @@ const ChatList = () => {
         </Box>
       </Box>
       
+      {/* Export format menu */}
+      <Menu
+        anchorEl={exportMenuAnchorEl}
+        open={Boolean(exportMenuAnchorEl)}
+        onClose={handleExportMenuClose}
+        PaperProps={{
+          elevation: 3,
+          sx: {
+            borderRadius: '8px',
+            mt: 1,
+          }
+        }}
+      >
+        <MenuItem onClick={() => handleExportFormatSelect('html')}>
+          <ListItemIcon>
+            <DescriptionIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Export as HTML" />
+        </MenuItem>
+        <MenuItem onClick={() => handleExportFormatSelect('json')}>
+          <ListItemIcon>
+            <CodeIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Export as JSON" />
+        </MenuItem>
+      </Menu>
+      
       {/* Export Warning Modal */}
       <Dialog
         open={exportModalOpen}
@@ -408,6 +527,42 @@ const ChatList = () => {
           </Button>
           <Button onClick={() => handleExportWarningClose(true)} color="highlight" variant="contained">
             Continue Export
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Delete Confirmation Modal */}
+      <Dialog
+        open={deleteModalOpen}
+        onClose={() => handleDeleteDialogClose(false)}
+        aria-labelledby="delete-confirmation-dialog-title"
+      >
+        <DialogTitle id="delete-confirmation-dialog-title" sx={{ display: 'flex', alignItems: 'center' }}>
+          <WarningIcon sx={{ color: 'warning.main', mr: 1 }} />
+          Confirm Deletion
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this chat? This action cannot be undone and will permanently remove the chat from Cursor's database.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={() => handleDeleteDialogClose(false)} 
+            color="primary"
+            sx={{ color: 'white' }}
+            disabled={deleteInProgress}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={() => handleDeleteDialogClose(true)} 
+            color="error" 
+            variant="contained"
+            disabled={deleteInProgress}
+            startIcon={deleteInProgress ? <CircularProgress size={20} color="inherit" /> : null}
+          >
+            {deleteInProgress ? "Deleting..." : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -701,13 +856,23 @@ const ChatList = () => {
                               </Box>
                             )}
                           </CardContent>
-                          <CardActions sx={{ mt: 'auto', pt: 0 }}>
-                            <Tooltip title="Export as HTML (Warning: Check for sensitive data)">
+                          <CardActions sx={{ mt: 'auto', pt: 0, display: 'flex', justifyContent: 'flex-end' }}>
+                            <Tooltip title="Delete chat">
                               <IconButton 
                                 size="small" 
-                                onClick={(e) => handleExport(e, chat.session_id)}
+                                onClick={(e) => handleDelete(e, chat.session_id)}
                                 sx={{ 
-                                  ml: 'auto',
+                                  color: 'error.main',
+                                }}
+                              >
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Export chat">
+                              <IconButton 
+                                size="small" 
+                                onClick={(e) => handleExportClick(e, chat.session_id)}
+                                sx={{ 
                                   position: 'relative',
                                   '&::after': dontShowExportWarning ? null : {
                                     content: '""',
