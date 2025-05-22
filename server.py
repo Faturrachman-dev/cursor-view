@@ -1021,36 +1021,36 @@ def export_chat(session_id):
     try:
         logger.info(f"Received request to export chat {session_id} from {request.remote_addr}")
         export_format = request.args.get('format', 'html').lower()
-        chats = extract_chats(detailed_logging=False)
+        # Use detailed_logging for easier debugging, but only for the specific session
+        chats = extract_chats(detailed_logging=True, target_session_id=session_id)
         
         for chat in chats:
-            # Check for a matching composerId safely
-            if 'session' in chat and chat['session'] and isinstance(chat['session'], dict):
-                if chat['session'].get('composerId') == session_id:
-                    formatted_chat = format_chat_for_frontend(chat)
-                    
-                    if export_format == 'json':
-                        # Export as JSON
-                        return Response(
-                            json.dumps(formatted_chat, indent=2),
-                            mimetype="application/json; charset=utf-8",
-                            headers={
-                                "Content-Disposition": f'attachment; filename="cursor-chat-{session_id[:8]}.json"',
-                                "Cache-Control": "no-store",
-                            },
-                        )
-                    else:
-                        # Default to HTML export
-                        html_content = generate_standalone_html(formatted_chat)
-                        return Response(
-                            html_content,
-                            mimetype="text/html; charset=utf-8",
-                            headers={
-                                "Content-Disposition": f'attachment; filename="cursor-chat-{session_id[:8]}.html"',
-                                "Content-Length": str(len(html_content)),
-                                "Cache-Control": "no-store",
-                            },
-                        )
+            # Use the same pattern as get_chat which works correctly
+            if chat.get('session_id') == session_id:
+                formatted_chat = format_chat_for_frontend(chat)
+                
+                if export_format == 'json':
+                    # Export as JSON
+                    return Response(
+                        json.dumps(formatted_chat, indent=2),
+                        mimetype="application/json; charset=utf-8",
+                        headers={
+                            "Content-Disposition": f'attachment; filename="cursor-chat-{session_id[:8]}.json"',
+                            "Cache-Control": "no-store",
+                        },
+                    )
+                else:
+                    # Default to HTML export
+                    html_content = generate_standalone_html(formatted_chat)
+                    return Response(
+                        html_content,
+                        mimetype="text/html; charset=utf-8",
+                        headers={
+                            "Content-Disposition": f'attachment; filename="cursor-chat-{session_id[:8]}.html"',
+                            "Content-Length": str(len(html_content)),
+                            "Cache-Control": "no-store",
+                        },
+                    )
         
         logger.warning(f"Chat with ID {session_id} not found for export")
         return jsonify({"error": "Chat not found"}), 404
