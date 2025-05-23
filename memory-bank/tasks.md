@@ -8,20 +8,17 @@
 
 
 ## Bug Fix Tasks
-- [ ] Fix JSON export functionality (404 error when requesting /api/chat/{id}/export?format=json)
-  - [ ] Investigate backend server.py export_chat function
-  - [ ] Debug why specific chat IDs are not found during export
-  - [ ] Verify frontend export request in ChatDetail.js
+- [x] Fix JSON export functionality (404 error when requesting /api/chat/{id}/export?format=json)
+  - [x] Investigate backend server.py export_chat function
+  - [x] Debug why specific chat IDs are not found during export
+  - [x] Verify frontend export request in ChatDetail.js
 
 
-### Detailed Implementation Plan
-1. Modify server.py's export_chat function (around line 1018):
-   - Use the same pattern as get_chat for finding sessions by ID
-   - Replace the check for chat['session']['composerId'] with chat.get('session_id')
-   - Add detailed logging to trace the chat lookup process
-2. Check for any other inconsistencies between get_chat and export_chat implementations
-3. Test both HTML and JSON export formats
-4. Verify the fix in the browser
+### Implementation Notes
+- Fixed the export_chat function in server.py to use the correct pattern for finding sessions by ID
+- Changed from checking chat['session']['composerId'] to checking chat.get('session_id')
+- Added detailed logging to help with debugging
+- Used target_session_id parameter for more efficient extraction
 
 ## Code Fix Implementation
 
