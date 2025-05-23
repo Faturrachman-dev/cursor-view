@@ -65,6 +65,44 @@ def j(cur: sqlite3.Cursor, table: str, key: str):
             logger.debug(f"Failed to parse JSON for {key}: {e}")
     return None
 
+def _extract_bubble_data(bubble: dict, detailed_logging: bool = False) -> tuple[str, list, bool, dict, dict, Any]:
+    """Extracts text, code_blocks, and other metadata from a bubble dictionary."""
+    
+    # Extract regular text
+    text = (bubble.get("text", "") or bubble.get("richText", "") or bubble.get("code", "") or 
+          bubble.get("codeSnippet", "") or bubble.get("content", "") or bubble.get("markdown", "") or "").strip()
+    
+    # Extract code blocks as separate entities
+    code_blocks = []
+    if "codeBlocks" in bubble and isinstance(bubble["codeBlocks"], list):
+        for block in bubble["codeBlocks"]:
+            if isinstance(block, dict):
+                code_content = block.get("content", "")
+                lang_id = block.get("languageId", "")
+                
+                if code_content:
+                    code_blocks.append({
+                        "content": code_content,
+                        "language": lang_id
+                    })
+    
+    # Extract nested content
+    if not text and bubble.get("parts"):
+        for part in bubble.get("parts", []):
+            if isinstance(part, dict):
+                part_text = part.get("text", "") or part.get("code", "") or part.get("content", "")
+                if part_text and part_text.strip():
+                    text = part_text.strip()
+                    break
+    
+    # Extract additional fields
+    is_thought = bubble.get("isThought", False)
+    thinking = bubble.get("thinking", {})
+    tool_former_data = bubble.get("toolFormerData", {})
+    capability_type = bubble.get("capabilityType", None)
+                    
+    return text, code_blocks, is_thought, thinking, tool_former_data, capability_type
+
 def iter_bubbles_from_disk_kv(db: pathlib.Path, detailed_logging=False, target_session_id=None) -> Iterable[tuple[str,str,str,str,list,bool,dict,dict,int]]:
     """Yield (composerId, role, text, db_path, code_blocks, is_thought, thinking, tool_former_data, capability_type) from cursorDiskKV table."""
     try:
@@ -100,38 +138,7 @@ def iter_bubbles_from_disk_kv(db: pathlib.Path, detailed_logging=False, target_s
             if should_log_details:
                 logger.debug(f"Raw bubble data for composer {composer_id}: {json.dumps(bubble, indent=2)}")
             
-            # Extract regular text
-            text = (bubble.get("text", "") or bubble.get("richText", "") or bubble.get("code", "") or 
-                  bubble.get("codeSnippet", "") or bubble.get("content", "") or bubble.get("markdown", "") or "").strip()
-            
-            # Extract code blocks as separate entities
-            code_blocks = []
-            if "codeBlocks" in bubble and isinstance(bubble["codeBlocks"], list):
-                for block in bubble["codeBlocks"]:
-                    if isinstance(block, dict):
-                        code_content = block.get("content", "")
-                        lang_id = block.get("languageId", "")
-                        
-                        if code_content:
-                            code_blocks.append({
-                                "content": code_content,
-                                "language": lang_id
-                            })
-            
-            # Extract nested content
-            if not text and bubble.get("parts"):
-                for part in bubble.get("parts", []):
-                    if isinstance(part, dict):
-                        part_text = part.get("text", "") or part.get("code", "") or part.get("content", "")
-                        if part_text and part_text.strip():
-                            text = part_text.strip()
-                            break
-            
-            # Extract additional fields
-            is_thought = bubble.get("isThought", False)
-            thinking = bubble.get("thinking", {})
-            tool_former_data = bubble.get("toolFormerData", {})
-            capability_type = bubble.get("capabilityType", None)
+            text, code_blocks, is_thought, thinking, tool_former_data, capability_type = _extract_bubble_data(bubble, detailed_logging)
                             
             # Skip bubbles with no content - but allow thought or tool data bubbles even without text
             if not text and not code_blocks and not is_thought and not tool_former_data:
@@ -167,29 +174,7 @@ def iter_chat_from_item_table(db: pathlib.Path, detailed_logging=False, target_s
                     if should_log_details:
                         logger.debug(f"Raw bubble data from ItemTable for tab {tab_id}: {json.dumps(bubble, indent=2)}")
                     
-                    # Extract regular text
-                    text = (bubble.get("text", "") or bubble.get("richText", "") or bubble.get("code", "") or 
-                          bubble.get("codeSnippet", "") or bubble.get("content", "") or bubble.get("markdown", "") or "").strip()
-                    
-                    # Extract code blocks as separate entities
-                    code_blocks = []
-                    if "codeBlocks" in bubble and isinstance(bubble["codeBlocks"], list):
-                        for block in bubble["codeBlocks"]:
-                            if isinstance(block, dict):
-                                code_content = block.get("content", "")
-                                lang_id = block.get("languageId", "")
-                                
-                                if code_content:
-                                    code_blocks.append({
-                                        "content": code_content,
-                                        "language": lang_id
-                                    })
-                    
-                    # Extract additional fields
-                    is_thought = bubble.get("isThought", False)
-                    thinking = bubble.get("thinking", {})
-                    tool_former_data = bubble.get("toolFormerData", {})
-                    capability_type = bubble.get("capabilityType", None)
+                    text, code_blocks, is_thought, thinking, tool_former_data, capability_type = _extract_bubble_data(bubble, detailed_logging)
                     
                     # Skip bubbles with no content - but allow thought or tool data bubbles even without text
                     if not text and not code_blocks and not is_thought and not tool_former_data:
