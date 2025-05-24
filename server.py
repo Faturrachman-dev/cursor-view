@@ -898,15 +898,15 @@ def delete_chat(session_id):
         logger.info(f"Received request to delete chat {session_id} from {request.remote_addr}")
         
         # Extract all chats to find the one we want to delete
-        chats = extract_chats(detailed_logging=False)
+        # Use detailed_logging for debugging this specific session
+        chats = extract_chats(detailed_logging=True, target_session_id=session_id)
         chat_to_delete = None
         
         for chat in chats:
-            # Check for a matching composerId safely
-            if 'session' in chat and chat['session'] and isinstance(chat['session'], dict):
-                if chat['session'].get('composerId') == session_id:
-                    chat_to_delete = chat
-                    break
+            # Use the same pattern as get_chat and export_chat which works correctly
+            if chat.get('session_id') == session_id:
+                chat_to_delete = chat
+                break
         
         if not chat_to_delete:
             logger.warning(f"Chat with ID {session_id} not found for deletion")
@@ -917,11 +917,8 @@ def delete_chat(session_id):
         if not db_path:
             return jsonify({"error": "Database path not found for this chat"}), 400
         
-        # Get composer ID
-        composer_id = None
-        if 'session' in chat_to_delete and chat_to_delete['session'] and isinstance(chat_to_delete['session'], dict):
-            composer_id = chat_to_delete['session'].get('composerId')
-        
+        # Get composer ID - use session_id directly since it's the same as composer_id
+        composer_id = chat_to_delete.get('session_id')
         if not composer_id:
             return jsonify({"error": "Composer ID not found for this chat"}), 400
         

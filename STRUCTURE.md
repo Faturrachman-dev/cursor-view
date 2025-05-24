@@ -1,43 +1,137 @@
 # Project Structure
 
 ```
-└── 📁cursor-view                          # Root project directory
-    └── 📁export                           # Directory containing exported chat files
-    └── 📁frontend                         # React frontend application
-        └── 📁build                        # Compiled production build of the React app
-            └── asset-manifest.json        # Asset mapping for the build
-            └── favicon.ico                # Favicon
-            └── index.html                 # Main HTML entry point
-            └── manifest.json              # Web app manifest
-            └── 📁static                   # Static assets
-                └── 📁css                  # Compiled CSS files
-                    └── main.35335c5e.css  # Main CSS file
-                    └── main.35335c5e.css.map # Source map for CSS
-                └── 📁js                   # Compiled JavaScript files
-                    └── main.ce2d036f.js   # Main JavaScript bundle
-                    └── main.ce2d036f.js.LICENSE.txt # License notices
-                    └── main.ce2d036f.js.map # Source map for JS
-        └── package-lock.json              # NPM package lock file
-        └── package.json                   # NPM package configuration
-        └── 📁public                       # Public assets for the React app
-            └── favicon.ico                # Favicon source
-            └── index.html                 # HTML template
-            └── manifest.json              # Web app manifest source
-        └── 📁src                          # React source code
-            └── App.js                     # Main App component
-            └── 📁components               # React components
-                └── ChatDetail.js          # Chat detail view component (displays conversations w/ code blocks)
-                └── ChatList.js            # Chat list component (displays all chats)
-                └── Header.js              # Header component
-            └── index.css                  # Global CSS
-            └── index.js                   # React entry point
-    └── .gitignore                         # Git ignore file
-    └── cursor_chat_finder.py              # Utility to find Cursor chat files
-    └── extract_cursor_chat.py             # Core module for extracting chat data from databases
-    └── LICENSE                            # Project license
-    └── package-lock.json                  # NPM package lock file
-    └── package.json                       # NPM package configuration
-    └── README.md                          # Project documentation and setup instructions
-    └── requirements.txt                   # Python dependencies
-    └── server.py                          # Main Python backend server (Flask)
+└── 📁cursor-view
+    └── 📁.repomix
+        └── bundles.json
+    └── 📁ai-contexts
+        └── custom_instructions.txt
+        └── fetch-rules-vs-read-file.md
+        └── insight-CMB.md
+        └── insight-complexity-levels.md
+        └── insights_fetch-rules.md
+        └── insights.md
+        └── refined-instructions.txt
+        └── summary-CMB.md
+        └── summary-context.md
+        └── summary.md
+    └── 📁cursor-memory-bank
+            └── 📁info
+            └── packed-refs
+        └── .gitignore
+        └── 📁assets
+        └── creative_mode_think_tool.md
+        └── 📁custom_modes
+            └── creative_instructions.md
+            └── implement_instructions.md
+            └── mode_switching_analysis.md
+            └── plan_instructions.md
+            └── reflect_archive_instructions.md
+            └── van_instructions.md
+        └── 📁mdc rules
+            └── rules-core-refined.md
+            └── rules-core.txt
+            └── rules-levels.txt
+            └── rules-phases-main.txt
+            └── rules-visual-maps.txt
+        └── MEMORY_BANK_OPTIMIZATIONS.md
+        └── memory_bank_upgrade_guide.md
+        └── 📁optimization-journey
+            └── 00-introduction.md
+            └── 01-efficiency-and-clarity.md
+            └── 02-system-self-assessment.md
+            └── 03-redundancy-elimination.md
+            └── 04-single-source-of-truth.md
+            └── 05-adaptive-complexity-model.md
+            └── 06-self-assessment-recommendations.md
+            └── 07-structured-creative-thinking.md
+            └── 08-creative-phase-enforcement.md
+            └── 09-context-optimization.md
+            └── 10-current-system-state.md
+            └── 11-key-lessons.md
+            └── 11-methodological-integration.md
+            └── 12-future-directions.md
+            └── 12-key-lessons.md
+            └── 13-future-directions.md
+            └── 13-methodological-integration.md
+            └── README.md
+        └── README.md
+        └── 📁refined_instructions
+            └── creative.md
+            └── implement.md
+            └── plan.md
+            └── reflect_archive.md
+            └── van.md
+        └── RELEASE_NOTES.md
+    └── 📁documentation
+        └── code_reference.md
+        └── database_structure.md
+        └── fix_implementation.md
+        └── README.md
+        └── server_documentation.md
+    └── 📁export
+        └── cursor-chat-dd1ba98f (2).json
+    └── 📁frontend
+        └── 📁build
+            └── asset-manifest.json
+            └── favicon.ico
+            └── index.html
+            └── manifest.json
+            └── 📁static
+                └── 📁css
+                    └── main.35335c5e.css.map
+                └── 📁js
+                    └── main.4e976b27.js.LICENSE.txt
+                    └── main.4e976b27.js.map
+        └── package.json
+        └── 📁public
+            └── favicon.ico
+            └── index.html
+            └── manifest.json
+        └── 📁src
+            └── 📁components
+    └── 📁memory-bank
+        └── activeContext.md
+        └── 📁archive
+            └── archive-json-export-fix.md
+        └── bugfix-code.md
+        └── 📁creative
+        └── productContext.md
+        └── progress.md
+        └── projectbrief.md
+        └── 📁reflection
+        └── style-guide.md
+        └── systemPatterns.md
+        └── tasks.md
+        └── techContext.md
+    └── 📁temp_mdc_backup
+        └── command-execution.mdc
+        └── complexity-decision-tree.mdc
+        └── creative-phase-enforcement.mdc
+        └── creative-phase-metrics.mdc
+        └── file-verification.mdc
+        └── hierarchical-rule-loading.mdc
+        └── memory-bank-paths.mdc
+        └── mode-transition-optimization.mdc
+        └── optimization-integration.mdc
+        └── platform-awareness.mdc
+    └── 📁UI
+        └── 📁new
+        └── 📁old
+            └── 📁codes
+                └── server.py
+    └── .cursorindexingignore
+    └── .gitignore
+    └── batch.py
+    └── CHANGELOG.md
+    └── chat-links.txt
+    └── CODEBLOCK_SUPPORT.md
+    └── error-delete-chat.txt
+    └── extract_cursor_chat.py
+    └── extract_db_example.py
+    └── LICENSE
+    └── package.json
+    └── README.md
+    └── server.py
+    └── STRUCTURE.md
 ```
