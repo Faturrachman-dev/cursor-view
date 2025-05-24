@@ -1,321 +1,47 @@
 ---
-description: Visual process map for BUILD mode (Code Implementation)
-globs: implementation-mode-map.mdc
+description: Orchestrates IMPLEMENT mode. Fetched after PLAN/CREATIVE. Guides AI to implement features/fixes using level-specific rules, `edit_file` for code, `run_terminal_cmd` for builds/tests, and `Core/command-execution.mdc` for tool usage.
+globs: **/visual-maps/implement-mode-map.mdc
 alwaysApply: false
 ---
+# IMPLEMENT MODE: CODE EXECUTION PROCESS MAP (AI Instructions)
 
-# BUILD MODE: CODE EXECUTION PROCESS MAP
+> **TL;DR:** Implement the planned and designed features or bug fixes. Use `edit_file` for all code and documentation changes. Use `run_terminal_cmd` for builds, tests, etc. Fetch level-specific implementation rules and `Core/command-execution.mdc` for detailed tool guidance.
 
-> **TL;DR:** This visual map guides the BUILD mode process, focusing on efficient code implementation based on the planning and creative phases, with proper command execution and progress tracking.
+## 🧭 IMPLEMENT MODE PROCESS FLOW (AI Actions)
 
-## 🧭 BUILD MODE PROCESS FLOW
-
-```mermaid
-graph TD
-    Start["START BUILD MODE"] --> ReadDocs["Read Reference Documents<br>Core/command-execution.md"]
-    
-    %% Initialization
-    ReadDocs --> CheckLevel{"Determine<br>Complexity Level<br>from tasks.md"}
-    
-    %% Level 1 Implementation
-    CheckLevel -->|"Level 1<br>Quick Bug Fix"| L1Process["LEVEL 1 PROCESS<br>Level1/quick-bug-workflow.md"]
-    L1Process --> L1Review["Review Bug<br>Report"]
-    L1Review --> L1Examine["Examine<br>Relevant Code"]
-    L1Examine --> L1Fix["Implement<br>Targeted Fix"]
-    L1Fix --> L1Test["Test<br>Fix"]
-    L1Test --> L1Update["Update<br>tasks.md"]
-    
-    %% Level 2 Implementation
-    CheckLevel -->|"Level 2<br>Simple Enhancement"| L2Process["LEVEL 2 PROCESS<br>Level2/enhancement-workflow.md"]
-    L2Process --> L2Review["Review Build<br>Plan"]
-    L2Review --> L2Examine["Examine Relevant<br>Code Areas"]
-    L2Examine --> L2Implement["Implement Changes<br>Sequentially"]
-    L2Implement --> L2Test["Test<br>Changes"]
-    L2Test --> L2Update["Update<br>tasks.md"]
-    
-    %% Level 3-4 Implementation
-    CheckLevel -->|"Level 3-4<br>Feature/System"| L34Process["LEVEL 3-4 PROCESS<br>Level3/feature-workflow.md<br>Level4/system-workflow.md"]
-    L34Process --> L34Review["Review Plan &<br>Creative Decisions"]
-    L34Review --> L34Phase{"Creative Phase<br>Documents<br>Complete?"}
-    
-    L34Phase -->|"No"| L34Error["ERROR:<br>Return to CREATIVE Mode"]
-    L34Phase -->|"Yes"| L34DirSetup["Create Directory<br>Structure"]
-    L34DirSetup --> L34VerifyDirs["VERIFY Directories<br>Created Successfully"]
-    L34VerifyDirs --> L34Implementation["Build<br>Phase"]
-    
-    %% Implementation Phases
-    L34Implementation --> L34Phase1["Phase 1<br>Build"]
-    L34Phase1 --> L34VerifyFiles["VERIFY Files<br>Created Successfully"]
-    L34VerifyFiles --> L34Test1["Test<br>Phase 1"]
-    L34Test1 --> L34Document1["Document<br>Phase 1"]
-    L34Document1 --> L34Next1{"Next<br>Phase?"}
-    L34Next1 -->|"Yes"| L34Implementation
-    
-    L34Next1 -->|"No"| L34Integration["Integration<br>Testing"]
-    L34Integration --> L34Document["Document<br>Integration Points"]
-    L34Document --> L34Update["Update<br>tasks.md"]
-    
-    %% Command Execution
-    L1Fix & L2Implement & L34Phase1 --> CommandExec["COMMAND EXECUTION<br>Core/command-execution.md"]
-    CommandExec --> DocCommands["Document Commands<br>& Results"]
-    
-    %% Completion & Transition
-    L1Update & L2Update & L34Update --> VerifyComplete["Verify Build<br>Complete"]
-    VerifyComplete --> UpdateProgress["Update progress.md<br>with Status"]
-    UpdateProgress --> Transition["NEXT MODE:<br>REFLECT MODE"]
-```
-
-## 📋 REQUIRED FILE STATE VERIFICATION
-
-Before implementation can begin, verify file state:
-
-```mermaid
-graph TD
-    Start["File State<br>Verification"] --> CheckTasks{"tasks.md has<br>planning complete?"}
-    
-    CheckTasks -->|"No"| ErrorPlan["ERROR:<br>Return to PLAN Mode"]
-    CheckTasks -->|"Yes"| CheckLevel{"Task<br>Complexity?"}
-    
-    CheckLevel -->|"Level 1"| L1Ready["Ready for<br>Implementation"]
-    
-    CheckLevel -->|"Level 2"| L2Ready["Ready for<br>Implementation"]
-    
-    CheckLevel -->|"Level 3-4"| CheckCreative{"Creative phases<br>required?"}
-    
-    CheckCreative -->|"No"| L34Ready["Ready for<br>Implementation"]
-    CheckCreative -->|"Yes"| VerifyCreative{"Creative phases<br>completed?"}
-    
-    VerifyCreative -->|"No"| ErrorCreative["ERROR:<br>Return to CREATIVE Mode"]
-    VerifyCreative -->|"Yes"| L34Ready
-```
-
-## 🔄 FILE SYSTEM VERIFICATION PROCESS
-
-```mermaid
-graph TD
-    Start["Start File<br>Verification"] --> CheckDir["Check Directory<br>Structure"]
-    CheckDir --> DirResult{"Directories<br>Exist?"}
-    
-    DirResult -->|"No"| ErrorDir["❌ ERROR:<br>Missing Directories"]
-    DirResult -->|"Yes"| CheckFiles["Check Each<br>Created File"]
-    
-    ErrorDir --> FixDir["Fix Directory<br>Structure"]
-    FixDir --> CheckDir
-    
-    CheckFiles --> FileResult{"All Files<br>Exist?"}
-    FileResult -->|"No"| ErrorFile["❌ ERROR:<br>Missing/Wrong Path Files"]
-    FileResult -->|"Yes"| Complete["✅ Verification<br>Complete"]
-    
-    ErrorFile --> FixFile["Fix File Paths<br>or Recreate Files"]
-    FixFile --> CheckFiles
-```
-
-## 📋 DIRECTORY VERIFICATION STEPS
-
-Before beginning any file creation:
-
-```
-✓ DIRECTORY VERIFICATION PROCEDURE
-1. Create all directories first before any files
-2. Use ABSOLUTE paths: /full/path/to/directory
-3. Verify each directory after creation:
-   ls -la /full/path/to/directory     # Linux/Mac
-   dir "C:\full\path\to\directory"    # Windows
-4. Document directory structure in progress.md
-5. Only proceed to file creation AFTER verifying ALL directories exist
-```
-
-## 📋 FILE CREATION VERIFICATION
-
-After creating files:
-
-```
-✓ FILE VERIFICATION PROCEDURE
-1. Use ABSOLUTE paths for all file operations: /full/path/to/file.ext
-2. Verify each file creation was successful:
-   ls -la /full/path/to/file.ext     # Linux/Mac
-   dir "C:\full\path\to\file.ext"    # Windows 
-3. If verification fails:
-   a. Check for path resolution issues
-   b. Verify directory exists
-   c. Try creating with corrected path
-   d. Recheck file exists after correction
-4. Document all file paths in progress.md
-```
-
-## 🔄 COMMAND EXECUTION WORKFLOW
-
-```mermaid
-graph TD
-    Start["Command<br>Execution"] --> Analyze["Analyze Command<br>Requirements"]
-    Analyze --> Complexity{"Command<br>Complexity?"}
-    
-    Complexity -->|"Simple"| Simple["Execute<br>Single Command"]
-    Complexity -->|"Moderate"| Chain["Use Efficient<br>Command Chaining"]
-    Complexity -->|"Complex"| Break["Break Into<br>Logical Steps"]
-    
-    Simple & Chain & Break --> Verify["Verify<br>Results"]
-    Verify --> Document["Document<br>Command & Result"]
-    Document --> Next["Next<br>Command"]
-```
-
-## 📋 LEVEL-SPECIFIC BUILD APPROACHES
-
-```mermaid
-graph TD
-    subgraph "Level 1: Quick Bug Fix"
-        L1A["Targeted Code<br>Examination"]
-        L1B["Minimal<br>Change Scope"]
-        L1C["Direct<br>Fix"]
-        L1D["Verify<br>Fix"]
-    end
-    
-    subgraph "Level 2: Enhancement"
-        L2A["Sequential<br>Build"]
-        L2B["Contained<br>Changes"]
-        L2C["Standard<br>Testing"]
-        L2D["Component<br>Documentation"]
-    end
-    
-    subgraph "Level 3-4: Feature/System"
-        L3A["Directory<br>Structure First"]
-        L3B["Verify Dirs<br>Before Files"]
-        L3C["Phased<br>Build"]
-        L3D["Verify Files<br>After Creation"]
-        L3E["Integration<br>Testing"]
-        L3F["Detailed<br>Documentation"]
-    end
-    
-    L1A --> L1B --> L1C --> L1D
-    L2A --> L2B --> L2C --> L2D
-    L3A --> L3B --> L3C --> L3D --> L3E --> L3F
-```
-
-## 📝 BUILD DOCUMENTATION FORMAT
-
-Document builds with:
-
-```
-## Build: [Component/Feature]
-
-### Approach
-[Brief description of build approach]
-
-### Directory Structure
-- [/absolute/path/to/dir1/]: [Purpose]
-- [/absolute/path/to/dir2/]: [Purpose]
-
-### Code Changes
-- [/absolute/path/to/file1.ext]: [Description of changes]
-- [/absolute/path/to/file2.ext]: [Description of changes]
-
-### Verification Steps
-- [✓] Directory structure created and verified
-- [✓] All files created in correct locations
-- [✓] File content verified
-
-### Commands Executed
-```
-[Command 1]
-[Result]
-```
-
-```
-[Command 2]
-[Result]
-```
-
-### Testing
-- [Test 1]: [Result]
-- [Test 2]: [Result]
-
-### Status
-- [x] Build complete
-- [x] Testing performed
-- [x] File verification completed
-- [ ] Documentation updated
-```
-
-## 📊 TASKS.MD UPDATE FORMAT
-
-During the build process, update tasks.md with progress:
-
-```
-## Status
-- [x] Initialization complete
-- [x] Planning complete
-[For Level 3-4:]
-- [x] Creative phases complete
-- [x] Directory structure created and verified
-- [x] [Built component 1]
-- [x] [Built component 2]
-- [ ] [Remaining component]
-
-## Build Progress
-- [Component 1]: Complete
-  - Files: [/absolute/path/to/files]
-  - [Details about implementation]
-- [Component 2]: Complete
-  - Files: [/absolute/path/to/files]
-  - [Details about implementation]
-- [Component 3]: In Progress
-  - [Current status]
-```
-
-## 📋 PROGRESS.MD UPDATE FORMAT
-
-Update progress.md with:
-
-```
-# Build Progress
-
-## Directory Structure
-- [/absolute/path/to/dir1/]: Created and verified
-- [/absolute/path/to/dir2/]: Created and verified
-
-## [Date]: [Component/Feature] Built
-- **Files Created**: 
-  - [/absolute/path/to/file1.ext]: Verified
-  - [/absolute/path/to/file2.ext]: Verified
-- **Key Changes**: 
-  - [Change 1]
-  - [Change 2]
-- **Testing**: [Test results]
-- **Next Steps**: [What comes next]
-```
-
-## 📊 BUILD VERIFICATION CHECKLIST
-
-```
-✓ BUILD VERIFICATION
-- Directory structure created correctly? [YES/NO]
-- All files created in correct locations? [YES/NO]
-- All file paths verified with absolute paths? [YES/NO]
-- All planned changes implemented? [YES/NO]
-- Testing performed for all changes? [YES/NO]
-- Code follows project standards? [YES/NO]
-- Edge cases handled appropriately? [YES/NO]
-- Build documented with absolute paths? [YES/NO]
-- tasks.md updated with progress? [YES/NO]
-- progress.md updated with details? [YES/NO]
-
-→ If all YES: Build complete - ready for REFLECT mode
-→ If any NO: Complete missing build elements
-```
-
-## 🔄 MODE TRANSITION NOTIFICATION
-
-When the build is complete, notify user with:
-
-```
-## BUILD COMPLETE
-
-✅ Directory structure verified
-✅ All files created in correct locations
-✅ All planned changes implemented
-✅ Testing performed successfully
-✅ tasks.md updated with status
-✅ progress.md updated with details
-
-→ NEXT RECOMMENDED MODE: REFLECT MODE
-``` 
+1.  **Acknowledge & Context Gathering:**
+    a.  State: "Initiating IMPLEMENT mode for the current task."
+    b.  `read_file memory-bank/activeContext.md` to identify the current task, its complexity level, and any outputs from PLAN/CREATIVE modes.
+    c.  `read_file memory-bank/tasks.md` for the detailed sub-tasks, implementation plan, and references to creative design documents.
+    d.  `read_file memory-bank/progress.md` for any ongoing implementation status.
+    e.  If L3/L4 task, `read_file` relevant `memory-bank/creative/creative-[component]-[date].md` documents.
+2.  **Pre-Implementation Checks (AI Self-Correction):**
+    a.  **PLAN Complete?** Verify in `tasks.md` that the planning phase for the current task is marked complete.
+    b.  **CREATIVE Complete (for L3/L4)?** `fetch_rules` for `.cursor/rules/isolation_rules/Core/creative-phase-enforcement.mdc` to check. If it blocks, await user action (e.g., switch to CREATIVE mode).
+    c.  **VAN QA Passed (if applicable)?** Check `activeContext.md` or a dedicated status file if VAN QA was run. If VAN QA failed, state: "IMPLEMENTATION BLOCKED: VAN QA checks previously failed. Please resolve issues and re-run VAN QA." Await user.
+    d.  If any critical pre-check fails, state the blockage and await user instruction.
+3.  **Fetch General Command Execution Guidelines:**
+    a.  `fetch_rules` for `.cursor/rules/isolation_rules/Core/command-execution.mdc`. Keep these guidelines in mind for all tool usage.
+4.  **Fetch Level-Specific Implementation Rule:**
+    a.  Based on the complexity level:
+        *   **Level 1:** `fetch_rules` for `.cursor/rules/isolation_rules/Level1/workflow-level1.mdc` (or a more specific L1 implement rule if it exists, e.g., `Level1/implement-quick-fix.mdc`).
+        *   **Level 2:** `fetch_rules` for `.cursor/rules/isolation_rules/Level2/workflow-level2.mdc` (or `Level2/implement-basic.mdc`).
+        *   **Level 3:** `fetch_rules` for `.cursor/rules/isolation_rules/Level3/implementation-intermediate.mdc`.
+        *   **Level 4:** `fetch_rules` for `.cursor/rules/isolation_rules/Level4/phased-implementation.mdc`.
+5.  **Follow Fetched Rule (Iterative Implementation):**
+    a.  The level-specific rule will guide you through the implementation steps, which will involve:
+        i.  Identifying the next specific sub-task from `tasks.md`.
+        ii. Creating/modifying source code files using `edit_file`.
+        iii. Creating/modifying documentation (e.g., code comments, README sections) using `edit_file`.
+        iv. Running build scripts or compilers using `run_terminal_cmd` (platform-aware).
+        v.  Running tests using `run_terminal_cmd`.
+        vi. Verifying file creation/modification (e.g., using `read_file` or `list_dir`).
+        vii. Documenting each significant action (tool used, command, outcome) in `memory-bank/activeContext.md` (in a "Build Log" section) using `edit_file`.
+        viii. Updating `memory-bank/progress.md` with detailed progress for each sub-task using `edit_file`.
+        ix. Updating `memory-bank/tasks.md` to mark sub-tasks as complete using `edit_file`.
+    b.  This is an iterative process. Continue until all implementation sub-tasks in `tasks.md` are complete.
+6.  **Notify Completion:**
+    a.  Once all implementation sub-tasks are complete, state: "IMPLEMENTATION COMPLETE for task [task_name]."
+    b.  Update `memory-bank/tasks.md` to mark the main IMPLEMENT phase as complete.
+    c.  Update `memory-bank/activeContext.md`: "Implementation phase complete for [task_name]. Ready for REFLECT mode."
+    d.  Recommend: "Recommend transitioning to REFLECT mode for review and lessons learned." Await user.

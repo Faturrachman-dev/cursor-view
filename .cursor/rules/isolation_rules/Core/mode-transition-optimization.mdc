@@ -1,81 +1,29 @@
 ---
-description: Core design principles for optimized and context-aware mode transitions within the Memory Bank system.
+description: Core design principles for optimized mode transitions using `activeContext.md` as the handover document.
 globs: **/Core/mode-transition-optimization.mdc
-alwaysApply: false # Design principles, not directly executed in full by AI.
+alwaysApply: false
 ---
+# MODE TRANSITION OPTIMIZATION (AI Actions)
 
-# MODE TRANSITION OPTIMIZATION (Design Principles)
+> **TL;DR:** Efficient mode transitions are achieved by updating `memory-bank/activeContext.md` (via `edit_file`) before a transition. The next mode's orchestrator rule then reads this file for context.
 
-> **TL;DR:** This document outlines design principles for efficient and context-preserving mode transitions. The AI achieves this by updating `activeContext.md` before a transition and the next mode's orchestrator rule reading it.
-
-## 🔄 UNIFIED CONTEXT TRANSFER PROTOCOL (Conceptual for AI)
-*(Mermaid diagram for human reference)*
-**Textual Guide for AI (How this is achieved):**
+## 🔄 CONTEXT TRANSFER PROCESS (AI Actions):
 
 1.  **Before Current Mode Exits (or suggests exiting):**
-    a.  The current mode's orchestrating `.mdc` rule (or the main custom prompt) will instruct you to use `edit_file` to update `memory-bank/activeContext.md`.
-    b.  This update should summarize:
-        *   Key decisions made in the current mode.
-        *   Status of the current task.
-        *   Critical context to pass to the next mode.
-        *   The recommended next mode and primary task/focus for it.
-        *   Example section in `activeContext.md`:
-            ```markdown
-            ## Mode Transition Prepared
-            - From Mode: PLAN
-            - To Mode: CREATIVE
-            - Task: Implement User Authentication
-            - Key Output from PLAN: Detailed sub-tasks in `tasks.md`; `auth_module` flagged for creative design.
-            - Focus for CREATIVE: Design `auth_module` architecture.
-            ```
+    a.  Your current instructions (from main prompt or an `.mdc` via `fetch_rules`) will guide you to use `edit_file` to update `memory-bank/activeContext.md`.
+    b.  This update should include a section like:
+        ```markdown
+        ## Mode Transition Prepared - [Timestamp]
+        - **From Mode:** [Current Mode, e.g., PLAN]
+        - **To Mode Recommended:** [Target Mode, e.g., CREATIVE or IMPLEMENT]
+        - **Current Task Focus:** [Specific task name or ID from tasks.md]
+        - **Key Outputs/Decisions from [Current Mode]:**
+            - [Summary of what was achieved, e.g., "Plan for user authentication feature is complete."]
+            - [Reference to key artifacts created/updated, e.g., "See `memory-bank/tasks.md` for detailed sub-tasks. Creative design needed for UI components."]
+        - **Primary Goal for [Target Mode]:** [What the next mode should focus on, e.g., "Design UI mockups for login and registration pages."]
+        ```
 2.  **When New Mode Starts:**
-    a.  The new mode's main custom prompt will instruct you to `fetch_rules` for its primary orchestrating `.mdc` file.
-    b.  That orchestrating `.mdc` file will (as one of its first steps) instruct you to `read_file` `memory-bank/activeContext.md` to understand the incoming context, task, and focus.
+    a.  The new mode's main custom prompt (in Cursor's Advanced Settings) will instruct you to `fetch_rules` for its primary orchestrating `.mdc` file (e.g., `visual-maps/creative-mode-map.mdc`).
+    b.  That orchestrating `.mdc` will (as an early step) instruct you to `read_file memory-bank/activeContext.md` to understand the incoming context, task focus, and goals.
 
-## 📊 CONTEXT TRANSITION DOCUMENT (Content for `activeContext.md` update)
-When preparing for a mode transition, ensure `memory-bank/activeContext.md` (updated via `edit_file`) contains:
-```markdown
-# MODE TRANSITION PREPARED: [Current Mode] → [Target Mode]
-
-## Task Context
-- Current Task: [Task name/description from tasks.md]
-- Complexity Level: [Level 1-4 from activeContext.md/tasks.md]
-- Current Phase within Task: [e.g., Planning Complete, Ready for Design]
-- Overall Progress: [Summary from progress.md]
-
-## Key Decisions/Outputs from [Current Mode]
-- [Decision/Output 1]: [Brief summary]
-- [Decision/Output 2]: [Brief summary]
-
-## Critical Context for [Target Mode]
-- [Context item 1 relevant to target mode]
-- [Context item 2 relevant to target mode]
-
-## Focus for [Target Mode]
-- Primary Goal: [e.g., Design UI for checkout page]
-- Key Files/Documents to Consult: [e.g., `tasks.md` for sub-tasks, `creative-checkout-spec.md`]
-```
-
-## 🔍 MODE-SPECIFIC TRANSITION HANDLERS (Examples of `activeContext.md` updates)
-
-*   **VAN → PLAN Transition (AI updates `activeContext.md` at end of VAN):**
-    ```markdown
-    ## Mode Transition Prepared
-    - From Mode: VAN
-    - To Mode: PLAN
-    - Task: [Initial Project Analysis & Setup from tasks.md]
-    - Key Output from VAN: Project Complexity Level [X] determined; Initial `projectbrief.md` and other context files created/updated.
-    - Focus for PLAN: Develop detailed plan for [Main project goal or first major feature].
-    ```
-*   **PLAN → CREATIVE Transition (AI updates `activeContext.md` at end of PLAN):**
-    ```markdown
-    ## Mode Transition Prepared
-    - From Mode: PLAN
-    - To Mode: CREATIVE
-    - Task: [Feature Name from tasks.md]
-    - Key Output from PLAN: Detailed feature plan in `tasks.md`; Components [A, B] flagged for creative design.
-    - Focus for CREATIVE: Execute creative design phase for components [A, B].
-    ```
-*   (Similar structured updates for other transitions)
-
-**Key Principle:** The `activeContext.md` file, managed by `edit_file`, serves as the primary "handover document" between modes. Hierarchical rule loading (fetching specific `.mdc`s) is managed by the instructions within each mode's orchestrator.
+**Key Principle:** `memory-bank/activeContext.md` is the primary "handover document" between modes, managed by `edit_file`. Keep its "Mode Transition Prepared" section concise and actionable for the next mode.

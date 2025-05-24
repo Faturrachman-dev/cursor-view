@@ -1,58 +1,22 @@
 ---
-description: Core reference on metrics and quality assessment for Creative Phase outputs. Primarily for human guidance and AI understanding of quality expectations.
+description: Core reference on metrics and quality assessment for Creative Phase outputs. For AI understanding of quality expectations.
 globs: **/Core/creative-phase-metrics.mdc
-alwaysApply: false # Can be fetched by CREATIVE or REFLECT mode for guidance.
+alwaysApply: false
 ---
+# CREATIVE PHASE METRICS & QUALITY ASSESSMENT (AI Guidance)
 
-# CREATIVE PHASE METRICS & QUALITY ASSESSMENT
+> **TL;DR:** This outlines quality expectations for `creative-*.md` documents. Use this as a guide when generating or reviewing creative outputs.
 
-> **TL;DR:** This document defines quality metrics and evaluation criteria for outputs generated during the Creative Phase (e.g., `creative-*.md` files). It serves as a guide for ensuring design decisions are well-documented, justified, and meet required standards. This rule is primarily for AI understanding of what constitutes a "good" creative output.
-
-## 📊 METRICS OVERVIEW (Conceptual for AI)
-*(Mermaid diagram for human reference)*
-**Textual Guide for AI (When generating or reviewing creative phase documentation):**
-A high-quality creative document (`memory-bank/creative/creative-[feature_name].md`) should demonstrate:
-
-1.  **Documentation Quality:**
-    *   Clear problem statement and objectives for the design.
-    *   Well-defined requirements and constraints that the design addresses.
-    *   Proper formatting, structure, and clarity.
-2.  **Decision Coverage:**
-    *   All significant design decisions for the component are identified and addressed.
-    *   Dependencies and potential impacts are considered.
-3.  **Option Analysis:**
-    *   Multiple (2-3) viable design options were explored.
-    *   Pros and cons for each option are clearly documented.
-    *   Technical feasibility and resource implications were considered.
-4.  **Impact Assessment:**
-    *   The impact of the chosen design on the overall system, performance, security, and maintainability is assessed.
-5.  **Verification & Justification:**
-    *   The recommended design is clearly justified against requirements and trade-offs.
-    *   Implementation guidelines are provided for the chosen design.
-
-## 📋 QUALITY METRICS SCORECARD (For AI to understand expectations)
-*(Scorecard for human reference and AI's conceptual understanding of a good output)*
-```markdown
-# Creative Phase Quality Assessment (Conceptual)
-
-## 1. Documentation Quality
-- Clear problem statement & objectives?
-- Requirements & constraints listed?
-- Well-structured & formatted?
-
-## 2. Decision Coverage
-- All key design aspects addressed?
-- Dependencies noted?
-- Impact considered?
-
-## 3. Option Analysis
-- Multiple options explored?
-- Pros/cons for each documented?
-- Feasibility/complexity assessed?
-
-## 4. Impact Assessment (for chosen design)
-- System/performance/security impact considered?
-
-## 5. Justification & Guidelines
-- Recommended design clearly justified?
-- Implementation guidelines provided?
+## 📊 QUALITY EXPECTATIONS FOR `memory-bank/creative/creative-[feature_name].md` (AI Self-Guide)
+A good creative document (created/updated via `edit_file`) should cover:
+1.  **Problem & Objectives:** Clearly defined. What problem is this design solving? What are the goals?
+2.  **Requirements & Constraints:** List functional and non-functional requirements. Note any technical or business constraints.
+3.  **Options Explored:** At least 2-3 viable design options should be considered and briefly described.
+4.  **Analysis of Options:** For each option:
+    *   Pros (advantages).
+    *   Cons (disadvantages).
+    *   Feasibility (technical, time, resources).
+    *   Impact (on other system parts, user experience).
+5.  **Recommended Design & Justification:** Clearly state the chosen design option and provide a strong rationale for why it was selected over others, referencing the analysis.
+6.  **Implementation Guidelines:** High-level steps or considerations for implementing the chosen design. This is not a full plan, but key pointers for the IMPLEMENT phase.
+7.  **Visualizations (if applicable):** Reference or describe any diagrams (e.g., flowcharts, component diagrams) that clarify the design. (Actual diagram creation might be a separate step or user-provided).

@@ -1,149 +1,83 @@
 ---
-description: Utility for VAN QA validation reports
-globs: van-qa-utils/reports.mdc
+description: VAN QA utility for generating success/failure reports. Fetched by `van-qa-main.mdc`. Guides AI to format and present QA results using `edit_file`.
+globs: **/visual-maps/van_mode_split/van-qa-utils/reports.mdc
 alwaysApply: false
 ---
-# VAN QA: VALIDATION REPORTS
+# VAN QA: VALIDATION REPORTS (AI Instructions)
 
-> **TL;DR:** This component contains the formats for comprehensive success and failure reports generated upon completion of the QA validation process.
+> **TL;DR:** Generate and present a formatted success or failure report based on the outcomes of the VAN QA checks. Update `activeContext.md` and `.qa_validation_status`. This rule is fetched by `van-qa-main.mdc`.
 
-## 📋 COMPREHENSIVE SUCCESS REPORT FORMAT
+## ⚙️ AI ACTIONS FOR GENERATING REPORTS:
 
-After all four validation points pass, generate this success report:
+You will be told by `van-qa-main.mdc` whether the overall QA passed or failed, and will have access to the detailed logs in `activeContext.md`.
 
-```
-╔═════════════════════ 🔍 QA VALIDATION REPORT ══════════════════════╗
-│ PROJECT: [Project Name] | TIMESTAMP: [Current Date/Time]            │
-├─────────────────────────────────────────────────────────────────────┤
-│ 1️⃣ DEPENDENCIES: ✓ Compatible                                       │
-│ 2️⃣ CONFIGURATION: ✓ Valid & Compatible                             │
-│ 3️⃣ ENVIRONMENT: ✓ Ready                                             │
-│ 4️⃣ MINIMAL BUILD: ✓ Successful & Passed                            │
-├─────────────────────────────────────────────────────────────────────┤
-│ 🚨 FINAL VERDICT: PASS                                              │
-│ ➡️ Clear to proceed to BUILD mode                                   │
-╚═════════════════════════════════════════════════════════════════════╝
-```
+1.  **Acknowledge:** State: "Generating VAN QA Report."
+2.  **Gather Data from `activeContext.md`:**
+    a.  `read_file memory-bank/activeContext.md`.
+    b.  Extract the findings from the "VAN QA Log" sections for:
+        *   Dependency Check Status & Details
+        *   Configuration Check Status & Details
+        *   Environment Check Status & Details
+        *   Minimal Build Test Status & Details
+3.  **Format the Report:**
 
-### Success Report Generation Example:
-```powershell
-function Generate-SuccessReport {
-    param (
-        [string]$ProjectName = "Current Project"
-    )
-    
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    
-    $report = @"
-╔═════════════════════ 🔍 QA VALIDATION REPORT ══════════════════════╗
-│ PROJECT: $ProjectName | TIMESTAMP: $timestamp            │
-├─────────────────────────────────────────────────────────────────────┤
-│ 1️⃣ DEPENDENCIES: ✓ Compatible                                       │
-│ 2️⃣ CONFIGURATION: ✓ Valid & Compatible                             │
-│ 3️⃣ ENVIRONMENT: ✓ Ready                                             │
-│ 4️⃣ MINIMAL BUILD: ✓ Successful & Passed                            │
-├─────────────────────────────────────────────────────────────────────┤
-│ 🚨 FINAL VERDICT: PASS                                              │
-│ ➡️ Clear to proceed to BUILD mode                                   │
-╚═════════════════════════════════════════════════════════════════════╝
-"@
-    
-    # Save validation status (used by BUILD mode prevention mechanism)
-    "PASS" | Set-Content -Path "memory-bank\.qa_validation_status"
-    
-    return $report
-}
-```
+    **If Overall QA Status is PASS:**
+    ```markdown
+    ╔═════════════════════ 🔍 QA VALIDATION REPORT ══════════════════════╗
+    │ PROJECT: [Project Name from activeContext.md/projectbrief.md]
+    │ TIMESTAMP: [Current Date/Time]
+    ├─────────────────────────────────────────────────────────────────────┤
+    │ 1️⃣ DEPENDENCIES:   ✓ PASS. [Brief summary, e.g., "Node & npm OK"]
+    │ 2️⃣ CONFIGURATION:  ✓ PASS. [Brief summary, e.g., "package.json & tsconfig OK"]
+    │ 3️⃣ ENVIRONMENT:    ✓ PASS. [Brief summary, e.g., "Git found, permissions assumed OK"]
+    │ 4️⃣ MINIMAL BUILD:  ✓ PASS. [Brief summary, e.g., "npm run build script executed successfully"]
+    ├─────────────────────────────────────────────────────────────────────┤
+    │ 🚨 FINAL VERDICT: PASS                                              │
+    │ ➡️ Clear to proceed to BUILD mode.                                  │
+    ╚═════════════════════════════════════════════════════════════════════╝
+    ```
 
-## ❌ FAILURE REPORT FORMAT
+    **If Overall QA Status is FAIL:**
+    ```markdown
+    ⚠️⚠️⚠️ QA VALIDATION FAILED ⚠️⚠️⚠️
 
-If any validation step fails, generate this detailed failure report:
+    Project: [Project Name]
+    Timestamp: [Current Date/Time]
 
-```
-⚠️⚠️⚠️ QA VALIDATION FAILED ⚠️⚠️⚠️
+    The following issues must be resolved before proceeding to BUILD mode:
 
-The following issues must be resolved before proceeding to BUILD mode:
+    1️⃣ DEPENDENCY ISSUES: [Status: FAIL/WARN]
+       - Details: [Extracted from activeContext.md log for dependencies]
+       - Recommended Fix: (Refer to common-fixes.mdc or specific error messages)
 
-1️⃣ DEPENDENCY ISSUES:
-- [Detailed description of dependency issues]
-- [Recommended fix]
+    2️⃣ CONFIGURATION ISSUES: [Status: FAIL/WARN]
+       - Details: [Extracted from activeContext.md log for configurations]
+       - Recommended Fix: (Refer to common-fixes.mdc or specific error messages)
 
-2️⃣ CONFIGURATION ISSUES:
-- [Detailed description of configuration issues]
-- [Recommended fix]
+    3️⃣ ENVIRONMENT ISSUES: [Status: FAIL/WARN]
+       - Details: [Extracted from activeContext.md log for environment]
+       - Recommended Fix: (Refer to common-fixes.mdc or specific error messages)
 
-3️⃣ ENVIRONMENT ISSUES:
-- [Detailed description of environment issues]
-- [Recommended fix]
+    4️⃣ MINIMAL BUILD TEST ISSUES: [Status: FAIL/WARN]
+       - Details: [Extracted from activeContext.md log for build test]
+       - Recommended Fix: (Refer to common-fixes.mdc or specific error messages)
 
-4️⃣ BUILD TEST ISSUES:
-- [Detailed description of build test issues]
-- [Recommended fix]
-
-⚠️ BUILD MODE IS BLOCKED until these issues are resolved.
-Type 'VAN QA' after fixing the issues to re-validate.
-```
-
-### Failure Report Generation Example:
-```powershell
-function Generate-FailureReport {
-    param (
-        [string[]]$DependencyIssues = @(),
-        [string[]]$ConfigIssues = @(),
-        [string[]]$EnvironmentIssues = @(),
-        [string[]]$BuildIssues = @()
-    )
-    
-    $report = @"
-⚠️⚠️⚠️ QA VALIDATION FAILED ⚠️⚠️⚠️
-
-The following issues must be resolved before proceeding to BUILD mode:
-
-"@
-    
-    if ($DependencyIssues.Count -gt 0) {
-        $report += @"
-1️⃣ DEPENDENCY ISSUES:
-$(($DependencyIssues | ForEach-Object { "- $_" }) -join "`n")
-
-"@
-    }
-    
-    if ($ConfigIssues.Count -gt 0) {
-        $report += @"
-2️⃣ CONFIGURATION ISSUES:
-$(($ConfigIssues | ForEach-Object { "- $_" }) -join "`n")
-
-"@
-    }
-    
-    if ($EnvironmentIssues.Count -gt 0) {
-        $report += @"
-3️⃣ ENVIRONMENT ISSUES:
-$(($EnvironmentIssues | ForEach-Object { "- $_" }) -join "`n")
-
-"@
-    }
-    
-    if ($BuildIssues.Count -gt 0) {
-        $report += @"
-4️⃣ BUILD TEST ISSUES:
-$(($BuildIssues | ForEach-Object { "- $_" }) -join "`n")
-
-"@
-    }
-    
-    $report += @"
-⚠️ BUILD MODE IS BLOCKED until these issues are resolved.
-Type 'VAN QA' after fixing the issues to re-validate.
-"@
-    
-    # Save validation status (used by BUILD mode prevention mechanism)
-    "FAIL" | Set-Content -Path "memory-bank\.qa_validation_status"
-    
-    return $report
-}
-```
-
-**Next Step (on SUCCESS):** Load `van-qa-utils/mode-transitions.mdc` to handle BUILD mode transition.
-**Next Step (on FAILURE):** Load `van-qa-utils/common-fixes.mdc` for issue remediation guidance. 
+    ⚠️ BUILD MODE IS BLOCKED until these issues are resolved.
+    Type 'VAN QA' after fixing the issues to re-validate.
+    ```
+4.  **Present Report to User:**
+    a.  Display the formatted report directly to the user in the chat.
+5.  **Update `.qa_validation_status` File:**
+    a.  Use `edit_file` to write "PASS" or "FAIL" to `memory-bank/.qa_validation_status`. This file acts as a simple flag for other rules.
+        *   Example content for PASS: `QA_STATUS: PASS - [Timestamp]`
+        *   Example content for FAIL: `QA_STATUS: FAIL - [Timestamp]`
+6.  **Log Report Generation in `activeContext.md`:**
+    a.  Use `edit_file` to append to `memory-bank/activeContext.md`:
+        ```markdown
+        #### VAN QA Report Generation - [Timestamp]
+        - Overall QA Status: [PASS/FAIL]
+        - Report presented to user.
+        - `.qa_validation_status` file updated.
+        ```
+7.  **Completion:** State: "VAN QA Report generated and presented."
+    (Control returns to `van-qa-main.mdc`).

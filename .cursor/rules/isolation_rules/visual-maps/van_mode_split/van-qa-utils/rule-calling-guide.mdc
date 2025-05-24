@@ -1,66 +1,37 @@
 ---
-description: Comprehensive guide for calling VAN QA rules
-globs: van-qa-utils/rule-calling-guide.mdc
+description: VAN QA utility: A reference guide on how to call VAN QA rules. Fetched if AI needs clarification on rule invocation.
+globs: **/visual-maps/van_mode_split/van-qa-utils/rule-calling-guide.mdc
 alwaysApply: false
 ---
-# VAN QA: COMPREHENSIVE RULE CALLING GUIDE
+# VAN QA: COMPREHENSIVE RULE CALLING GUIDE (AI Reference)
 
-> **TL;DR:** This reference guide shows how to properly call all VAN QA rules at the right time during the validation process.
+> **TL;DR:** This is a reference for understanding how VAN QA rules are structured to be called using `fetch_rules`. You typically won't fetch this rule directly unless you are trying to understand the system's design or if explicitly told to by a higher-level debugging instruction.
 
-## 🔍 RULE CALLING BASICS
+## 🔍 RULE CALLING BASICS for CMB System:
 
-Remember these key principles:
-1. Always use the `fetch_rules` tool to load rules
-2. Use exact rule paths
-3. Load components only when needed
+1.  **`fetch_rules` is Key:** All `.mdc` rule files in this system are designed to be loaded and executed via the `fetch_rules` tool.
+2.  **Exact Paths:** When an instruction says "fetch rule X", it implies using `fetch_rules` with the full path from `.cursor/rules/isolation_rules/`, for example: `fetch_rules` for `.cursor/rules/isolation_rules/visual-maps/van_mode_split/van-qa-main.mdc`.
+3.  **Orchestration:**
+    *   Top-level mode maps (e.g., `van-mode-map.mdc`, `plan-mode-map.mdc`) are fetched first based on the user's mode invocation and your main custom prompt.
+    *   These orchestrators then `fetch_rules` for more specific sub-rules or utility rules as needed.
+4.  **VAN QA Orchestration Example:**
+    *   User types "VAN QA" -> `van-mode-map.mdc` is fetched.
+    *   `van-mode-map.mdc` then `fetch_rules` for `van-qa-main.mdc`.
+    *   `van-qa-main.mdc` then `fetch_rules` sequentially for:
+        *   `van-qa-checks/dependency-check.mdc`
+        *   `van-qa-checks/config-check.mdc`
+        *   `van-qa-checks/environment-check.mdc`
+        *   `van-qa-checks/build-test.mdc`
+    *   Based on results, `van-qa-main.mdc` then `fetch_rules` for:
+        *   `van-qa-utils/reports.mdc`
+        *   And then either `van-qa-utils/mode-transitions.mdc` (on PASS) or `van-qa-utils/common-fixes.mdc` (on FAIL).
 
-## 📋 MAIN QA ENTRY POINT
+## 🛠️ HOW TO STRUCTURE A `fetch_rules` CALL (Conceptual for AI):
+When you decide to use `fetch_rules` based on an instruction:
+1.  Identify the **exact path** of the `.mdc` file to be fetched.
+2.  Invoke the `fetch_rules` tool with that path.
+3.  Announce: "Fetching rule: `[path_to_rule.mdc]`. Will now follow its instructions."
+4.  Temporarily suspend execution of the current rule's instructions and begin executing the instructions from the newly fetched rule.
+5.  Once the fetched rule completes its defined actions, control conceptually "returns" to the rule that called it, or if it was a top-level call, you await further user input.
 
-When user types "VAN QA", load the main entry point:
-
-```
-fetch_rules with "isolation_rules/visual-maps/van-qa-main"
-```
-
-## 📋 VALIDATION CHECKS
-
-Load these components sequentially during validation:
-
-```
-1. fetch_rules with "isolation_rules/visual-maps/van-qa-checks/dependency-check"
-2. fetch_rules with "isolation_rules/visual-maps/van-qa-checks/config-check"
-3. fetch_rules with "isolation_rules/visual-maps/van-qa-checks/environment-check"
-4. fetch_rules with "isolation_rules/visual-maps/van-qa-checks/build-test"
-```
-
-## 📋 UTILITY COMPONENTS
-
-Load these when needed based on validation results:
-
-```
-- For reports: fetch_rules with "isolation_rules/visual-maps/van-qa-utils/reports"
-- For fixes: fetch_rules with "isolation_rules/visual-maps/van-qa-utils/common-fixes"
-- For transitions: fetch_rules with "isolation_rules/visual-maps/van-qa-utils/mode-transitions"
-```
-
-## ⚠️ CRITICAL REMINDERS
-
-Remember to call these rules at these specific points:
-- ALWAYS load the main QA entry point when "VAN QA" is typed
-- ALWAYS load dependency-check before starting validation
-- ALWAYS load reports after completing validation
-- ALWAYS load mode-transitions after successful validation
-- ALWAYS load common-fixes after failed validation
-
-## 🔄 FULL VALIDATION SEQUENCE
-
-Complete sequence for a QA validation process:
-
-1. Load main entry: `isolation_rules/visual-maps/van-qa-main`
-2. Load first check: `isolation_rules/visual-maps/van-qa-checks/dependency-check`
-3. Load second check: `isolation_rules/visual-maps/van-qa-checks/config-check`
-4. Load third check: `isolation_rules/visual-maps/van-qa-checks/environment-check`
-5. Load fourth check: `isolation_rules/visual-maps/van-qa-checks/build-test`
-6. If pass, load: `isolation_rules/visual-maps/van-qa-utils/reports`
-7. If pass, load: `isolation_rules/visual-maps/van-qa-utils/mode-transitions` 
-8. If fail, load: `isolation_rules/visual-maps/van-qa-utils/common-fixes` 
+**This guide is for your understanding of the system's design. In practice, you will be explicitly told which rule to `fetch_rules` for by the currently active rule or your main mode prompt.**

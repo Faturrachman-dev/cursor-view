@@ -1,42 +1,31 @@
 ---
-description: Core guidelines for platform-aware command execution, especially for `run_terminal_cmd`.
+description: Core guidelines for platform-aware command execution with `run_terminal_cmd`.
 globs: **/Core/platform-awareness.mdc
-alwaysApply: true # Fundamental principle for terminal commands.
+alwaysApply: true
 ---
+# PLATFORM AWARENESS SYSTEM (for `run_terminal_cmd`)
 
-# PLATFORM AWARENESS SYSTEM
+> **TL;DR:** When using `run_terminal_cmd`, be aware of OS differences (paths, common commands). If unsure, state your default command (Linux-style) and ask the user to confirm or provide the platform-specific version (e.g., for Windows PowerShell).
 
-> **TL;DR:** This rule guides you to detect the operating system and adapt `run_terminal_cmd` commands accordingly (e.g., path separators, specific command names) to ensure cross-platform compatibility.
+## 🔍 AI ACTION FOR PLATFORM AWARENESS:
 
-## 🔍 PLATFORM DETECTION PROCESS (Conceptual for AI)
-*(Mermaid diagram for human reference)*
-**AI Action (Primarily during VAN mode, or if executing an unknown command):**
+1.  **Identify Need for `run_terminal_cmd`:** This tool is for tasks like `mkdir`, running scripts (e.g., `npm run build`, `python manage.py test`), installing packages (`pip install`, `npm install`), or other shell operations. **Do NOT use it for creating or editing file content; use `edit_file` for that.**
+2.  **Consider Platform Differences:**
+    *   **Path Separators:** `/` (common for Linux, macOS, and often works in modern Windows PowerShell) vs. `\` (traditional Windows). When constructing paths for commands, be mindful.
+    *   **Common Commands:**
+        *   Directory Creation: `mkdir -p path/to/dir` (Linux/macOS) vs. `New-Item -ItemType Directory -Path path	o\dir` or `mkdir path	o\dir` (Windows PowerShell).
+        *   Listing Directory Contents: `ls -la` (Linux/macOS) vs. `Get-ChildItem` or `dir` (Windows PowerShell).
+        *   File Deletion: `rm path/to/file` (Linux/macOS) vs. `Remove-Item path	oile` (Windows PowerShell).
+        *   Environment Variables: `export VAR=value` (Linux/macOS) vs. `$env:VAR="value"` (Windows PowerShell).
+3.  **Execution Strategy with `run_terminal_cmd`:**
+    a.  **Check Context:** `read_file memory-bank/techContext.md` or `memory-bank/activeContext.md` to see if the OS has been previously identified.
+    b.  **If OS is Known:** Use the appropriate command syntax for that OS.
+    c.  **If OS is Unknown or Unsure:**
+        i.  State your intended action and the command you would typically use (default to Linux-style if no other info). Example: "To create the directory `my_app/src`, I would use `run_terminal_cmd` with `mkdir -p my_app/src`."
+        ii. Ask for Confirmation/Correction: "Is this command correct for your operating system? If you are on Windows, please provide the PowerShell equivalent."
+        iii. Await user confirmation or correction before proceeding with `run_terminal_cmd`.
+    d.  **Clearly State Command:** Before execution, always state the exact command you are about to run with `run_terminal_cmd`.
+4.  **Document Action and Outcome:**
+    a.  After `run_terminal_cmd` completes, use `edit_file` to log the command, its full output (or a summary if very long), and success/failure status in `memory-bank/activeContext.md` under a "Terminal Command Log" or similar section. (Refer to `Core/command-execution.mdc` for the log template).
 
-1.  **Assume Default or Ask:**
-    *   You can assume a common default (e.g., Linux/bash syntax for `mkdir -p`).
-    *   Or, if unsure, **ask the user**: "What is the current operating system (Windows, macOS, Linux) and primary shell (PowerShell, Bash, Zsh)?"
-2.  **Store/Recall Information:** Once known (or if provided in `techContext.md`), try to remember this for subsequent `run_terminal_cmd` calls in the session.
-3.  **Adapt Commands for `run_terminal_cmd`:**
-    *   **Path Separators:** Use `/` for Linux/macOS, `\` for Windows.
-    *   **Directory Creation:**
-        *   Linux/macOS: `mkdir -p path/to/directory`
-        *   Windows PowerShell: `mkdir path\to\directory` or `New-Item -ItemType Directory -Path path\to\directory`
-    *   **File Creation (Empty - prefer `edit_file` for content):**
-        *   Linux/macOS: `touch path/to/file.ext`
-        *   Windows PowerShell: `New-Item -ItemType File -Path path\to\file.ext`
-    *   **Listing Files:**
-        *   Linux/macOS: `ls -la`
-        *   Windows PowerShell: `Get-ChildItem` or `dir`
-    *   **Chaining Commands:**
-        *   Linux/macOS (bash/zsh): `command1 && command2` (sequential success), `command1 ; command2` (sequential)
-        *   Windows PowerShell: `command1; command2` (sequential), `command1 && command2` (often works but behavior can vary, `If ($LASTEXITCODE -eq 0) { command2 }` is more robust for conditional).
-4.  **Report Chosen Command:** When using `run_terminal_cmd`, state the command you are about to execute, explicitly noting if it's adapted for a presumed platform. Example: "I will now run the following PowerShell command to create the directory: `mkdir memory-bank\archive`."
-
-## 📝 PLATFORM VERIFICATION CHECKLIST (AI Self-Correction)
-Before executing a `run_terminal_cmd`:
-- Have I considered the likely OS?
-- Is the path separator correct for that OS?
-- Is the command name and syntax appropriate for that OS/shell?
-- If unsure, have I asked the user or stated my assumption?
-
-**This rule is a guiding principle. The actual detection is often implicit or through user confirmation. The key is to be *aware* of potential differences and adapt `run_terminal_cmd` usage.**
+**This is a guiding principle. The key is to be *aware* of potential differences, default to a common standard (like Linux commands), and proactively seek clarification from the user when unsure to ensure `run_terminal_cmd` is used safely and effectively.**

@@ -1,117 +1,39 @@
 ---
-description: Process map for VAN QA minimal build test
-globs: van-qa-checks/build-test.mdc
+description: VAN QA sub-rule for minimal build test. Fetched by `van-qa-main.mdc`. Guides AI to attempt a basic build/compilation.
+globs: **/visual-maps/van_mode_split/van-qa-checks/build-test.mdc
 alwaysApply: false
 ---
-# VAN QA: MINIMAL BUILD TEST
+# VAN QA: MINIMAL BUILD TEST (AI Instructions)
 
-> **TL;DR:** This component performs a minimal build test to ensure core build functionality works properly.
+> **TL;DR:** Attempt a minimal or dry-run build of the project to catch early integration or setup issues. Log findings to `activeContext.md` using `edit_file`. This rule is fetched by `van-qa-main.mdc`.
 
-## 4️⃣ MINIMAL BUILD TEST PROCESS
+## ⚙️ AI ACTIONS FOR MINIMAL BUILD TEST:
 
-```mermaid
-graph TD
-    Start["Minimal Build Test"] --> CreateTest["Create Minimal<br>Test Project"]
-    CreateTest --> BuildTest["Attempt<br>Build"]
-    BuildTest --> BuildStatus{"Build<br>Successful?"}
-    
-    BuildStatus -->|"Yes"| RunTest["Run Basic<br>Functionality Test"]
-    BuildStatus -->|"No"| FixBuild["Fix Build<br>Issues"]
-    FixBuild --> RetryBuild["Retry Build"]
-    RetryBuild --> BuildStatus
-    
-    RunTest --> TestStatus{"Test<br>Passed?"}
-    TestStatus -->|"Yes"| TestSuccess["Minimal Build Test<br>✅ PASS"]
-    TestStatus -->|"No"| FixTest["Fix Test<br>Issues"]
-    FixTest --> RetryTest["Retry Test"]
-    RetryTest --> TestStatus
-    
-    style Start fill:#4da6ff,stroke:#0066cc,color:white
-    style TestSuccess fill:#10b981,stroke:#059669,color:white
-    style BuildStatus fill:#f6546a,stroke:#c30052,color:white
-    style TestStatus fill:#f6546a,stroke:#c30052,color:white
-```
-
-### Minimal Build Test Implementation:
-```powershell
-# Example: Perform minimal build test for a React project
-function Perform-MinimalBuildTest {
-    $buildSuccess = $false
-    $testSuccess = $false
-    
-    # Create minimal test project
-    $testDir = ".__build_test"
-    if (Test-Path $testDir) {
-        Remove-Item -Path $testDir -Recurse -Force
-    }
-    
-    try {
-        # Create minimal test directory
-        New-Item -Path $testDir -ItemType Directory | Out-Null
-        Push-Location $testDir
-        
-        # Initialize minimal package.json
-        @"
-{
-  "name": "build-test",
-  "version": "1.0.0",
-  "description": "Minimal build test",
-  "main": "index.js",
-  "scripts": {
-    "build": "echo Build test successful"
-  }
-}
-"@ | Set-Content -Path "package.json"
-        
-        # Attempt build
-        npm run build | Out-Null
-        $buildSuccess = $true
-        
-        # Create minimal test file
-        @"
-console.log('Test successful');
-"@ | Set-Content -Path "index.js"
-        
-        # Run basic test
-        node index.js | Out-Null
-        $testSuccess = $true
-        
-    } catch {
-        Write-Output "❌ Build test failed: $($_.Exception.Message)"
-    } finally {
-        Pop-Location
-        if (Test-Path $testDir) {
-            Remove-Item -Path $testDir -Recurse -Force
-        }
-    }
-    
-    # Display results
-    if ($buildSuccess -and $testSuccess) {
-        Write-Output "✅ Minimal build test passed successfully"
-        return $true
-    } else {
-        if (-not $buildSuccess) {
-            Write-Output "❌ Build process failed"
-        }
-        if (-not $testSuccess) {
-            Write-Output "❌ Basic functionality test failed"
-        }
-        return $false
-    }
-}
-```
-
-## 📋 MINIMAL BUILD TEST CHECKPOINT
-
-```
-✓ CHECKPOINT: MINIMAL BUILD TEST
-- Test project creation successful? [YES/NO]
-- Build process completed successfully? [YES/NO]
-- Basic functionality test passed? [YES/NO]
-
-→ If all YES: QA Validation complete, proceed to generate success report.
-→ If any NO: Fix build issues before continuing.
-```
-
-**Next Step (on PASS):** Load `van-qa-utils/reports.mdc` to generate success report.
-**Next Step (on FAIL):** Check `van-qa-utils/common-fixes.mdc` for build test fixes. 
+1.  **Acknowledge & Context:**
+    a.  State: "Starting Minimal Build Test."
+    b.  `read_file package.json` (or equivalent like `Makefile`, `pom.xml`) to identify build commands.
+    c.  `read_file memory-bank/techContext.md` for info on build tools.
+2.  **Define Build Command:**
+    a.  Identify the primary build script (e.g., `npm run build`, `mvn package`, `make`).
+    b.  Consider if a "dry run" or "lint-only" or "compile-only" version of the build command exists to test the toolchain without full artifact generation (e.g., `tsc --noEmit` for TypeScript). If so, prefer it for a *minimal* test. If not, use the standard build command.
+3.  **Execute Build Command (Using `run_terminal_cmd`):**
+    a.  State the exact build command you are about to run.
+    b.  Ensure you are in the correct directory (usually project root). `list_dir .` to confirm presence of `package.json` etc. If not, use `cd` via `run_terminal_cmd`.
+    c.  `run_terminal_cmd [build_command]`.
+    d.  Capture the full output.
+4.  **Evaluate Results & Log:**
+    a.  Analyze the output for success messages or error codes/messages.
+    b.  Use `edit_file` to append detailed findings to the "VAN QA Log" in `memory-bank/activeContext.md`:
+        ```markdown
+        #### Minimal Build Test Log - [Timestamp]
+        - Command: `npm run build`
+        - Output:
+          \`\`\`
+          [Full or summarized build output]
+          \`\`\`
+        - Status: [PASS/FAIL - with key error if FAIL]
+        - Overall Minimal Build Test Status: [PASS/FAIL]
+        ```
+5.  **Completion:**
+    a.  State: "Minimal Build Test complete. Overall Status: [PASS/FAIL]."
+    b.  (The `van-qa-main.mdc` orchestrator will use this outcome).

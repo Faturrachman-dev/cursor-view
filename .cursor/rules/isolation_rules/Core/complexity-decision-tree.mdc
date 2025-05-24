@@ -3,48 +3,35 @@ description: Core rule for AI to determine task complexity (Level 1-4) and initi
 globs: **/Core/complexity-decision-tree.mdc
 alwaysApply: false
 ---
-
 # TASK COMPLEXITY DETERMINATION
 
-> **TL;DR:** This rule guides you to determine the appropriate complexity level (1-4) for the current task. Based on the level, you will then be instructed to fetch the corresponding primary mode map (e.g., for PLAN or IMPLEMENT).
+> **TL;DR:** This rule guides you to determine task complexity (Level 1-4). Based on the level, you will then be instructed to `fetch_rules` for the corresponding primary mode map.
 
 ## 🌳 COMPLEXITY DECISION TREE (Conceptual for AI)
-*(Mermaid diagram for human reference)*
 **Textual Guide for AI:**
-Based on the user's request and your initial analysis (e.g., from reading `README.md` or a high-level task description):
+Based on user's request and initial analysis (e.g., from `read_file` on `README.md`):
 
-1.  **Is the task primarily a bug fix or error correction?**
-    *   **Yes:**
-        *   Does it affect only a single, well-isolated component or a very small code section? -> **Level 1 (Quick Bug Fix)**
-        *   Does it affect multiple components but the fix is relatively straightforward and localized? -> **Level 2 (Simple Enhancement/Refactor)**
-        *   Does it involve complex interactions, potential architectural impact, or require significant redesign of a component? -> **Level 3 (Intermediate Feature/Bug)**
-    *   **No (likely a new feature or enhancement):**
-        *   Is it a small, self-contained addition or modification to an existing component? -> **Level 2 (Simple Enhancement)**
-        *   Is it a complete new feature involving multiple new/existing components, requiring design? -> **Level 3 (Intermediate Feature)**
-        *   Is it a system-wide change, a new major subsystem, or involves deep architectural design/redesign? -> **Level 4 (Complex System)**
-
-## 📊 COMPLEXITY LEVEL INDICATORS (Keywords & Scope)
-
-*   **Level 1 (Quick Bug Fix):** Keywords: "fix", "broken", "error". Scope: Single component, UI tweak, typo. Duration: Minutes to ~1 hour.
-*   **Level 2 (Simple Enhancement/Refactor):** Keywords: "add small", "improve UI", "update text", "refactor module". Scope: Single component or few related files. Duration: ~1-4 hours.
-*   **Level 3 (Intermediate Feature):** Keywords: "implement feature", "create new module", "develop X functionality". Scope: Multiple components, new distinct functionality. Duration: Days.
-*   **Level 4 (Complex System):** Keywords: "design system", "architect new platform", "integrate multiple services". Scope: Entire application or major subsystems. Duration: Weeks/Months.
+1.  **Bug fix/error correction?**
+    *   **Yes:** Single, isolated component? -> **Level 1 (Quick Bug Fix)**
+    *   **Yes:** Multiple components, straightforward fix? -> **Level 2 (Simple Enhancement/Refactor)**
+    *   **Yes:** Complex interactions, architectural impact? -> **Level 3 (Intermediate Feature/Bug)**
+    *   **No (new feature/enhancement):**
+        *   Small, self-contained addition? -> **Level 2 (Simple Enhancement)**
+        *   Complete new feature, multiple components, needs design? -> **Level 3 (Intermediate Feature)**
+        *   System-wide, major subsystem, deep architectural design? -> **Level 4 (Complex System)**
 
 ## 📝 ACTION: DOCUMENT & ANNOUNCE COMPLEXITY
 
-1.  **Determine Level:** Based on the above, decide on Level 1, 2, 3, or 4.
-2.  **Document in `activeContext.md`:**
-    *   Use `edit_file` to update `memory-bank/activeContext.md`.
-    *   Add/Update a section:
-        ```markdown
-        ## Task Complexity Assessment
-        - Task: [Brief description of user's request]
-        - Determined Complexity: Level [1/2/3/4] - [Name, e.g., Quick Bug Fix]
-        - Rationale: [Brief justification for the level]
-        ```
-3.  **Update `tasks.md`:**
-    *   Use `edit_file` to update the main task entry in `memory-bank/tasks.md` with the determined level, e.g., `Level 3: Implement user authentication`.
-4.  **Announce to User & Next Step:**
-    *   State: "Based on the request, I've assessed this as a Level [Number]: [Name] task."
-    *   **If Level 1:** "I will now proceed with the Level 1 (Quick Bug Fix) workflow. I will use `fetch_rules` to load `.cursor/rules/isolation_rules/Level1/workflow-level1.mdc`." (Or directly to IMPLEMENT map if VAN is just for this).
-    *   **If Level 2, 3, or 4:** "This requires more detailed planning. I will now transition to PLAN mode. I will use `fetch_rules` to load `.cursor/rules/isolation_rules/visual-maps/plan-mode-map.mdc`."
+1.  **Determine Level:** Decide Level 1, 2, 3, or 4.
+2.  **Document in `activeContext.md`:** Use `edit_file` to update `memory-bank/activeContext.md`:
+    ```markdown
+    ## Task Complexity Assessment
+    - Task: [User's request]
+    - Determined Complexity: Level [1/2/3/4] - [Name]
+    - Rationale: [Justification]
+    ```
+3.  **Update `tasks.md`:** Use `edit_file` to update `memory-bank/tasks.md` with the level, e.g., `Level 3: Implement user auth`.
+4.  **Announce & Next Step:**
+    *   State: "Assessed as Level [N]: [Name]."
+    *   **Level 1:** "Proceeding with Level 1 workflow. Will `fetch_rules` for `.cursor/rules/isolation_rules/Level1/workflow-level1.mdc` (or directly to IMPLEMENT map if simple enough, e.g., `visual-maps/implement-mode-map.mdc` which might then fetch a Level 1 implement rule)."
+    *   **Level 2-4:** "Requires detailed planning. Transitioning to PLAN mode. Will `fetch_rules` for `.cursor/rules/isolation_rules/visual-maps/plan-mode-map.mdc`."
