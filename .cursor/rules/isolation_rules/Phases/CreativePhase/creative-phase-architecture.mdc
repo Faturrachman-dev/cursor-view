@@ -1,187 +1,53 @@
 ---
-description: creative phase architecture
-globs: creative-phase-architecture.md
+description: Guides the AI through the architectural design process within a CREATIVE phase. Instructs on using `edit_file` to document architectural decisions in a `creative-architecture-*.md` file, referencing the `optimized-creative-template.mdc`.
+globs: **/Phases/CreativePhase/creative-phase-architecture.mdc
 alwaysApply: false
 ---
+# CREATIVE PHASE: ARCHITECTURE DESIGN (AI Instructions)
 
-# CREATIVE PHASE: ARCHITECTURE DESIGN
+> **TL;DR:** This rule guides you through designing and documenting architectural solutions for a specific component or system aspect. Use `edit_file` to create/update a `memory-bank/creative/creative-architecture-[component_name]-[date].md` document, structured using the `optimized-creative-template.mdc`.
 
-> **TL;DR:** This document provides structured guidance for architectural design decisions during creative phases, ensuring comprehensive evaluation of options and clear documentation of architectural choices.
+This rule is typically fetched by `visual-maps/creative-mode-map.mdc` when an architectural design task is active.
 
-## 🏗️ ARCHITECTURE DESIGN WORKFLOW
+## ⚙️ AI ACTIONS FOR ARCHITECTURE DESIGN:
 
-```mermaid
-graph TD
-    Start["Architecture<br>Design Start"] --> Req["1. Requirements<br>Analysis"]
-    Req --> Comp["2. Component<br>Identification"]
-    Comp --> Options["3. Architecture<br>Options"]
-    Options --> Eval["4. Option<br>Evaluation"]
-    Eval --> Decision["5. Decision &<br>Documentation"]
-    Decision --> Valid["6. Validation &<br>Verification"]
-    
-    style Start fill:#4da6ff,stroke:#0066cc,color:white
-    style Req fill:#ffa64d,stroke:#cc7a30,color:white
-    style Comp fill:#4dbb5f,stroke:#36873f,color:white
-    style Options fill:#d94dbb,stroke:#a3378a,color:white
-    style Eval fill:#4dbbbb,stroke:#368787,color:white
-    style Decision fill:#d971ff,stroke:#a33bc2,color:white
-    style Valid fill:#ff71c2,stroke:#c23b8a,color:white
-```
-
-## 📋 ARCHITECTURE DECISION TEMPLATE
-
-```markdown
-# Architecture Decision Record
-
-## Context
-- System Requirements:
-  - [Requirement 1]
-  - [Requirement 2]
-- Technical Constraints:
-  - [Constraint 1]
-  - [Constraint 2]
-
-## Component Analysis
-- Core Components:
-  - [Component 1]: [Purpose/Role]
-  - [Component 2]: [Purpose/Role]
-- Interactions:
-  - [Interaction 1]
-  - [Interaction 2]
-
-## Architecture Options
-### Option 1: [Name]
-- Description: [Brief description]
-- Pros:
-  - [Pro 1]
-  - [Pro 2]
-- Cons:
-  - [Con 1]
-  - [Con 2]
-- Technical Fit: [High/Medium/Low]
-- Complexity: [High/Medium/Low]
-- Scalability: [High/Medium/Low]
-
-### Option 2: [Name]
-[Same structure as Option 1]
-
-## Decision
-- Chosen Option: [Option name]
-- Rationale: [Explanation]
-- Implementation Considerations:
-  - [Consideration 1]
-  - [Consideration 2]
-
-## Validation
-- Requirements Met:
-  - [✓] Requirement 1
-  - [✓] Requirement 2
-- Technical Feasibility: [Assessment]
-- Risk Assessment: [Evaluation]
-```
-
-## 🎯 ARCHITECTURE EVALUATION CRITERIA
-
-```mermaid
-graph TD
-    subgraph "EVALUATION CRITERIA"
-    C1["Scalability"]
-    C2["Maintainability"]
-    C3["Performance"]
-    C4["Security"]
-    C5["Cost"]
-    C6["Time to Market"]
-    end
-    
-    style C1 fill:#4dbb5f,stroke:#36873f,color:white
-    style C2 fill:#ffa64d,stroke:#cc7a30,color:white
-    style C3 fill:#d94dbb,stroke:#a3378a,color:white
-    style C4 fill:#4dbbbb,stroke:#368787,color:white
-    style C5 fill:#d971ff,stroke:#a33bc2,color:white
-    style C6 fill:#ff71c2,stroke:#c23b8a,color:white
-```
-
-## 📊 ARCHITECTURE VISUALIZATION TEMPLATES
-
-### Component Diagram Template
-```mermaid
-graph TD
-    subgraph "SYSTEM ARCHITECTURE"
-    C1["Component 1"]
-    C2["Component 2"]
-    C3["Component 3"]
-    
-    C1 -->|"Interface 1"| C2
-    C2 -->|"Interface 2"| C3
-    end
-    
-    style C1 fill:#4dbb5f,stroke:#36873f,color:white
-    style C2 fill:#ffa64d,stroke:#cc7a30,color:white
-    style C3 fill:#d94dbb,stroke:#a3378a,color:white
-```
-
-### Data Flow Template
-```mermaid
-sequenceDiagram
-    participant C1 as Component 1
-    participant C2 as Component 2
-    participant C3 as Component 3
-    
-    C1->>C2: Request
-    C2->>C3: Process
-    C3-->>C2: Response
-    C2-->>C1: Result
-```
-
-## ✅ VERIFICATION CHECKLIST
-
-```markdown
-## Architecture Design Verification
-- [ ] All system requirements addressed
-- [ ] Component responsibilities defined
-- [ ] Interfaces specified
-- [ ] Data flows documented
-- [ ] Security considerations addressed
-- [ ] Scalability requirements met
-- [ ] Performance requirements met
-- [ ] Maintenance approach defined
-
-## Implementation Readiness
-- [ ] All components identified
-- [ ] Dependencies mapped
-- [ ] Technical constraints documented
-- [ ] Risk assessment completed
-- [ ] Resource requirements defined
-- [ ] Timeline estimates provided
-```
-
-## 🔄 ARCHITECTURE REVIEW PROCESS
-
-```mermaid
-graph TD
-    subgraph "REVIEW PROCESS"
-    R1["Technical<br>Review"]
-    R2["Security<br>Review"]
-    R3["Performance<br>Review"]
-    R4["Final<br>Approval"]
-    end
-    
-    R1 --> R2 --> R3 --> R4
-    
-    style R1 fill:#4dbb5f,stroke:#36873f,color:white
-    style R2 fill:#ffa64d,stroke:#cc7a30,color:white
-    style R3 fill:#d94dbb,stroke:#a3378a,color:white
-    style R4 fill:#4dbbbb,stroke:#368787,color:white
-```
-
-## 🔄 DOCUMENT MANAGEMENT
-
-```mermaid
-graph TD
-    Current["Current Document"] --> Active["Active:<br>- creative-phase-architecture.md"]
-    Current --> Related["Related:<br>- creative-phase-enforcement.md<br>- planning-comprehensive.md"]
-    
-    style Current fill:#4da6ff,stroke:#0066cc,color:white
-    style Active fill:#4dbb5f,stroke:#36873f,color:white
-    style Related fill:#ffa64d,stroke:#cc7a30,color:white
-``` 
+1.  **Acknowledge & Context:**
+    a.  State: "Initiating CREATIVE phase for Architecture Design: [Component/System Aspect from tasks.md]."
+    b.  `read_file memory-bank/tasks.md` for specific requirements, constraints, and scope for this architectural design task.
+    c.  `read_file memory-bank/activeContext.md` for overall project context.
+    d.  `read_file memory-bank/systemPatterns.md` and `techContext.md` for existing architectural patterns and technology landscape.
+    e.  `read_file .cursor/rules/isolation_rules/Phases/CreativePhase/optimized-creative-template.mdc` to understand the documentation structure.
+2.  **Define Problem & Requirements (Section 1 of `optimized-creative-template.mdc`):**
+    a.  Clearly state the architectural problem being solved (e.g., "Design a scalable backend for real-time notifications").
+    b.  List key functional requirements (e.g., "Must handle 1000 concurrent users," "Deliver notifications within 500ms").
+    c.  List key non-functional requirements (quality attributes) like scalability, performance, security, maintainability, cost.
+    d.  Identify architectural constraints (e.g., "Must use AWS services," "Integrate with existing user database").
+3.  **Explore Architectural Options (Section 2 & 3 of `optimized-creative-template.mdc`):**
+    a.  Brainstorm 2-3 distinct architectural patterns or high-level design options (e.g., Microservices vs. Monolith, Event-driven vs. Request-response, SQL vs. NoSQL for a specific data store).
+    b.  For each option, briefly describe it.
+    c.  Analyze each option against the requirements and constraints. Consider:
+        *   Pros & Cons.
+        *   Impact on scalability, performance, security, maintainability, cost.
+        *   Complexity of implementation.
+        *   Team familiarity with technologies.
+    d.  Use a summary table for quick comparison if helpful.
+4.  **Make Decision & Justify (Section 4 of `optimized-creative-template.mdc`):**
+    a.  Select the most suitable architectural option.
+    b.  Provide a clear and detailed rationale for the decision, explaining why it's preferred over alternatives, referencing the analysis.
+5.  **Outline Implementation Guidelines (Section 5 of `optimized-creative-template.mdc`):**
+    a.  Describe key components of the chosen architecture.
+    b.  Suggest primary technologies, frameworks, or libraries.
+    c.  Outline high-level interaction patterns between components (textually describe data flows or sequence diagrams if complex).
+    d.  Identify major interfaces or APIs to be defined.
+    e.  Note any critical next steps for detailed design or implementation planning.
+6.  **Document in `creative-architecture-*.md`:**
+    a.  Determine filename: `creative-architecture-[component_name_or_aspect]-[date].md`.
+    b.  Use `edit_file` to create/update `memory-bank/creative/[filename]` with all the above information, structured according to the `optimized-creative-template.mdc`.
+7.  **Update Core Memory Bank Files:**
+    a.  Use `edit_file` to update `memory-bank/tasks.md`:
+        *   Mark the specific "CREATIVE: Architect [component/aspect]" sub-task as complete.
+        *   Add a link to the created `creative-architecture-*.md` document.
+    b.  Use `edit_file` to add a summary of the architectural decision to the "Creative Decisions Log" in `memory-bank/activeContext.md`.
+8.  **Completion:**
+    a.  State: "Architecture design for [Component/Aspect] complete. Documented in `memory-bank/creative/[filename]`."
+    b.  (Control returns to `visual-maps/creative-mode-map.mdc` to check for more creative tasks or recommend next mode).

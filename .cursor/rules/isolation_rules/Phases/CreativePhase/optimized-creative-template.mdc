@@ -1,219 +1,106 @@
 ---
-description: Optimized creative phase template with progressive documentation
-globs: "**/creative*/**", "**/design*/**", "**/decision*/**"
+description: Optimized template for documenting creative phase outputs (design, architecture, UI/UX decisions). Provides a structure for `edit_file` operations.
+globs: **/Phases/CreativePhase/optimized-creative-template.mdc
 alwaysApply: false
 ---
+# OPTIMIZED CREATIVE PHASE TEMPLATE (Structure for `creative-*.md` files)
 
-# OPTIMIZED CREATIVE PHASE TEMPLATE
+> **TL;DR:** This rule provides a structured template for documenting outputs of a creative phase (e.g., architecture, UI/UX, algorithm design). Use this structure when `edit_file` is used to create or update a `memory-bank/creative/creative-[aspect_name]-[date].md` document.
 
-> **TL;DR:** This template implements a progressive documentation approach for creative phases, optimizing token usage while maintaining thorough design exploration.
+## 📝 PROGRESSIVE DOCUMENTATION MODEL (Principle for AI)
+*   Start with concise summaries for problem and options.
+*   Provide detailed analysis primarily for the selected option(s) or when comparing top contenders.
+*   This keeps the document focused and token-efficient initially, allowing for expansion if needed.
 
-## 📝 PROGRESSIVE DOCUMENTATION MODEL
-
-```mermaid
-graph TD
-    Start["Creative Phase Start"] --> P1["1️⃣ PROBLEM<br>Define scope"]
-    P1 --> P2["2️⃣ OPTIONS<br>Explore alternatives"]
-    P2 --> P3["3️⃣ ANALYSIS<br>Evaluate selected options"]
-    P3 --> P4["4️⃣ DECISION<br>Finalize approach"]
-    P4 --> P5["5️⃣ IMPLEMENTATION<br>Document guidelines"]
-    
-    style Start fill:#d971ff,stroke:#a33bc2,color:white
-    style P1 fill:#4da6ff,stroke:#0066cc,color:white
-    style P2 fill:#ffa64d,stroke:#cc7a30,color:white
-    style P3 fill:#4dbb5f,stroke:#36873f,color:white
-    style P4 fill:#d94dbb,stroke:#a3378a,color:white
-    style P5 fill:#4dbbbb,stroke:#368787,color:white
-```
-
-## 📋 TEMPLATE STRUCTURE
+## 📋 TEMPLATE STRUCTURE (Guide for `edit_file` content)
 
 ```markdown
-📌 CREATIVE PHASE START: [Component Name]
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1️⃣ PROBLEM
-   Description: [Brief problem description]
-   Requirements: [Key requirements as bullet points]
-   Constraints: [Technical or business constraints]
-
-2️⃣ OPTIONS
-   Option A: [Name] - [One-line description]
-   Option B: [Name] - [One-line description]
-   Option C: [Name] - [One-line description]
-
-3️⃣ ANALYSIS
-   | Criterion | Option A | Option B | Option C |
-   |-----------|----------|----------|----------|
-   | Performance | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ |
-   | Complexity | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
-   | Maintainability | ⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ |
-   
-   Key Insights:
-   - [Insight 1]
-   - [Insight 2]
-
-4️⃣ DECISION
-   Selected: [Option X]
-   Rationale: [Brief justification]
-   
-5️⃣ IMPLEMENTATION NOTES
-   - [Implementation note 1]
-   - [Implementation note 2]
-   - [Implementation note 3]
+📌 CREATIVE PHASE START: [Specific Aspect Being Designed, e.g., User Authentication Module Architecture]
+Date: [Current Date]
+Related Task ID (from tasks.md): [Task ID]
+Designer: AI
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📌 CREATIVE PHASE END
-```
 
-## 🧩 DETAILED OPTION ANALYSIS (ON DEMAND)
+### 1️⃣ PROBLEM DEFINITION
+- **Description:** [Clear and concise description of the specific problem this design phase addresses. What needs to be designed or decided?]
+- **Key Requirements (Functional & Non-Functional):**
+  - [ ] Requirement 1: [e.g., System must support JWT-based authentication.]
+  - [ ] Requirement 2: [e.g., Token validation must occur within 50ms.]
+  - [ ] Requirement 3: [e.g., Design must allow for future integration with OAuth providers.]
+- **Constraints:** [Any technical, business, or resource constraints impacting design choices. e.g., Must use existing PostgreSQL database for user store.]
 
-Detailed analysis can be provided on demand for selected options:
+### 2️⃣ OPTIONS EXPLORED
+[List 2-3 viable options considered. Provide a brief one-line description for each.]
+- **Option A:** [Name of Option A, e.g., Monolithic Auth Service] - [One-line description]
+- **Option B:** [Name of Option B, e.g., Microservice for Auth with API Gateway] - [One-line description]
+- **Option C:** [Name of Option C, e.g., Leverage Third-Party Auth Provider (Auth0/Okta)] - [One-line description]
 
-```markdown
+### 3️⃣ ANALYSIS OF OPTIONS
+[Provide a comparative analysis. A table is good for summaries. Detailed pros/cons for each option can follow, especially for top contenders or the chosen one.]
+
+**Summary Comparison Table:**
+| Criterion         | Option A: [Name] | Option B: [Name] | Option C: [Name] |
+|-------------------|------------------|------------------|------------------|
+| Scalability       | [e.g., Medium]   | [e.g., High]     | [e.g., High]     |
+| Complexity        | [e.g., Low]      | [e.g., Medium]   | [e.g., Low-Med]  |
+| Development Effort| [e.g., Low]      | [e.g., High]     | [e.g., Medium]   |
+| Maintainability   | [e.g., Medium]   | [e.g., Medium]   | [e.g., High (external)] |
+| Cost (Operational)| [e.g., Low]      | [e.g., Medium]   | [e.g., Potentially High] |
+| Security (Control)| [e.g., High]     | [e.g., High]     | [e.g., Medium (dependency)] |
+| Alignment w/ Reqs | [e.g., Good]     | [e.g., Excellent]| [e.g., Good, some gaps] |
+
+**Detailed Analysis (Focus on top 1-2 options or as requested):**
+
 <details>
-  <summary>Detailed Analysis: Option A</summary>
-  
-  ### Option A: [Full Name]
-  
-  **Complete Description**:
-  [Detailed description of how the option works]
-  
-  **Pros**:
-  - [Pro 1 with explanation]
-  - [Pro 2 with explanation]
-  - [Pro 3 with explanation]
-  
-  **Cons**:
-  - [Con 1 with explanation]
-  - [Con 2 with explanation]
-  
-  **Implementation Complexity**: [Low/Medium/High]
-  [Explanation of complexity factors]
-  
-  **Resource Requirements**:
-  [Details on resource needs]
-  
-  **Risk Assessment**:
-  [Analysis of risks]
+  <summary>Detailed Analysis: Option B: Microservice for Auth</summary>
+
+  **Description:**
+  [Detailed description of how Option B works, key components involved, data flows, etc.]
+
+  **Pros:**
+  - Pro 1: [e.g., Independent scalability of auth service.]
+  - Pro 2: [e.g., Clear separation of concerns, improving maintainability of other services.]
+
+  **Cons:**
+  - Con 1: [e.g., Increased operational complexity due to distributed system.]
+  - Con 2: [e.g., Potential for network latency between services.]
+
+  **Implementation Complexity:** [Low/Medium/High]
+  [Explanation of complexity factors specific to this option.]
+
+  **Resource Requirements:**
+  [Details on specific resource needs: e.g., separate database, more compute instances.]
+
+  **Risk Assessment:**
+  [Analysis of risks specific to this option: e.g., inter-service communication failures.]
 </details>
-```
 
-## 📊 COMPLEXITY-BASED SCALING
+*(Repeat `<details>` block for other significantly considered options if necessary)*
 
-The template automatically scales documentation requirements based on task complexity level:
+### 4️⃣ DECISION & RATIONALE
+- **Selected Option:** [Clearly state the chosen option, e.g., Option B: Microservice for Auth with API Gateway]
+- **Rationale:** [Provide a detailed justification for why this option was selected over others. Refer to the analysis, requirements, and constraints. e.g., "Option B was chosen despite higher initial complexity due to its superior scalability and alignment with our long-term microservices strategy. It best meets NFR for scalability and maintainability..."]
 
-### Level 1-2 (Quick Fix/Enhancement)
-- Simplified problem/solution
-- Focus on implementation
-- Minimal option exploration
-
-### Level 3 (Feature Development)
-- Multiple options required
-- Analysis table with key criteria
-- Implementation guidelines
-
-### Level 4 (Enterprise Development)
-- Comprehensive analysis
-- Multiple viewpoints considered
-- Detailed implementation plan
-- Expanded verification criteria
-
-## ✅ VERIFICATION PROTOCOL
-
-Quality verification is condensed into a simple checklist:
-
-```markdown
-VERIFICATION:
-[x] Problem clearly defined
-[x] Multiple options considered
-[x] Decision made with rationale
-[x] Implementation guidance provided
-```
-
-## 🔄 USAGE EXAMPLES
-
-### Architecture Decision (Level 3)
-
-```markdown
-📌 CREATIVE PHASE START: Authentication System
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1️⃣ PROBLEM
-   Description: Design an authentication system for the application
-   Requirements: Secure, scalable, supports SSO, easy to maintain
-   Constraints: Must work with existing user database, <100ms response time
-
-2️⃣ OPTIONS
-   Option A: JWT-based stateless auth - Simple token-based approach
-   Option B: Session-based auth with Redis - Server-side session storage
-   Option C: OAuth2 implementation - Delegated authorization framework
-
-3️⃣ ANALYSIS
-   | Criterion | JWT | Sessions | OAuth2 |
-   |-----------|-----|----------|--------|
-   | Security | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-   | Scalability | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
-   | Complexity | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
-   | Performance | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
-   
-   Key Insights:
-   - JWT offers best performance but limited revocation options
-   - Sessions provide better security control but require more infrastructure
-   - OAuth2 most complex but offers best integration possibilities
-
-4️⃣ DECISION
-   Selected: Option A: JWT-based auth with refresh tokens
-   Rationale: Best balance of performance and scalability while meeting security needs
-   
-5️⃣ IMPLEMENTATION NOTES
-   - Use HS256 algorithm for token signing
-   - Implement short-lived access tokens (15min) with longer refresh tokens (7 days)
-   - Store token blacklist in Redis for revocation capability
-   - Add rate limiting on token endpoints
+### 5️⃣ IMPLEMENTATION GUIDELINES (for the selected option)
+[Provide high-level guidelines, key considerations, or next steps for implementing the chosen design. This is not the full implementation plan but pointers for the IMPLEMENT phase.]
+- [Guideline 1: e.g., Define clear API contracts for the new auth service using OpenAPI spec.]
+- [Guideline 2: e.g., Implement robust error handling and retry mechanisms for inter-service calls.]
+- [Guideline 3: e.g., Ensure comprehensive logging and monitoring for the auth service.]
+- [Guideline 4: e.g., Key technologies to use: Spring Boot for service, JWT for tokens, PostgreSQL for user data.]
+- [Guideline 5: e.g., First implementation phase should focus on core token generation and validation.]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📌 CREATIVE PHASE END
+📌 CREATIVE PHASE END: [Specific Aspect Being Designed]
+Outcome: Design decision made and documented. Ready for implementation planning or further creative phases if needed.
 ```
 
-### Algorithm Decision (Level 2)
-
-```markdown
-📌 CREATIVE PHASE START: Search Algorithm
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1️⃣ PROBLEM
-   Description: Implement efficient text search for product catalog
-   Requirements: Fast results, support for partial matches, case insensitive
-   Constraints: Dataset < 10,000 items, must work in browser environment
-
-2️⃣ OPTIONS
-   Option A: Simple regex search - Basic pattern matching
-   Option B: Trie-based search - Prefix tree structure
-   Option C: Fuzzy search with Levenshtein - Edit distance algorithm
-
-3️⃣ DECISION
-   Selected: Option B: Trie-based search
-   Rationale: Best performance for prefix searches with manageable memory usage
-   
-4️⃣ IMPLEMENTATION NOTES
-   - Use existing trie library
-   - Preprocess text to lowercase during indexing
-   - Implement letter-by-letter search for instant results
-   - Add debounce (300ms) to prevent excessive rebuilding
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📌 CREATIVE PHASE END
-```
-
-## 🏆 TOKEN EFFICIENCY BENEFITS
-
-This template significantly reduces token usage by:
-
-1. Focusing on essential information without unnecessary verbosity
-2. Using compact tabular formats for comparisons
-3. Implementing progressive disclosure for detailed information
-4. Scaling documentation requirements by task complexity
-5. Using visual indicators (emojis) for quick scanning
-
-The template maintains the rigor of the creative process while improving token efficiency by approximately 60% over the previous format.
+## ✅ VERIFICATION CHECKLIST (AI Self-Guide when using this template)
+Before finalizing a `creative-*.md` document using `edit_file`:
+- [ ] Problem clearly defined?
+- [ ] Multiple (2-3) viable options considered and listed?
+- [ ] Analysis (summary table and/or detailed pros/cons) provided?
+- [ ] Decision clearly stated with strong rationale?
+- [ ] Implementation guidelines for the chosen decision included?
+- [ ] Document saved to `memory-bank/creative/creative-[aspect_name]-[date].md`?
+- [ ] `tasks.md` updated to mark this creative sub-task complete and link to this document?

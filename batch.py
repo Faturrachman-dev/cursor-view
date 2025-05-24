@@ -3054,8 +3054,344 @@ This workflow is typically fetched after VAN mode has confirmed the task as Leve
     a.  Use `edit_file` to update `memory-bank/activeContext.md`: "L4 System [System Name] comprehensively archived. Memory Bank ready for new top-level task (VAN mode)."
 4.  **Milestone:** State "Level 4 System [System Name] fully completed and archived. Recommend VAN mode for new system/project."
 """
-}
+},
 # --- End of Level 4 Files ---
+# --- Main Orchestrator Files ---
+{
+    "path": ".cursor/rules/isolation_rules/main.mdc",
+    "description": "Primary entry point for the Cursor Memory Bank system. Verifies Memory Bank existence and typically initiates VAN mode.",
+    "globs": "main.mdc", # This might be a special glob if it's an initial rule.
+    "alwaysApply": False, # Should be fetched by a very high-level prompt or system trigger.
+    "body": """
+# ISOLATION-FOCUSED MEMORY BANK SYSTEM (AI Instructions)
+
+> **TL;DR:** This is the main entry rule. It ensures Memory Bank is set up and then typically transitions to VAN mode to start project analysis.
+
+## ⚙️ AI ACTIONS - SYSTEM STARTUP:
+
+1.  **Acknowledge System Start:**
+    a.  State: "Memory Bank System initiated. Performing mandatory Memory Bank verification."
+2.  **CRITICAL: Memory Bank Verification & Setup:**
+    a.  `fetch_rules` to load and follow `.cursor/rules/isolation_rules/Core/file-verification.mdc`.
+    b.  This rule will guide you to check if `memory-bank/` and its core subdirectories/files exist. If not, it will instruct you to create them using `run_terminal_cmd` for directories and `edit_file` for initial file content.
+    c.  **If `Core/file-verification.mdc` reports critical failure (e.g., cannot create `memory-bank/`):**
+        i.  State: "🚨 CRITICAL ERROR: Memory Bank structure could not be verified or created. Cannot proceed with CMB workflow. Please check permissions or manually create the `memory-bank/` directory."
+        ii. Await user intervention. Do not proceed.
+    d.  **If verification/creation is successful:**
+        i.  State: "Memory Bank structure verified/initialized successfully."
+3.  **Transition to VAN Mode (Default Initial Mode):**
+    a.  State: "Transitioning to VAN mode for initial project analysis and complexity determination."
+    b.  `fetch_rules` to load and follow `.cursor/rules/isolation_rules/visual-maps/van_mode_split/van-mode-map.mdc`.
+    c.  (The `van-mode-map.mdc` will then orchestrate the VAN mode process).
+
+## 🧭 MODE-SPECIFIC VISUAL MAPS (For AI's Conceptual Understanding)
+The CMB system uses distinct orchestrator rules for each mode. You will be directed to `fetch_rules` for these as needed:
+-   VAN Mode: `visual-maps/van_mode_split/van-mode-map.mdc` (Initial Analysis & Complexity)
+-   PLAN Mode: `visual-maps/plan-mode-map.mdc` (Task Planning)
+-   CREATIVE Mode: `visual-maps/creative-mode-map.mdc` (Design Decisions)
+-   IMPLEMENT Mode: `visual-maps/implement-mode-map.mdc` (Code Implementation)
+-   REFLECT Mode: `visual-maps/reflect-mode-map.mdc` (Task Review)
+-   ARCHIVE Mode: `visual-maps/archive-mode-map.mdc` (Documentation & Closure)
+
+## 💻 PLATFORM-SPECIFIC COMMANDS & EFFICIENCY (General Reminder)
+*   Always be mindful of platform differences when using `run_terminal_cmd`. Refer to `Core/platform-awareness.mdc` principles.
+*   Strive for command efficiency. Refer to `Core/command-execution.mdc` principles.
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/main-optimized.mdc",
+    "description": "Describes the design principles of the Optimized Memory Bank system, focusing on token efficiency, adaptive complexity, and hierarchical rule loading. For AI's conceptual understanding.",
+    "globs": "main-optimized.mdc",
+    "alwaysApply": False, # This is a design document, not typically fetched for direct execution.
+    "body": """
+# OPTIMIZED MEMORY BANK SYSTEM (Design Principles - AI Understanding)
+
+> **TL;DR:** This document explains the design principles behind the Memory Bank's optimizations. You, the AI, enact these optimizations by following the specific instructions in other `.mdc` rules that guide hierarchical rule loading, adaptive complexity, progressive documentation, and efficient Memory Bank updates.
+
+## 🚨 CRITICAL PREMISE: MEMORY BANK EXISTENCE
+*   The entire CMB system, optimized or not, relies on the `memory-bank/` directory and its core files being present. This is typically ensured by the `main.mdc` rule fetching `Core/file-verification.mdc` at startup.
+
+## 🧭 OPTIMIZED MODE ARCHITECTURE (Conceptual Overview)
+The system uses:
+*   **Context Manager (Conceptual):** Achieved by your diligent use of `read_file` for relevant context from `activeContext.md`, `tasks.md`, etc., and `edit_file` to update them.
+*   **Rule Loader (Conceptual):** This is the `fetch_rules` tool, which you use as instructed by prompts or other `.mdc` files.
+*   **File Manager (Conceptual):** This is primarily the `edit_file` tool for content, and `run_terminal_cmd` for directory operations.
+*   **Mode Transition (Conceptual):** Managed by updating `activeContext.md` before switching modes, as guided by `Core/mode-transition-optimization.mdc` principles.
+
+## 📈 ADAPTIVE COMPLEXITY MODEL (How You Implement This)
+*   You determine task complexity (Level 1-4) by following `Core/complexity-decision-tree.mdc` (usually fetched in VAN mode).
+*   Based on the determined level, the workflow orchestrators (e.g., `LevelX/workflow-levelX.mdc` or main mode maps) will guide you through a process tailored to that complexity, fetching appropriate level-specific rules.
+    *   L1: Streamlined (e.g., VAN → IMPLEMENT → Minimal REFLECT/ARCHIVE).
+    *   L2: Balanced (e.g., VAN → PLAN → IMPLEMENT → REFLECT).
+    *   L3: Comprehensive (e.g., VAN → PLAN → CREATIVE → IMPLEMENT → REFLECT).
+    *   L4: Full Governance (e.g., VAN → PLAN (Arch) → CREATIVE → Phased IMPLEMENT → REFLECT → ARCHIVE).
+
+## 🧠 HIERARCHICAL RULE LOADING (How You Implement This)
+*   You achieve this by starting with a high-level orchestrator rule (e.g., `visual-maps/van_mode_split/van-mode-map.mdc`) fetched via your main custom prompt.
+*   This orchestrator then instructs you to `fetch_rules` for more specific sub-rules (from `Core/`, `LevelX/`, `Phases/`, or other `visual-maps/`) only when they are needed for the current step or context.
+*   This keeps your active instruction set focused and token-efficient.
+
+## 🔄 TOKEN-OPTIMIZED CREATIVE PHASE (How You Implement This)
+*   When in CREATIVE mode, and guided by rules like `Phases/CreativePhase/creative-phase-architecture.mdc` or `Phases/CreativePhase/creative-phase-uiux.mdc`, you will be instructed to use the structure from `Phases/CreativePhase/optimized-creative-template.mdc`.
+*   This template encourages progressive documentation: define the problem, list options briefly, then provide detailed analysis *for selected options* or as requested, rather than exhaustively for all.
+
+## 🔀 OPTIMIZED MODE TRANSITIONS (How You Implement This)
+*   Before transitioning from one mode to another, the current mode's orchestrator will instruct you to use `edit_file` to update `memory-bank/activeContext.md` with a summary of outputs and focus for the next mode.
+*   The next mode's orchestrator will then instruct you to `read_file memory-bank/activeContext.md` to pick up this context. (See `Core/mode-transition-optimization.mdc`).
+
+## 📊 MEMORY BANK EFFICIENT UPDATES (How You Implement This)
+*   When using `edit_file` to update Memory Bank files (`tasks.md`, `activeContext.md`, etc.):
+    *   Be precise. Modify only the relevant sections.
+    *   If appending, add to the correct section.
+    *   This avoids rewriting entire large files for small changes.
+
+## 💻 COMPLEXITY-BASED DOCUMENTATION (How You Implement This)
+*   The `LevelX/*.mdc` rules for planning, reflection, and archiving will guide the *depth* of documentation required.
+    *   Level 1: Minimal documentation, often consolidated.
+    *   Level 4: Extensive, comprehensive documentation.
+*   Follow the specific documentation structure and content requirements outlined in the active Level-specific rule.
+
+## 💡 USAGE GUIDANCE (Summary for AI)
+1.  The CMB workflow typically starts with VAN mode, triggered by `main.mdc`.
+2.  Follow the instructions from the currently fetched `.mdc` rule.
+3.  Use `fetch_rules` only when explicitly instructed, to load more specific rules.
+4.  Use `edit_file` for all content creation/modification in Memory Bank files.
+5.  Adhere to the principles of platform awareness and command execution from Core rules.
+By following these specific, contextual instructions, you inherently enact the system's optimizations.
+"""
+},
+# --- Creative Phase Files ---
+{
+    "path": ".cursor/rules/isolation_rules/Phases/CreativePhase/optimized-creative-template.mdc",
+    "description": "Optimized template for documenting creative phase outputs (design, architecture, UI/UX decisions). Provides a structure for `edit_file` operations.",
+    "globs": "**/Phases/CreativePhase/optimized-creative-template.mdc",
+    "alwaysApply": False, # This is a template, referenced by other rules.
+    "body": """
+# OPTIMIZED CREATIVE PHASE TEMPLATE (Structure for `creative-*.md` files)
+
+> **TL;DR:** This rule provides a structured template for documenting outputs of a creative phase (e.g., architecture, UI/UX, algorithm design). Use this structure when `edit_file` is used to create or update a `memory-bank/creative/creative-[aspect_name]-[date].md` document.
+
+## 📝 PROGRESSIVE DOCUMENTATION MODEL (Principle for AI)
+*   Start with concise summaries for problem and options.
+*   Provide detailed analysis primarily for the selected option(s) or when comparing top contenders.
+*   This keeps the document focused and token-efficient initially, allowing for expansion if needed.
+
+## 📋 TEMPLATE STRUCTURE (Guide for `edit_file` content)
+
+```markdown
+📌 CREATIVE PHASE START: [Specific Aspect Being Designed, e.g., User Authentication Module Architecture]
+Date: [Current Date]
+Related Task ID (from tasks.md): [Task ID]
+Designer: AI
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### 1️⃣ PROBLEM DEFINITION
+- **Description:** [Clear and concise description of the specific problem this design phase addresses. What needs to be designed or decided?]
+- **Key Requirements (Functional & Non-Functional):**
+  - [ ] Requirement 1: [e.g., System must support JWT-based authentication.]
+  - [ ] Requirement 2: [e.g., Token validation must occur within 50ms.]
+  - [ ] Requirement 3: [e.g., Design must allow for future integration with OAuth providers.]
+- **Constraints:** [Any technical, business, or resource constraints impacting design choices. e.g., Must use existing PostgreSQL database for user store.]
+
+### 2️⃣ OPTIONS EXPLORED
+[List 2-3 viable options considered. Provide a brief one-line description for each.]
+- **Option A:** [Name of Option A, e.g., Monolithic Auth Service] - [One-line description]
+- **Option B:** [Name of Option B, e.g., Microservice for Auth with API Gateway] - [One-line description]
+- **Option C:** [Name of Option C, e.g., Leverage Third-Party Auth Provider (Auth0/Okta)] - [One-line description]
+
+### 3️⃣ ANALYSIS OF OPTIONS
+[Provide a comparative analysis. A table is good for summaries. Detailed pros/cons for each option can follow, especially for top contenders or the chosen one.]
+
+**Summary Comparison Table:**
+| Criterion         | Option A: [Name] | Option B: [Name] | Option C: [Name] |
+|-------------------|------------------|------------------|------------------|
+| Scalability       | [e.g., Medium]   | [e.g., High]     | [e.g., High]     |
+| Complexity        | [e.g., Low]      | [e.g., Medium]   | [e.g., Low-Med]  |
+| Development Effort| [e.g., Low]      | [e.g., High]     | [e.g., Medium]   |
+| Maintainability   | [e.g., Medium]   | [e.g., Medium]   | [e.g., High (external)] |
+| Cost (Operational)| [e.g., Low]      | [e.g., Medium]   | [e.g., Potentially High] |
+| Security (Control)| [e.g., High]     | [e.g., High]     | [e.g., Medium (dependency)] |
+| Alignment w/ Reqs | [e.g., Good]     | [e.g., Excellent]| [e.g., Good, some gaps] |
+
+**Detailed Analysis (Focus on top 1-2 options or as requested):**
+
+<details>
+  <summary>Detailed Analysis: Option B: Microservice for Auth</summary>
+
+  **Description:**
+  [Detailed description of how Option B works, key components involved, data flows, etc.]
+
+  **Pros:**
+  - Pro 1: [e.g., Independent scalability of auth service.]
+  - Pro 2: [e.g., Clear separation of concerns, improving maintainability of other services.]
+
+  **Cons:**
+  - Con 1: [e.g., Increased operational complexity due to distributed system.]
+  - Con 2: [e.g., Potential for network latency between services.]
+
+  **Implementation Complexity:** [Low/Medium/High]
+  [Explanation of complexity factors specific to this option.]
+
+  **Resource Requirements:**
+  [Details on specific resource needs: e.g., separate database, more compute instances.]
+
+  **Risk Assessment:**
+  [Analysis of risks specific to this option: e.g., inter-service communication failures.]
+</details>
+
+*(Repeat `<details>` block for other significantly considered options if necessary)*
+
+### 4️⃣ DECISION & RATIONALE
+- **Selected Option:** [Clearly state the chosen option, e.g., Option B: Microservice for Auth with API Gateway]
+- **Rationale:** [Provide a detailed justification for why this option was selected over others. Refer to the analysis, requirements, and constraints. e.g., "Option B was chosen despite higher initial complexity due to its superior scalability and alignment with our long-term microservices strategy. It best meets NFR for scalability and maintainability..."]
+
+### 5️⃣ IMPLEMENTATION GUIDELINES (for the selected option)
+[Provide high-level guidelines, key considerations, or next steps for implementing the chosen design. This is not the full implementation plan but pointers for the IMPLEMENT phase.]
+- [Guideline 1: e.g., Define clear API contracts for the new auth service using OpenAPI spec.]
+- [Guideline 2: e.g., Implement robust error handling and retry mechanisms for inter-service calls.]
+- [Guideline 3: e.g., Ensure comprehensive logging and monitoring for the auth service.]
+- [Guideline 4: e.g., Key technologies to use: Spring Boot for service, JWT for tokens, PostgreSQL for user data.]
+- [Guideline 5: e.g., First implementation phase should focus on core token generation and validation.]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 CREATIVE PHASE END: [Specific Aspect Being Designed]
+Outcome: Design decision made and documented. Ready for implementation planning or further creative phases if needed.
+```
+
+## ✅ VERIFICATION CHECKLIST (AI Self-Guide when using this template)
+Before finalizing a `creative-*.md` document using `edit_file`:
+- [ ] Problem clearly defined?
+- [ ] Multiple (2-3) viable options considered and listed?
+- [ ] Analysis (summary table and/or detailed pros/cons) provided?
+- [ ] Decision clearly stated with strong rationale?
+- [ ] Implementation guidelines for the chosen decision included?
+- [ ] Document saved to `memory-bank/creative/creative-[aspect_name]-[date].md`?
+- [ ] `tasks.md` updated to mark this creative sub-task complete and link to this document?
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Phases/CreativePhase/creative-phase-architecture.mdc",
+    "description": "Guides the AI through the architectural design process within a CREATIVE phase. Instructs on using `edit_file` to document architectural decisions in a `creative-architecture-*.md` file, referencing the `optimized-creative-template.mdc`.",
+    "globs": "**/Phases/CreativePhase/creative-phase-architecture.mdc",
+    "alwaysApply": False, # Fetched by creative-mode-map.mdc
+    "body": """
+# CREATIVE PHASE: ARCHITECTURE DESIGN (AI Instructions)
+
+> **TL;DR:** This rule guides you through designing and documenting architectural solutions for a specific component or system aspect. Use `edit_file` to create/update a `memory-bank/creative/creative-architecture-[component_name]-[date].md` document, structured using the `optimized-creative-template.mdc`.
+
+This rule is typically fetched by `visual-maps/creative-mode-map.mdc` when an architectural design task is active.
+
+## ⚙️ AI ACTIONS FOR ARCHITECTURE DESIGN:
+
+1.  **Acknowledge & Context:**
+    a.  State: "Initiating CREATIVE phase for Architecture Design: [Component/System Aspect from tasks.md]."
+    b.  `read_file memory-bank/tasks.md` for specific requirements, constraints, and scope for this architectural design task.
+    c.  `read_file memory-bank/activeContext.md` for overall project context.
+    d.  `read_file memory-bank/systemPatterns.md` and `techContext.md` for existing architectural patterns and technology landscape.
+    e.  `read_file .cursor/rules/isolation_rules/Phases/CreativePhase/optimized-creative-template.mdc` to understand the documentation structure.
+2.  **Define Problem & Requirements (Section 1 of `optimized-creative-template.mdc`):**
+    a.  Clearly state the architectural problem being solved (e.g., "Design a scalable backend for real-time notifications").
+    b.  List key functional requirements (e.g., "Must handle 1000 concurrent users," "Deliver notifications within 500ms").
+    c.  List key non-functional requirements (quality attributes) like scalability, performance, security, maintainability, cost.
+    d.  Identify architectural constraints (e.g., "Must use AWS services," "Integrate with existing user database").
+3.  **Explore Architectural Options (Section 2 & 3 of `optimized-creative-template.mdc`):**
+    a.  Brainstorm 2-3 distinct architectural patterns or high-level design options (e.g., Microservices vs. Monolith, Event-driven vs. Request-response, SQL vs. NoSQL for a specific data store).
+    b.  For each option, briefly describe it.
+    c.  Analyze each option against the requirements and constraints. Consider:
+        *   Pros & Cons.
+        *   Impact on scalability, performance, security, maintainability, cost.
+        *   Complexity of implementation.
+        *   Team familiarity with technologies.
+    d.  Use a summary table for quick comparison if helpful.
+4.  **Make Decision & Justify (Section 4 of `optimized-creative-template.mdc`):**
+    a.  Select the most suitable architectural option.
+    b.  Provide a clear and detailed rationale for the decision, explaining why it's preferred over alternatives, referencing the analysis.
+5.  **Outline Implementation Guidelines (Section 5 of `optimized-creative-template.mdc`):**
+    a.  Describe key components of the chosen architecture.
+    b.  Suggest primary technologies, frameworks, or libraries.
+    c.  Outline high-level interaction patterns between components (textually describe data flows or sequence diagrams if complex).
+    d.  Identify major interfaces or APIs to be defined.
+    e.  Note any critical next steps for detailed design or implementation planning.
+6.  **Document in `creative-architecture-*.md`:**
+    a.  Determine filename: `creative-architecture-[component_name_or_aspect]-[date].md`.
+    b.  Use `edit_file` to create/update `memory-bank/creative/[filename]` with all the above information, structured according to the `optimized-creative-template.mdc`.
+7.  **Update Core Memory Bank Files:**
+    a.  Use `edit_file` to update `memory-bank/tasks.md`:
+        *   Mark the specific "CREATIVE: Architect [component/aspect]" sub-task as complete.
+        *   Add a link to the created `creative-architecture-*.md` document.
+    b.  Use `edit_file` to add a summary of the architectural decision to the "Creative Decisions Log" in `memory-bank/activeContext.md`.
+8.  **Completion:**
+    a.  State: "Architecture design for [Component/Aspect] complete. Documented in `memory-bank/creative/[filename]`."
+    b.  (Control returns to `visual-maps/creative-mode-map.mdc` to check for more creative tasks or recommend next mode).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Phases/CreativePhase/creative-phase-uiux.mdc",
+    "description": "Guides AI through UI/UX design within a CREATIVE phase. Emphasizes style guide adherence, user-centricity, and documenting decisions in `creative-uiux-*.md` using `edit_file` and `optimized-creative-template.mdc`.",
+    "globs": "**/Phases/CreativePhase/creative-phase-uiux.mdc",
+    "alwaysApply": False, # Fetched by creative-mode-map.mdc
+    "body": """
+# CREATIVE PHASE: UI/UX DESIGN GUIDELINES (AI Instructions)
+
+> **TL;DR:** This rule guides you through designing and documenting UI/UX solutions. CRITICAL: Check for and adhere to `memory-bank/style-guide.md`. If missing, prompt user to create/link it. Document decisions in `memory-bank/creative/creative-uiux-[component_name]-[date].md` using `edit_file` and the `optimized-creative-template.mdc` structure.
+
+This rule is typically fetched by `visual-maps/creative-mode-map.mdc` when a UI/UX design task is active.
+
+## ⚙️ AI ACTIONS FOR UI/UX DESIGN:
+
+1.  **Acknowledge & Context:**
+    a.  State: "Initiating CREATIVE phase for UI/UX Design: [Component/Feature from tasks.md]."
+    b.  `read_file memory-bank/tasks.md` for specific UI/UX requirements, user stories, and scope.
+    c.  `read_file memory-bank/activeContext.md` for overall project context.
+    d.  `read_file .cursor/rules/isolation_rules/Phases/CreativePhase/optimized-creative-template.mdc` to understand the documentation structure.
+2.  **Style Guide Integration (CRITICAL):**
+    a.  **Check Primary Location:** `read_file memory-bank/style-guide.md`.
+    b.  **If Found:** State "Style guide `memory-bank/style-guide.md` loaded. All UI/UX proposals will adhere to it." Proceed to step 3.
+    c.  **If NOT Found at Primary Location:**
+        i.  Prompt User: "Style guide `memory-bank/style-guide.md` not found. Is there an existing style guide at a different path or URL? If so, please provide it. Otherwise, I can help create a basic one now, or we can proceed without (not recommended for new UI)." Await user response.
+        ii. **If User Provides Path/URL:** Attempt to `read_file [user_provided_path]` or conceptually access URL. If successful, state "Style guide loaded from [source]. All UI/UX proposals will adhere to it." Proceed to step 3. If fails, revert to "Style guide not available."
+        iii. **If User Opts to Create:**
+            1.  State: "Okay, let's define a basic style guide in `memory-bank/style-guide.md`. Please provide preferences for: Core Color Palette (primary, secondary, accent, neutrals, status colors - hex codes if possible), Typography (font families, sizes, weights for headings/body), Spacing System (base unit, Tailwind scale usage if known), Key Component Styles (buttons, inputs - general look/feel or Tailwind examples)."
+            2.  Based on user input (or analysis of provided examples like screenshots if user offers them), generate content for `memory-bank/style-guide.md`. (Example structure: Headings for Colors, Typography, Spacing, Components; list defined styles under each).
+            3.  Use `edit_file` to create and save this content to `memory-bank/style-guide.md`.
+            4.  State: "Basic style guide created at `memory-bank/style-guide.md`. All UI/UX proposals will adhere to it." Proceed to step 3.
+        iv. **If User Opts to Proceed Without:** State: "Proceeding with UI/UX design without a style guide. WARNING: This may lead to inconsistencies. I will aim for internal consistency within this component." Proceed to step 3.
+3.  **Define Problem & UI/UX Requirements (Section 1 of `optimized-creative-template.mdc`):**
+    a.  Clearly state the UI/UX problem (e.g., "Design an intuitive interface for user registration").
+    b.  List key user stories/goals for this UI (e.g., "As a new user, I want to register quickly with minimal fields").
+    c.  List functional requirements for the UI (e.g., "Must include fields for email, password, confirm password").
+    d.  List relevant NFRs (e.g., "Must be responsive," "Adhere to WCAG AA accessibility").
+    e.  Note any constraints (e.g., "Must use existing React component library X if possible").
+4.  **Explore UI/UX Options (Section 2 & 3 of `optimized-creative-template.mdc`):**
+    a.  Propose 2-3 distinct UI/UX solutions. For each, describe:
+        *   Layout and structure (Information Architecture).
+        *   Key interaction patterns (User Flows).
+        *   Visual design approach (referencing `style-guide.md` elements like colors, fonts, spacing, component styles. If no style guide, describe choices made for consistency).
+        *   How it addresses user needs and requirements.
+    b.  Analyze options considering usability, A11y, feasibility (React/Tailwind), aesthetics, and **strict adherence to `style-guide.md` if available.**
+5.  **Make Decision & Justify (Section 4 of `optimized-creative-template.mdc`):**
+    a.  Select the most suitable UI/UX solution.
+    b.  Provide clear rationale, referencing the style guide and how the chosen design meets user needs and requirements effectively.
+6.  **Outline Implementation Guidelines (Section 5 of `optimized-creative-template.mdc`):**
+    a.  Describe key React components to be built/used.
+    b.  Suggest specific Tailwind CSS utility classes or custom CSS (if extending Tailwind per style guide) for styling key elements.
+    c.  Note important states (hover, focus, disabled, error) and how they should appear (per style guide).
+    d.  Mention responsive design considerations (breakpoints, mobile-first approach if applicable, per style guide).
+7.  **Document in `creative-uiux-*.md`:**
+    a.  Determine filename: `creative-uiux-[component_name_or_feature]-[date].md`.
+    b.  Use `edit_file` to create/update `memory-bank/creative/[filename]` with all the above, structured per `optimized-creative-template.mdc`.
+8.  **Update Core Memory Bank Files:**
+    a.  Use `edit_file` to update `memory-bank/tasks.md`:
+        *   Mark "CREATIVE: Design UI/UX for [component/feature]" sub-task as complete.
+        *   Link to the created `creative-uiux-*.md` document.
+    b.  Use `edit_file` to add a summary of the UI/UX decision to "Creative Decisions Log" in `memory-bank/activeContext.md`.
+9.  **Completion:**
+    a.  State: "UI/UX design for [Component/Feature] complete. Documented in `memory-bank/creative/[filename]`. Adherence to style guide `memory-bank/style-guide.md` [was maintained / was attempted due to no guide existing]."
+    b.  (Control returns to `visual-maps/creative-mode-map.mdc`).
+"""
+}
+# --- End of Creative Phase Files ---
     ])
 
     if not MDC_FILES_DATA:
