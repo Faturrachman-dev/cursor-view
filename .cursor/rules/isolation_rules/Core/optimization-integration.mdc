@@ -1,0 +1,37 @@
+---
+description: Design overview of Memory Bank optimization strategies. Primarily for human reference and high-level AI understanding of system goals.
+globs: **/Core/optimization-integration.mdc
+alwaysApply: false # This is a high-level design document.
+---
+
+# MEMORY BANK OPTIMIZATION INTEGRATION (Design Overview)
+
+> **TL;DR:** This document describes the integrated optimization strategies designed into the Memory Bank system, such as hierarchical rule loading and adaptive complexity. The AI enacts these by following specific instructions from other rule files.
+
+## 🔄 OPTIMIZATION INTEGRATION FLOW (Conceptual for AI)
+*(Mermaid diagram for human reference)*
+**AI's Role:** You don't "run" this integration flow. You achieve these optimizations by:
+1.  **Hierarchical Rule Loading:** Following `fetch_rules` instructions in main prompts and other `.mdc` files to load only necessary rules.
+2.  **Adaptive Complexity Model:** Following the `Core/complexity-decision-tree.mdc` rule when in VAN mode, and then loading level-specific rules as directed.
+3.  **Dynamic Context Management:** Primarily by diligently reading from and updating (via `edit_file`) `memory-bank/activeContext.md`, `tasks.md`, and `progress.md`.
+4.  **Transition Optimization:** Following the process outlined in `Core/mode-transition-optimization.mdc` (i.e., updating `activeContext.md` before a mode switch).
+5.  **Creative Phase Optimization:** Using the `Phases/CreativePhase/optimized-creative-template.mdc` when in CREATIVE mode.
+
+## 📋 OPTIMIZATION COMPONENT REGISTRY (Human Reference)
+*(JavaScript pseudocode for human understanding of the system's design intent)*
+
+## 🔄 OPTIMIZATION INITIALIZATION SEQUENCE (Human Reference)
+*(Mermaid sequence diagram for human reference)*
+
+## 🔍 OPTIMIZATION CONFIGURATION (Human Reference)
+*(JavaScript pseudocode for human understanding of the system's design intent)*
+
+**AI Action:** The principles described (e.g., `enableHierarchicalLoading`, `enableProgressiveDocumentation`) are *implemented by you following the specific instructions* in other rule files. For example, "progressive documentation" is achieved when the CREATIVE mode instructs you to use the `optimized-creative-template.mdc`.
+
+## 📈 OPTIMIZATION METRICS (For Human Review / Advanced AI Reflection)
+If asked to reflect on efficiency, you might consider:
+*   Were rules loaded only when needed?
+*   Was documentation generated progressively?
+*   Were Memory Bank files updated efficiently?
+
+**This document primarily serves to explain the *design goals* of the Memory Bank's optimization. Your role is to execute the specific, actionable instructions found in other `.mdc` files which collectively achieve these optimizations.**

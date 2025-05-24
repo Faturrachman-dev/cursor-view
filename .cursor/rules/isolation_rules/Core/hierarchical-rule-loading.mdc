@@ -1,0 +1,44 @@
+---
+description: Core design principle for the Memory Bank system regarding hierarchical and lazy loading of `.mdc` rule files using `fetch_rules`.
+globs: **/Core/hierarchical-rule-loading.mdc
+alwaysApply: false # This is a design document/principle, not directly executed in full by AI.
+---
+
+# HIERARCHICAL RULE LOADING SYSTEM (Design Principle)
+
+> **TL;DR:** This document describes the Memory Bank's design principle of optimized rule loading. The AI achieves this by following instructions in main mode prompts or other `.mdc` rules that direct it to use `fetch_rules` to load specific, necessary `.mdc` rule files only when they are needed based on context, complexity level, and current phase.
+
+## 🧠 HIERARCHICAL RULE STRUCTURE (For Human Understanding & AI Context)
+*(Mermaid diagram for human reference)*
+**Conceptual Understanding for AI:** The Memory Bank system is organized with:
+*   Core rules (like this one, `command-execution.mdc`, etc.)
+*   Mode-specific orchestrator rules (e.g., `visual-maps/van-mode-map.mdc`)
+*   Level-specific detail rules (e.g., `Level3/planning-comprehensive.mdc`)
+*   Phase-specific detail rules (e.g., `Phases/CreativePhase/creative-phase-architecture.mdc`)
+
+## 📊 RULE LOADING PROTOCOL (AI Execution Flow)
+*(Mermaid sequence diagram for human reference)*
+**Textual Guide for AI:**
+1.  **Mode Activation:** When a mode is activated (e.g., user types "VAN"), your main custom prompt for that mode will instruct you to use `fetch_rules` to load the primary orchestrating `.mdc` file for that mode (e.g., `van-mode-map.mdc`).
+2.  **Essential Rules:** That primary `.mdc` file will guide you through initial steps, possibly instructing you to `fetch_rules` for other foundational `.mdc` files (like `Core/complexity-decision-tree.mdc`).
+3.  **Contextual/Lazy Loading:** As you progress through the steps defined in an `.mdc` file, it may instruct you: "If [condition is met, e.g., task is Level 3], then use `fetch_rules` to load and follow `[more_specific_rule.mdc]`." This is how specialized rules are loaded "lazily" or "on-demand."
+4.  **Follow Instructions:** Always follow the instructions within the currently loaded `.mdc` file.
+
+## 🔄 RULE LOADING IMPLEMENTATION (Conceptual - How the AI *behaves*)
+*(JavaScript pseudocode for human understanding of the design intent)*
+**AI's Behavior:** You don't implement a `RuleLoadManager`. Instead, you achieve hierarchical loading by:
+*   Starting with a main mode prompt.
+*   That prompt tells you to `fetch_rules` for an entry-point `.mdc`.
+*   That `.mdc` contains steps. Some steps might tell you to `fetch_rules` for another, more specific `.mdc`.
+*   You always operate based on the instructions from the most recently fetched and relevant rule.
+
+## 🚀 IMPLEMENTATION BENEFITS (For Human Understanding)
+This approach (AI following `fetch_rules` instructions from prompts and other rules) results in:
+*   Reduced initial token load.
+*   Loading only necessary rules for the current context.
+
+## 🧪 RULE LOADING VERIFICATION (AI Self-Check)
+When instructed to `fetch_rules` for an `.mdc` file:
+1.  Confirm you have the correct path.
+2.  After fetching, briefly acknowledge which rule you are now primarily following.
+    *   Example: "Successfully fetched `Core/complexity-decision-tree.mdc`. Now proceeding with complexity determination."

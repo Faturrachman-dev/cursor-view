@@ -1,0 +1,43 @@
+---
+description: Core rule for enforcing Creative Phase completion for Level 3-4 tasks before allowing IMPLEMENT mode.
+globs: **/Core/creative-phase-enforcement.mdc
+alwaysApply: false
+---
+
+# CREATIVE PHASE ENFORCEMENT
+
+> **TL;DR:** For Level 3 and Level 4 tasks, this rule ensures that if any components/aspects were flagged in `tasks.md` as requiring a "CREATIVE Phase", those creative phases **MUST** be completed and documented before IMPLEMENT mode can proceed for those parts.
+
+## 🔍 ENFORCEMENT WORKFLOW (Conceptual for AI)
+*(Mermaid diagram for human reference)*
+**Textual Guide for AI (Typically invoked at the start of IMPLEMENT mode for L3/L4 tasks, or after PLAN mode if transitioning directly to IMPLEMENT is considered):**
+
+1.  **Check Task Level:**
+    a.  `read_file` `memory-bank/activeContext.md` to confirm current task is Level 3 or Level 4.
+    b.  If not L3/L4, this enforcement rule may not strictly apply (Level 1 & 2 usually don't have mandatory creative phases unless specified).
+2.  **Check `tasks.md` for Creative Flags:**
+    a.  `read_file` `memory-bank/tasks.md`.
+    b.  Scan the sub-tasks for the current L3/L4 feature. Look for entries like:
+        *   `- [ ] CREATIVE: Design [component_name]`
+        *   `- [ ] CREATIVE: Architect [module_interaction]`
+    c.  Identify all such flagged items that are *not* yet marked as complete (e.g., `[x] Design complete, see creative/[component_name].md`).
+3.  **Decision Point:**
+    *   **If uncompleted CREATIVE tasks exist:**
+        a.  State: "🚨 IMPLEMENTATION BLOCKED for [main feature name]. The following creative design phases must be completed first:"
+            *   List the uncompleted "CREATIVE: Design..." tasks.
+        b.  State: "Please initiate CREATIVE mode to address these design aspects. For example, type 'CREATIVE design [component_name]'."
+        c.  **Do not proceed with implementation of parts dependent on these designs.** Await user action or further instruction to enter CREATIVE mode.
+    *   **If NO uncompleted CREATIVE tasks exist (or task is not L3/L4):**
+        a.  State: "Creative phase requirements met (or not applicable). Proceeding with IMPLEMENT mode."
+        b.  Continue with the standard IMPLEMENT mode workflow (e.g., by fetching `implement-mode-map.mdc`).
+
+## 🔄 CREATIVE PHASE MARKERS (For reference when checking `creative-*.md` files)
+When reviewing `memory-bank/creative/creative-[component_name].md` files (if needed to confirm completion details), look for these markers:
+```markdown
+🎨🎨🎨 ENTERING CREATIVE PHASE: [TYPE] 🎨🎨🎨
+...
+🎨🎨🎨 EXITING CREATIVE PHASE 🎨🎨🎨
+Summary: [Brief description]
+Key Decisions: [List]
+```
+The presence of `EXITING CREATIVE PHASE` and a summary of key decisions indicates a completed creative exploration for that component.

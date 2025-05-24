@@ -1,0 +1,81 @@
+---
+description: Core design principles for optimized and context-aware mode transitions within the Memory Bank system.
+globs: **/Core/mode-transition-optimization.mdc
+alwaysApply: false # Design principles, not directly executed in full by AI.
+---
+
+# MODE TRANSITION OPTIMIZATION (Design Principles)
+
+> **TL;DR:** This document outlines design principles for efficient and context-preserving mode transitions. The AI achieves this by updating `activeContext.md` before a transition and the next mode's orchestrator rule reading it.
+
+## 🔄 UNIFIED CONTEXT TRANSFER PROTOCOL (Conceptual for AI)
+*(Mermaid diagram for human reference)*
+**Textual Guide for AI (How this is achieved):**
+
+1.  **Before Current Mode Exits (or suggests exiting):**
+    a.  The current mode's orchestrating `.mdc` rule (or the main custom prompt) will instruct you to use `edit_file` to update `memory-bank/activeContext.md`.
+    b.  This update should summarize:
+        *   Key decisions made in the current mode.
+        *   Status of the current task.
+        *   Critical context to pass to the next mode.
+        *   The recommended next mode and primary task/focus for it.
+        *   Example section in `activeContext.md`:
+            ```markdown
+            ## Mode Transition Prepared
+            - From Mode: PLAN
+            - To Mode: CREATIVE
+            - Task: Implement User Authentication
+            - Key Output from PLAN: Detailed sub-tasks in `tasks.md`; `auth_module` flagged for creative design.
+            - Focus for CREATIVE: Design `auth_module` architecture.
+            ```
+2.  **When New Mode Starts:**
+    a.  The new mode's main custom prompt will instruct you to `fetch_rules` for its primary orchestrating `.mdc` file.
+    b.  That orchestrating `.mdc` file will (as one of its first steps) instruct you to `read_file` `memory-bank/activeContext.md` to understand the incoming context, task, and focus.
+
+## 📊 CONTEXT TRANSITION DOCUMENT (Content for `activeContext.md` update)
+When preparing for a mode transition, ensure `memory-bank/activeContext.md` (updated via `edit_file`) contains:
+```markdown
+# MODE TRANSITION PREPARED: [Current Mode] → [Target Mode]
+
+## Task Context
+- Current Task: [Task name/description from tasks.md]
+- Complexity Level: [Level 1-4 from activeContext.md/tasks.md]
+- Current Phase within Task: [e.g., Planning Complete, Ready for Design]
+- Overall Progress: [Summary from progress.md]
+
+## Key Decisions/Outputs from [Current Mode]
+- [Decision/Output 1]: [Brief summary]
+- [Decision/Output 2]: [Brief summary]
+
+## Critical Context for [Target Mode]
+- [Context item 1 relevant to target mode]
+- [Context item 2 relevant to target mode]
+
+## Focus for [Target Mode]
+- Primary Goal: [e.g., Design UI for checkout page]
+- Key Files/Documents to Consult: [e.g., `tasks.md` for sub-tasks, `creative-checkout-spec.md`]
+```
+
+## 🔍 MODE-SPECIFIC TRANSITION HANDLERS (Examples of `activeContext.md` updates)
+
+*   **VAN → PLAN Transition (AI updates `activeContext.md` at end of VAN):**
+    ```markdown
+    ## Mode Transition Prepared
+    - From Mode: VAN
+    - To Mode: PLAN
+    - Task: [Initial Project Analysis & Setup from tasks.md]
+    - Key Output from VAN: Project Complexity Level [X] determined; Initial `projectbrief.md` and other context files created/updated.
+    - Focus for PLAN: Develop detailed plan for [Main project goal or first major feature].
+    ```
+*   **PLAN → CREATIVE Transition (AI updates `activeContext.md` at end of PLAN):**
+    ```markdown
+    ## Mode Transition Prepared
+    - From Mode: PLAN
+    - To Mode: CREATIVE
+    - Task: [Feature Name from tasks.md]
+    - Key Output from PLAN: Detailed feature plan in `tasks.md`; Components [A, B] flagged for creative design.
+    - Focus for CREATIVE: Execute creative design phase for components [A, B].
+    ```
+*   (Similar structured updates for other transitions)
+
+**Key Principle:** The `activeContext.md` file, managed by `edit_file`, serves as the primary "handover document" between modes. Hierarchical rule loading (fetching specific `.mdc`s) is managed by the instructions within each mode's orchestrator.

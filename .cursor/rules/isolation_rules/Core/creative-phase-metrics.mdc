@@ -1,0 +1,58 @@
+---
+description: Core reference on metrics and quality assessment for Creative Phase outputs. Primarily for human guidance and AI understanding of quality expectations.
+globs: **/Core/creative-phase-metrics.mdc
+alwaysApply: false # Can be fetched by CREATIVE or REFLECT mode for guidance.
+---
+
+# CREATIVE PHASE METRICS & QUALITY ASSESSMENT
+
+> **TL;DR:** This document defines quality metrics and evaluation criteria for outputs generated during the Creative Phase (e.g., `creative-*.md` files). It serves as a guide for ensuring design decisions are well-documented, justified, and meet required standards. This rule is primarily for AI understanding of what constitutes a "good" creative output.
+
+## 📊 METRICS OVERVIEW (Conceptual for AI)
+*(Mermaid diagram for human reference)*
+**Textual Guide for AI (When generating or reviewing creative phase documentation):**
+A high-quality creative document (`memory-bank/creative/creative-[feature_name].md`) should demonstrate:
+
+1.  **Documentation Quality:**
+    *   Clear problem statement and objectives for the design.
+    *   Well-defined requirements and constraints that the design addresses.
+    *   Proper formatting, structure, and clarity.
+2.  **Decision Coverage:**
+    *   All significant design decisions for the component are identified and addressed.
+    *   Dependencies and potential impacts are considered.
+3.  **Option Analysis:**
+    *   Multiple (2-3) viable design options were explored.
+    *   Pros and cons for each option are clearly documented.
+    *   Technical feasibility and resource implications were considered.
+4.  **Impact Assessment:**
+    *   The impact of the chosen design on the overall system, performance, security, and maintainability is assessed.
+5.  **Verification & Justification:**
+    *   The recommended design is clearly justified against requirements and trade-offs.
+    *   Implementation guidelines are provided for the chosen design.
+
+## 📋 QUALITY METRICS SCORECARD (For AI to understand expectations)
+*(Scorecard for human reference and AI's conceptual understanding of a good output)*
+```markdown
+# Creative Phase Quality Assessment (Conceptual)
+
+## 1. Documentation Quality
+- Clear problem statement & objectives?
+- Requirements & constraints listed?
+- Well-structured & formatted?
+
+## 2. Decision Coverage
+- All key design aspects addressed?
+- Dependencies noted?
+- Impact considered?
+
+## 3. Option Analysis
+- Multiple options explored?
+- Pros/cons for each documented?
+- Feasibility/complexity assessed?
+
+## 4. Impact Assessment (for chosen design)
+- System/performance/security impact considered?
+
+## 5. Justification & Guidelines
+- Recommended design clearly justified?
+- Implementation guidelines provided?

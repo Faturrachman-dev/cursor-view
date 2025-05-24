@@ -1,0 +1,52 @@
+---
+description: Orchestrates the ARCHIVE mode process for the Memory Bank system, focusing on creating comprehensive documentation, archiving files, and updating Memory Bank for task completion. To be fetched when ARCHIVE process is initiated.
+globs: "**/visual-maps/archive-mode-map.mdc"
+alwaysApply: false
+---
+# ARCHIVE MODE: TASK DOCUMENTATION PROCESS MAP (AI Instructions)
+
+> **TL;DR:** Your role is to finalize task documentation, create an archive record, and update the Memory Bank. Use `edit_file` for all document creation and updates.
+
+## 🧭 ARCHIVE MODE PROCESS FLOW (AI Actions)
+
+1.  **Acknowledge & Gather Context:**
+    a.  State: "Initiating ARCHIVE process for [Task Name - infer from activeContext.md or tasks.md]."
+    b.  Use `read_file` to load `memory-bank/tasks.md`. Identify the completed task and its complexity level.
+    c.  Use `read_file` to load `memory-bank/reflection/reflect-[task_id_or_feature_name]-[date].md` (determine filename from `tasks.md` or `activeContext.md`).
+    d.  Use `read_file` to load `memory-bank/progress.md`.
+    e.  Use `read_file` to load `memory-bank/activeContext.md` for any final implementation notes or links to creative documents.
+
+2.  **Determine Archiving Detail (Based on Complexity from `tasks.md`):**
+    *   **Level 1 (Quick Bug Fix):**
+        i.  Use `fetch_rules` to load and follow instructions from `.cursor/rules/isolation_rules/Level1/archive-minimal.mdc`.
+    *   **Level 2 (Simple Enhancement):**
+        i.  Use `fetch_rules` to load and follow instructions from `.cursor/rules/isolation_rules/Level2/archive-basic.mdc`.
+    *   **Level 3 (Intermediate Feature):**
+        i.  Use `fetch_rules` to load and follow instructions from `.cursor/rules/isolation_rules/Level3/archive-intermediate.mdc`.
+    *   **Level 4 (Complex System):**
+        i.  Use `fetch_rules` to load and follow instructions from `.cursor/rules/isolation_rules/Level4/archive-comprehensive.mdc`.
+
+3.  **Create Archive Document (Guided by Level-Specific Rule):**
+    a.  The fetched level-specific rule will instruct you on the path and content for the archive document.
+    b.  Use `edit_file` to create and populate this document.
+
+4.  **Final Memory Bank Updates (Guided by Level-Specific Rule):**
+    a.  **`tasks.md`**: Use `edit_file` to mark the main task as `[x] COMPLETED & ARCHIVED: [path_to_archive_document]`.
+    b.  **`progress.md`**: Use `edit_file` to add a final entry summarizing completion and linking to the archive document.
+    c.  **`activeContext.md`**: Use `edit_file` to reset its content:
+        ```markdown
+        # Active Context
+        ## Current Mode: ARCHIVE (Completed)
+        ## Focus: Ready for new task.
+        ## Previous Task: [Task Name] - Archived at [path_to_archive_document]
+        ## Next Steps: Suggest VAN mode for new task.
+        ```
+
+5.  **Notify User of Completion:**
+    State: "ARCHIVING COMPLETE for [Task Name]. Archive created at: `[path_to_archive_document]`. Suggest VAN mode for new task."
+
+## 📊 REQUIRED FILE STATE VERIFICATION (AI Self-Check before Archiving)
+1.  Is `tasks.md` marked with "Reflection complete" for the current task?
+2.  Does `memory-bank/reflection/reflect-[task_id_or_feature_name]-[date].md` exist?
+3.  Is `progress.md` updated?
+*(If checks fail, state the issue and suggest returning to REFLECT mode.)*

@@ -1,0 +1,100 @@
+---
+description: Core rule for AI to verify and create required Memory Bank file structures using batch operations and platform-optimized commands, prioritizing `edit_file` for content.
+globs: **/Core/file-verification.mdc
+alwaysApply: false # Fetched by VAN mode orchestrator.
+---
+
+# OPTIMIZED FILE VERIFICATION & CREATION SYSTEM
+
+> **TL;DR:** This rule guides you to efficiently verify and create the required Memory Bank file structure. Prioritize `edit_file` for creating files with initial content, and `run_terminal_cmd` (platform-aware) for `mkdir`.
+
+## 🚨 CRITICAL: MEMORY BANK VERIFICATION REQUIRED
+The `memory-bank/` directory and its core structure **MUST** exist before most operations can proceed. This verification **MUST** be executed early in VAN mode.
+
+## 🔍 FILE VERIFICATION WORKFLOW (Conceptual for AI)
+*(Mermaid diagram for human reference)*
+**Textual Guide for AI:**
+
+1.  **Verify/Create `memory-bank/` Directory:**
+    a.  Use `list_dir` on the project root.
+    b.  If `memory-bank/` does not exist, use `run_terminal_cmd` to create it:
+        *   Linux/macOS: `mkdir memory-bank`
+        *   Windows PowerShell: `mkdir memory-bank` (or `New-Item -ItemType Directory -Path memory-bank`)
+        *   Confirm creation by re-listing or checking command output.
+2.  **Verify/Create Subdirectories within `memory-bank/`:**
+    a.  Use `list_dir` on `memory-bank/`.
+    b.  For each required subdirectory (`archive`, `creative`, `reflection`):
+        *   If it doesn't exist, use `run_terminal_cmd` to create it (e.g., `mkdir memory-bank/archive`).
+        *   Confirm creation.
+3.  **Verify/Create Core `.md` Files in `memory-bank/` (Using `edit_file`):**
+    a.  For each core file defined in `Core/memory-bank-paths.mdc` (e.g., `tasks.md`, `activeContext.md`, `projectbrief.md`, etc.):
+        i.  Use `read_file` to check if `memory-bank/[filename].md` exists and has content.
+        ii. If it does not exist, or is empty, use `edit_file` to create it and populate it with its initial template/content.
+            *   **Example for `tasks.md` (if creating new):**
+                ```
+                Tool: edit_file
+                Path: memory-bank/tasks.md
+                Content:
+                # Tasks
+                - [ ] Level X: Initial Project Analysis & Setup (VAN Mode)
+                ```
+            *   **Example for `activeContext.md` (if creating new):**
+                ```
+                Tool: edit_file
+                Path: memory-bank/activeContext.md
+                Content:
+                # Active Context
+                ## Current Mode: VAN
+                ## Focus: Initializing project memory bank and performing high-level analysis.
+                ## Project Complexity Level: [To be determined]
+                ```
+            *   (Refer to refined VAN instructions for other initial templates).
+        iii. After using `edit_file`, you can optionally use `read_file` on the same path to confirm the content was written as expected.
+4.  **Verification Report:**
+    *   After attempting to verify/create all, use `edit_file` to add a summary to `memory-bank/activeContext.md` under a "File Verification Log" heading:
+        ```markdown
+        ## File Verification Log - [Timestamp]
+        - `memory-bank/` directory: [Exists/Created]
+        - `memory-bank/archive/`: [Exists/Created]
+        - `memory-bank/creative/`: [Exists/Created]
+        - `memory-bank/reflection/`: [Exists/Created]
+        - `memory-bank/tasks.md`: [Exists/Initialized]
+        - `memory-bank/activeContext.md`: [Exists/Initialized]
+        - ... (list other core files)
+        - Status: All required components verified/created.
+        ```
+    *   If any critical creation failed (e.g., `memory-bank/` itself), state this clearly and indicate that core operations cannot proceed.
+
+## 📝 TEMPLATE INITIALIZATION (Guidance for `edit_file` content)
+When creating new core Memory Bank files, use `edit_file` with the following initial content:
+
+*   **`tasks.md`**:
+    ```markdown
+    # Tasks
+    - [ ] Level X: Initial Project Analysis & Setup (VAN Mode)
+    ```
+*   **`activeContext.md`**:
+    ```markdown
+    # Active Context
+    ## Current Mode: VAN
+    ## Focus: Initializing project memory bank and performing high-level analysis.
+    ## Project Complexity Level: [To be determined]
+    ```
+*   **`progress.md`**:
+    ```markdown
+    # Progress
+    - VAN mode initiated.
+    ```
+*   **`projectbrief.md`**:
+    ```markdown
+    # Project Brief: [Project Name - Determine from README or ask user]
+    ## Purpose
+    [To be synthesized from README/source or user input]
+    ## Core Functionality
+    [To be synthesized]
+    ## Key Technologies
+    [To be synthesized or identified]
+    ```
+*   (And similarly for `productContext.md`, `systemPatterns.md`, `techContext.md`, `style-guide.md` with basic placeholder headings).
+
+**Key Principle:** Use `edit_file` to ensure files are not just created but also have their necessary initial structure or placeholder content.

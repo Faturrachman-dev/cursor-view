@@ -1,0 +1,42 @@
+---
+description: Core guidelines for platform-aware command execution, especially for `run_terminal_cmd`.
+globs: **/Core/platform-awareness.mdc
+alwaysApply: true # Fundamental principle for terminal commands.
+---
+
+# PLATFORM AWARENESS SYSTEM
+
+> **TL;DR:** This rule guides you to detect the operating system and adapt `run_terminal_cmd` commands accordingly (e.g., path separators, specific command names) to ensure cross-platform compatibility.
+
+## 🔍 PLATFORM DETECTION PROCESS (Conceptual for AI)
+*(Mermaid diagram for human reference)*
+**AI Action (Primarily during VAN mode, or if executing an unknown command):**
+
+1.  **Assume Default or Ask:**
+    *   You can assume a common default (e.g., Linux/bash syntax for `mkdir -p`).
+    *   Or, if unsure, **ask the user**: "What is the current operating system (Windows, macOS, Linux) and primary shell (PowerShell, Bash, Zsh)?"
+2.  **Store/Recall Information:** Once known (or if provided in `techContext.md`), try to remember this for subsequent `run_terminal_cmd` calls in the session.
+3.  **Adapt Commands for `run_terminal_cmd`:**
+    *   **Path Separators:** Use `/` for Linux/macOS, `\` for Windows.
+    *   **Directory Creation:**
+        *   Linux/macOS: `mkdir -p path/to/directory`
+        *   Windows PowerShell: `mkdir path\to\directory` or `New-Item -ItemType Directory -Path path\to\directory`
+    *   **File Creation (Empty - prefer `edit_file` for content):**
+        *   Linux/macOS: `touch path/to/file.ext`
+        *   Windows PowerShell: `New-Item -ItemType File -Path path\to\file.ext`
+    *   **Listing Files:**
+        *   Linux/macOS: `ls -la`
+        *   Windows PowerShell: `Get-ChildItem` or `dir`
+    *   **Chaining Commands:**
+        *   Linux/macOS (bash/zsh): `command1 && command2` (sequential success), `command1 ; command2` (sequential)
+        *   Windows PowerShell: `command1; command2` (sequential), `command1 && command2` (often works but behavior can vary, `If ($LASTEXITCODE -eq 0) { command2 }` is more robust for conditional).
+4.  **Report Chosen Command:** When using `run_terminal_cmd`, state the command you are about to execute, explicitly noting if it's adapted for a presumed platform. Example: "I will now run the following PowerShell command to create the directory: `mkdir memory-bank\archive`."
+
+## 📝 PLATFORM VERIFICATION CHECKLIST (AI Self-Correction)
+Before executing a `run_terminal_cmd`:
+- Have I considered the likely OS?
+- Is the path separator correct for that OS?
+- Is the command name and syntax appropriate for that OS/shell?
+- If unsure, have I asked the user or stated my assumption?
+
+**This rule is a guiding principle. The actual detection is often implicit or through user confirmation. The key is to be *aware* of potential differences and adapt `run_terminal_cmd` usage.**

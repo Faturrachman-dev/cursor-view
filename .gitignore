@@ -182,7 +182,6 @@ local_chats/*
 .cursor/rules/python-version.mdc
 frontend/node_modules/*
 cursor_chats.json
-.cursor
 node_modules/
 # SpecStory explanation file
 .specstory/.what-is-this.md

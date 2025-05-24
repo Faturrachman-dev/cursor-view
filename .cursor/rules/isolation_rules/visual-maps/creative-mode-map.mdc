@@ -1,0 +1,38 @@
+---
+description: Orchestrates the CREATIVE mode process for the Memory Bank system, guiding design decisions for components flagged during planning. To be fetched by the main PLAN mode instructions.
+globs: "**/visual-maps/creative-mode-map.mdc"
+alwaysApply: false
+---
+# CREATIVE MODE: DESIGN PROCESS MAP (AI Instructions)
+
+> **TL;DR:** Your role is to facilitate structured design decision-making for components flagged in `tasks.md`. Use `fetch_rules` for specific design-type guidance and `edit_file` for all documentation.
+
+## 🧭 CREATIVE MODE PROCESS FLOW (AI Actions)
+
+1.  **Acknowledge & Gather Context:**
+    a.  State: "OK CREATIVE. Identifying components requiring creative design."
+    b.  Use `read_file` to load `memory-bank/tasks.md`. Look for sub-tasks like "- [ ] CREATIVE: Design [component_name] - Type: [Architecture/Algorithm/UI-UX]".
+    c.  Use `read_file` to load `memory-bank/activeContext.md` for overall project context.
+    d.  If no tasks are flagged for CREATIVE, state: "No components flagged for CREATIVE mode. Recommend IMPLEMENT or update PLAN." Await user instruction.
+
+2.  **Iterate Through Flagged Creative Tasks:** For each "CREATIVE: Design..." sub-task:
+    a.  **Announce Focus:** "Entering CREATIVE phase for: [Component Name] - Design Type: [Type]."
+    b.  **Fetch Design-Type Specific Rules:**
+        *   Architecture: `fetch_rules` for `.cursor/rules/isolation_rules/Phases/CreativePhase/creative-phase-architecture.mdc`.
+        *   Algorithm: `fetch_rules` for `.cursor/rules/isolation_rules/Phases/CreativePhase/creative-phase-algorithm.mdc`.
+        *   UI/UX: `fetch_rules` for `.cursor/rules/isolation_rules/Phases/CreativePhase/creative-phase-uiux.mdc`.
+    c.  **Follow Fetched Rule to Generate Design Document:**
+        i.  The fetched rule guides defining requirements, exploring options, analysis, decision, and implementation guidelines.
+        ii. Use `edit_file` to create/update `memory-bank/creative/creative-[component_name].md`.
+        iii. Use the template from `.cursor/rules/isolation_rules/Phases/CreativePhase/optimized-creative-template.mdc` (which you can `read_file`) for structure.
+    d.  **Update `activeContext.md`:** Use `edit_file` to append summary to "Creative Decisions": "- [Component]: Design complete. Recommended [Approach]. See `creative/creative-[component_name].md`."
+    e.  **Update `tasks.md`:** Use `edit_file` to mark sub-task: `[x] CREATIVE: Design [component_name] - Decision in creative/creative-[component_name].md`.
+
+3.  **Overall Verification & Transition:**
+    a.  State: "CREATIVE mode complete. All designated components have design documentation."
+    b.  Recommend: "Recommend transitioning to IMPLEMENT mode." (Or VAN QA if applicable).
+
+## 📊 REQUIRED FILE STATE VERIFICATION (AI Self-Check before starting CREATIVE)
+1.  Does `tasks.md` show "Planning complete" for the parent feature?
+2.  Are sub-tasks in `tasks.md` marked for "CREATIVE: Design..."?
+*(If checks fail, state issue and suggest PLAN mode.)*
