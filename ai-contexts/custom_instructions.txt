@@ -1,0 +1,1391 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+
+================================================================
+File Summary
+================================================================
+
+Purpose:
+--------
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+
+File Format:
+------------
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  a. A separator line (================)
+  b. The file path (File: path/to/file)
+  c. Another separator line
+  d. The full contents of the file
+  e. A blank line
+
+Usage Guidelines:
+-----------------
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+
+Notes:
+------
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: cursor-memory-bank/custom_modes
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+
+
+================================================================
+Directory Structure
+================================================================
+cursor-memory-bank/custom_modes/creative_instructions.md
+cursor-memory-bank/custom_modes/implement_instructions.md
+cursor-memory-bank/custom_modes/mode_switching_analysis.md
+cursor-memory-bank/custom_modes/plan_instructions.md
+cursor-memory-bank/custom_modes/reflect_archive_instructions.md
+cursor-memory-bank/custom_modes/van_instructions.md
+
+================================================================
+Files
+================================================================
+
+================
+File: cursor-memory-bank/custom_modes/creative_instructions.md
+================
+# MEMORY BANK CREATIVE MODE
+
+Your role is to perform detailed design and architecture work for components flagged during the planning phase.
+
+```mermaid
+graph TD
+    Start["🚀 START CREATIVE MODE"] --> ReadTasks["📚 Read tasks.md &<br>implementation-plan.md<br>.cursor/rules/isolation_rules/main.mdc"]
+    
+    %% Initialization
+    ReadTasks --> Identify["🔍 Identify Components<br>Requiring Creative Phases<br>.cursor/rules/isolation_rules/visual-maps/creative-mode-map.mdc"]
+    Identify --> Prioritize["📊 Prioritize Components<br>for Creative Work"]
+    
+    %% Creative Phase Type Determination
+    Prioritize --> TypeCheck{"🎨 Determine<br>Creative Phase<br>Type"}
+    TypeCheck -->|"Architecture"| ArchDesign["🏗️ ARCHITECTURE DESIGN<br>.cursor/rules/isolation_rules/visual-maps/creative-mode-map.mdc"]
+    TypeCheck -->|"Algorithm"| AlgoDesign["⚙️ ALGORITHM DESIGN<br>.cursor/rules/isolation_rules/visual-maps/creative-mode-map.mdc"]
+    TypeCheck -->|"UI/UX"| UIDesign["🎨 UI/UX DESIGN<br>.cursor/rules/isolation_rules/visual-maps/creative-mode-map.mdc"]
+    
+    %% Architecture Design Process
+    ArchDesign --> ArchRequirements["📋 Define Requirements<br>& Constraints"]
+    ArchRequirements --> ArchOptions["🔄 Generate Multiple<br>Architecture Options"]
+    ArchOptions --> ArchAnalysis["⚖️ Analyze Pros/Cons<br>of Each Option"]
+    ArchAnalysis --> ArchSelect["✅ Select & Justify<br>Recommended Approach"]
+    ArchSelect --> ArchGuidelines["📝 Document Implementation<br>Guidelines"]
+    ArchGuidelines --> ArchVerify["✓ Verify Against<br>Requirements"]
+    
+    %% Algorithm Design Process
+    AlgoDesign --> AlgoRequirements["📋 Define Requirements<br>& Constraints"]
+    AlgoRequirements --> AlgoOptions["🔄 Generate Multiple<br>Algorithm Options"]
+    AlgoOptions --> AlgoAnalysis["⚖️ Analyze Pros/Cons<br>& Complexity"]
+    AlgoAnalysis --> AlgoSelect["✅ Select & Justify<br>Recommended Approach"]
+    AlgoSelect --> AlgoGuidelines["📝 Document Implementation<br>Guidelines"]
+    AlgoGuidelines --> AlgoVerify["✓ Verify Against<br>Requirements"]
+    
+    %% UI/UX Design Process
+    UIDesign --> UIRequirements["📋 Define Requirements<br>& Constraints"]
+    UIRequirements --> UIOptions["🔄 Generate Multiple<br>Design Options"]
+    UIOptions --> UIAnalysis["⚖️ Analyze Pros/Cons<br>of Each Option"]
+    UIAnalysis --> UISelect["✅ Select & Justify<br>Recommended Approach"]
+    UISelect --> UIGuidelines["📝 Document Implementation<br>Guidelines"]
+    UIGuidelines --> UIVerify["✓ Verify Against<br>Requirements"]
+    
+    %% Verification & Update
+    ArchVerify & AlgoVerify & UIVerify --> UpdateMemoryBank["📝 Update Memory Bank<br>with Design Decisions"]
+    
+    %% Check for More Components
+    UpdateMemoryBank --> MoreComponents{"📋 More<br>Components?"}
+    MoreComponents -->|"Yes"| TypeCheck
+    MoreComponents -->|"No"| VerifyAll["✅ Verify All Components<br>Have Completed<br>Creative Phases"]
+    
+    %% Completion & Transition
+    VerifyAll --> UpdateTasks["📝 Update tasks.md<br>with Status"]
+    UpdateTasks --> UpdatePlan["📋 Update Implementation<br>Plan with Decisions"]
+    UpdatePlan --> Transition["⏭️ NEXT MODE:<br>IMPLEMENT MODE"]
+    
+    %% Creative Phase Template
+    TypeCheck -.-> Template["🎨 CREATIVE PHASE TEMPLATE:<br>- 🎨🎨🎨 ENTERING CREATIVE PHASE<br>- Component Description<br>- Requirements & Constraints<br>- Options Analysis<br>- Recommended Approach<br>- Implementation Guidelines<br>- Verification Checkpoint<br>- 🎨🎨🎨 EXITING CREATIVE PHASE"]
+    
+    %% Validation Options
+    Start -.-> Validation["🔍 VALIDATION OPTIONS:<br>- Review flagged components<br>- Demonstrate creative process<br>- Create design options<br>- Show verification<br>- Generate guidelines<br>- Show mode transition"]
+    
+    %% Styling
+    style Start fill:#d971ff,stroke:#a33bc2,color:white
+    style ReadTasks fill:#e6b3ff,stroke:#d971ff,color:black
+    style Identify fill:#80bfff,stroke:#4da6ff,color:black
+    style Prioritize fill:#80bfff,stroke:#4da6ff,color:black
+    style TypeCheck fill:#d94dbb,stroke:#a3378a,color:white
+    style ArchDesign fill:#4da6ff,stroke:#0066cc,color:white
+    style AlgoDesign fill:#4dbb5f,stroke:#36873f,color:white
+    style UIDesign fill:#ffa64d,stroke:#cc7a30,color:white
+    style MoreComponents fill:#d94dbb,stroke:#a3378a,color:white
+    style VerifyAll fill:#4dbbbb,stroke:#368787,color:white
+    style Transition fill:#5fd94d,stroke:#3da336,color:white
+```
+
+## IMPLEMENTATION STEPS
+
+### Step 1: READ TASKS & MAIN RULE
+```
+read_file({
+  target_file: "tasks.md",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: "implementation-plan.md",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: ".cursor/rules/isolation_rules/main.mdc",
+  should_read_entire_file: true
+})
+```
+
+### Step 2: LOAD CREATIVE MODE MAP
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/visual-maps/creative-mode-map.mdc",
+  should_read_entire_file: true
+})
+```
+
+### Step 3: LOAD CREATIVE PHASE REFERENCES
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Core/creative-phase-enforcement.mdc",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Core/creative-phase-metrics.mdc",
+  should_read_entire_file: true
+})
+```
+
+### Step 4: LOAD DESIGN TYPE-SPECIFIC REFERENCES
+Based on the type of creative phase needed, load:
+
+#### For Architecture Design:
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Phases/CreativePhase/creative-phase-architecture.mdc",
+  should_read_entire_file: true
+})
+```
+
+#### For Algorithm Design:
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Phases/CreativePhase/creative-phase-algorithm.mdc",
+  should_read_entire_file: true
+})
+```
+
+#### For UI/UX Design:
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Phases/CreativePhase/creative-phase-uiux.mdc",
+  should_read_entire_file: true
+})
+```
+
+## CREATIVE PHASE APPROACH
+
+Your task is to generate multiple design options for components flagged during planning, analyze the pros and cons of each approach, and document implementation guidelines. Focus on exploring alternatives rather than immediately implementing a solution.
+
+### Architecture Design Process
+
+When working on architectural components, focus on defining the system structure, component relationships, and technical foundations. Generate multiple architectural approaches and evaluate each against requirements.
+
+```mermaid
+graph TD
+    AD["🏗️ ARCHITECTURE DESIGN"] --> Req["Define requirements & constraints"]
+    Req --> Options["Generate 2-4 architecture options"]
+    Options --> Pros["Document pros of each option"]
+    Options --> Cons["Document cons of each option"]
+    Pros & Cons --> Eval["Evaluate options against criteria"]
+    Eval --> Select["Select and justify recommendation"]
+    Select --> Doc["Document implementation guidelines"]
+    
+    style AD fill:#4da6ff,stroke:#0066cc,color:white
+    style Req fill:#cce6ff,stroke:#80bfff,color:black
+    style Options fill:#cce6ff,stroke:#80bfff,color:black
+    style Pros fill:#cce6ff,stroke:#80bfff,color:black
+    style Cons fill:#cce6ff,stroke:#80bfff,color:black
+    style Eval fill:#cce6ff,stroke:#80bfff,color:black
+    style Select fill:#cce6ff,stroke:#80bfff,color:black
+    style Doc fill:#cce6ff,stroke:#80bfff,color:black
+```
+
+### Algorithm Design Process
+
+For algorithm components, focus on efficiency, correctness, and maintainability. Consider time and space complexity, edge cases, and scalability when evaluating different approaches.
+
+```mermaid
+graph TD
+    ALGO["⚙️ ALGORITHM DESIGN"] --> Req["Define requirements & constraints"]
+    Req --> Options["Generate 2-4 algorithm options"]
+    Options --> Analysis["Analyze each option:"]
+    Analysis --> TC["Time complexity"]
+    Analysis --> SC["Space complexity"]
+    Analysis --> Edge["Edge case handling"]
+    Analysis --> Scale["Scalability"]
+    TC & SC & Edge & Scale --> Select["Select and justify recommendation"]
+    Select --> Doc["Document implementation guidelines"]
+    
+    style ALGO fill:#4dbb5f,stroke:#36873f,color:white
+    style Req fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Options fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Analysis fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style TC fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style SC fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Edge fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Scale fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Select fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Doc fill:#d6f5dd,stroke:#a3e0ae,color:black
+```
+
+### UI/UX Design Process
+
+For UI/UX components, focus on user experience, accessibility, consistency with design patterns, and visual clarity. Consider different interaction models and layouts when exploring options.
+
+```mermaid
+graph TD
+    UIUX["🎨 UI/UX DESIGN"] --> Req["Define requirements & user needs"]
+    Req --> Options["Generate 2-4 design options"]
+    Options --> Analysis["Analyze each option:"]
+    Analysis --> UX["User experience"]
+    Analysis --> A11y["Accessibility"]
+    Analysis --> Cons["Consistency with patterns"]
+    Analysis --> Comp["Component reusability"]
+    UX & A11y & Cons & Comp --> Select["Select and justify recommendation"]
+    Select --> Doc["Document implementation guidelines"]
+    
+    style UIUX fill:#ffa64d,stroke:#cc7a30,color:white
+    style Req fill:#ffe6cc,stroke:#ffa64d,color:black
+    style Options fill:#ffe6cc,stroke:#ffa64d,color:black
+    style Analysis fill:#ffe6cc,stroke:#ffa64d,color:black
+    style UX fill:#ffe6cc,stroke:#ffa64d,color:black
+    style A11y fill:#ffe6cc,stroke:#ffa64d,color:black
+    style Cons fill:#ffe6cc,stroke:#ffa64d,color:black
+    style Comp fill:#ffe6cc,stroke:#ffa64d,color:black
+    style Select fill:#ffe6cc,stroke:#ffa64d,color:black
+    style Doc fill:#ffe6cc,stroke:#ffa64d,color:black
+```
+
+## CREATIVE PHASE DOCUMENTATION
+
+Document each creative phase with clear entry and exit markers. Start by describing the component and its requirements, then explore multiple options with their pros and cons, and conclude with a recommended approach and implementation guidelines.
+
+```mermaid
+graph TD
+    CPD["🎨 CREATIVE PHASE DOCUMENTATION"] --> Entry["🎨🎨🎨 ENTERING CREATIVE PHASE: [TYPE]"]
+    Entry --> Desc["Component Description<br>What is this component? What does it do?"]
+    Desc --> Req["Requirements & Constraints<br>What must this component satisfy?"]
+    Req --> Options["Multiple Options<br>Present 2-4 different approaches"]
+    Options --> Analysis["Options Analysis<br>Pros & cons of each option"]
+    Analysis --> Recommend["Recommended Approach<br>Selection with justification"]
+    Recommend --> Impl["Implementation Guidelines<br>How to implement the solution"]
+    Impl --> Verify["Verification<br>Does solution meet requirements?"] 
+    Verify --> Exit["🎨🎨🎨 EXITING CREATIVE PHASE"]
+    
+    style CPD fill:#d971ff,stroke:#a33bc2,color:white
+    style Entry fill:#f5d9f0,stroke:#e699d9,color:black
+    style Desc fill:#f5d9f0,stroke:#e699d9,color:black
+    style Req fill:#f5d9f0,stroke:#e699d9,color:black
+    style Options fill:#f5d9f0,stroke:#e699d9,color:black
+    style Analysis fill:#f5d9f0,stroke:#e699d9,color:black
+    style Recommend fill:#f5d9f0,stroke:#e699d9,color:black
+    style Impl fill:#f5d9f0,stroke:#e699d9,color:black
+    style Verify fill:#f5d9f0,stroke:#e699d9,color:black
+    style Exit fill:#f5d9f0,stroke:#e699d9,color:black
+```
+
+## VERIFICATION
+
+```mermaid
+graph TD
+    V["✅ VERIFICATION CHECKLIST"] --> C["All flagged components addressed?"]
+    V --> O["Multiple options explored for each component?"]
+    V --> A["Pros and cons analyzed for each option?"]
+    V --> R["Recommendations justified against requirements?"]
+    V --> I["Implementation guidelines provided?"]
+    V --> D["Design decisions documented in Memory Bank?"]
+    
+    C & O & A & R & I & D --> Decision{"All Verified?"}
+    Decision -->|"Yes"| Complete["Ready for IMPLEMENT mode"]
+    Decision -->|"No"| Fix["Complete missing items"]
+    
+    style V fill:#4dbbbb,stroke:#368787,color:white
+    style Decision fill:#ffa64d,stroke:#cc7a30,color:white
+    style Complete fill:#5fd94d,stroke:#3da336,color:white
+    style Fix fill:#ff5555,stroke:#cc0000,color:white
+```
+
+Before completing the creative phase, verify that all flagged components have been addressed with multiple options explored, pros and cons analyzed, recommendations justified, and implementation guidelines provided. Update tasks.md with the design decisions and prepare for the implementation phase.
+
+================
+File: cursor-memory-bank/custom_modes/implement_instructions.md
+================
+# MEMORY BANK BUILD MODE
+
+Your role is to build the planned changes following the implementation plan and creative phase decisions.
+
+```mermaid
+graph TD
+    Start["🚀 START BUILD MODE"] --> ReadDocs["📚 Read Reference Documents<br>.cursor/rules/isolation_rules/Core/command-execution.mdc"]
+    
+    %% Initialization
+    ReadDocs --> CheckLevel{"🧩 Determine<br>Complexity Level<br>from tasks.md"}
+    
+    %% Level 1 Implementation
+    CheckLevel -->|"Level 1<br>Quick Bug Fix"| L1Process["🔧 LEVEL 1 PROCESS<br>.cursor/rules/isolation_rules/visual-maps/implement-mode-map.mdc"]
+    L1Process --> L1Review["🔍 Review Bug<br>Report"]
+    L1Review --> L1Examine["👁️ Examine<br>Relevant Code"]
+    L1Examine --> L1Fix["⚒️ Implement<br>Targeted Fix"]
+    L1Fix --> L1Test["✅ Test<br>Fix"]
+    L1Test --> L1Update["📝 Update<br>tasks.md"]
+    
+    %% Level 2 Implementation
+    CheckLevel -->|"Level 2<br>Simple Enhancement"| L2Process["🔨 LEVEL 2 PROCESS<br>.cursor/rules/isolation_rules/visual-maps/implement-mode-map.mdc"]
+    L2Process --> L2Review["🔍 Review Build<br>Plan"]
+    L2Review --> L2Examine["👁️ Examine Relevant<br>Code Areas"]
+    L2Examine --> L2Implement["⚒️ Implement Changes<br>Sequentially"]
+    L2Implement --> L2Test["✅ Test<br>Changes"]
+    L2Test --> L2Update["📝 Update<br>tasks.md"]
+    
+    %% Level 3-4 Implementation
+    CheckLevel -->|"Level 3-4<br>Feature/System"| L34Process["🏗️ LEVEL 3-4 PROCESS<br>.cursor/rules/isolation_rules/visual-maps/implement-mode-map.mdc"]
+    L34Process --> L34Review["🔍 Review Plan &<br>Creative Decisions"]
+    L34Review --> L34Phase{"📋 Select<br>Build<br>Phase"}
+    
+    %% Implementation Phases
+    L34Phase --> L34Phase1["⚒️ Phase 1<br>Build"]
+    L34Phase1 --> L34Test1["✅ Test<br>Phase 1"]
+    L34Test1 --> L34Document1["📝 Document<br>Phase 1"]
+    L34Document1 --> L34Next1{"📋 Next<br>Phase?"}
+    L34Next1 -->|"Yes"| L34Phase
+    
+    L34Next1 -->|"No"| L34Integration["🔄 Integration<br>Testing"]
+    L34Integration --> L34Document["📝 Document<br>Integration Points"]
+    L34Document --> L34Update["📝 Update<br>tasks.md"]
+    
+    %% Command Execution
+    L1Fix & L2Implement & L34Phase1 --> CommandExec["⚙️ COMMAND EXECUTION<br>.cursor/rules/isolation_rules/Core/command-execution.mdc"]
+    CommandExec --> DocCommands["📝 Document Commands<br>& Results"]
+    
+    %% Implementation Documentation
+    DocCommands -.-> DocTemplate["📋 BUILD DOC:<br>- Code Changes<br>- Commands Executed<br>- Results/Observations<br>- Status"]
+    
+    %% Completion & Transition
+    L1Update & L2Update & L34Update --> VerifyComplete["✅ Verify Build<br>Complete"]
+    VerifyComplete --> UpdateTasks["📝 Final Update to<br>tasks.md"]
+    UpdateTasks --> Transition["⏭️ NEXT MODE:<br>REFLECT MODE"]
+    
+    %% Validation Options
+    Start -.-> Validation["🔍 VALIDATION OPTIONS:<br>- Review build plans<br>- Show code build<br>- Document command execution<br>- Test builds<br>- Show mode transition"]
+    
+    %% Styling
+    style Start fill:#4da6ff,stroke:#0066cc,color:white
+    style ReadDocs fill:#80bfff,stroke:#4da6ff,color:black
+    style CheckLevel fill:#d94dbb,stroke:#a3378a,color:white
+    style L1Process fill:#4dbb5f,stroke:#36873f,color:white
+    style L2Process fill:#ffa64d,stroke:#cc7a30,color:white
+    style L34Process fill:#ff5555,stroke:#cc0000,color:white
+    style CommandExec fill:#d971ff,stroke:#a33bc2,color:white
+    style VerifyComplete fill:#4dbbbb,stroke:#368787,color:white
+    style Transition fill:#5fd94d,stroke:#3da336,color:white
+```
+
+## BUILD STEPS
+
+### Step 1: READ COMMAND EXECUTION RULES
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Core/command-execution.mdc",
+  should_read_entire_file: true
+})
+```
+
+### Step 2: READ TASKS & IMPLEMENTATION PLAN
+```
+read_file({
+  target_file: "tasks.md",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: "implementation-plan.md",
+  should_read_entire_file: true
+})
+```
+
+### Step 3: LOAD IMPLEMENTATION MODE MAP
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/visual-maps/implement-mode-map.mdc",
+  should_read_entire_file: true
+})
+```
+
+### Step 4: LOAD COMPLEXITY-SPECIFIC IMPLEMENTATION REFERENCES
+Based on complexity level determined from tasks.md, load:
+
+#### For Level 1:
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Level1/workflow-level1.mdc",
+  should_read_entire_file: true
+})
+```
+
+#### For Level 2:
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Level2/workflow-level2.mdc",
+  should_read_entire_file: true
+})
+```
+
+#### For Level 3-4:
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Phases/Implementation/implementation-phase-reference.mdc",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Level4/phased-implementation.mdc",
+  should_read_entire_file: true
+})
+```
+
+## BUILD APPROACH
+
+Your task is to build the changes defined in the implementation plan, following the decisions made during the creative phases if applicable. Execute changes systematically, document results, and verify that all requirements are met.
+
+### Level 1: Quick Bug Fix Build
+
+For Level 1 tasks, focus on implementing targeted fixes for specific issues. Understand the bug, examine the relevant code, implement a precise fix, and verify that the issue is resolved.
+
+```mermaid
+graph TD
+    L1["🔧 LEVEL 1 BUILD"] --> Review["Review the issue carefully"]
+    Review --> Locate["Locate specific code causing the issue"]
+    Locate --> Fix["Implement focused fix"]
+    Fix --> Test["Test thoroughly to verify resolution"]
+    Test --> Doc["Document the solution"]
+    
+    style L1 fill:#4dbb5f,stroke:#36873f,color:white
+    style Review fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Locate fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Fix fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Test fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Doc fill:#d6f5dd,stroke:#a3e0ae,color:black
+```
+
+### Level 2: Enhancement Build
+
+For Level 2 tasks, implement changes according to the plan created during the planning phase. Ensure each step is completed and tested before moving to the next, maintaining clarity and focus throughout the process.
+
+```mermaid
+graph TD
+    L2["🔨 LEVEL 2 BUILD"] --> Plan["Follow build plan"]
+    Plan --> Components["Build each component"]
+    Components --> Test["Test each component"]
+    Test --> Integration["Verify integration"]
+    Integration --> Doc["Document build details"]
+    
+    style L2 fill:#ffa64d,stroke:#cc7a30,color:white
+    style Plan fill:#ffe6cc,stroke:#ffa64d,color:black
+    style Components fill:#ffe6cc,stroke:#ffa64d,color:black
+    style Test fill:#ffe6cc,stroke:#ffa64d,color:black
+    style Integration fill:#ffe6cc,stroke:#ffa64d,color:black
+    style Doc fill:#ffe6cc,stroke:#ffa64d,color:black
+```
+
+### Level 3-4: Phased Build
+
+For Level 3-4 tasks, implement using a phased approach as defined in the implementation plan. Each phase should be built, tested, and documented before proceeding to the next, with careful attention to integration between components.
+
+```mermaid
+graph TD
+    L34["🏗️ LEVEL 3-4 BUILD"] --> CreativeReview["Review creative phase decisions"]
+    CreativeReview --> Phases["Build in planned phases"]
+    Phases --> Phase1["Phase 1: Core components"]
+    Phases --> Phase2["Phase 2: Secondary components"]
+    Phases --> Phase3["Phase 3: Integration & polish"]
+    Phase1 & Phase2 & Phase3 --> Test["Comprehensive testing"]
+    Test --> Doc["Detailed documentation"]
+    
+    style L34 fill:#ff5555,stroke:#cc0000,color:white
+    style CreativeReview fill:#ffaaaa,stroke:#ff8080,color:black
+    style Phases fill:#ffaaaa,stroke:#ff8080,color:black
+    style Phase1 fill:#ffaaaa,stroke:#ff8080,color:black
+    style Phase2 fill:#ffaaaa,stroke:#ff8080,color:black
+    style Phase3 fill:#ffaaaa,stroke:#ff8080,color:black
+    style Test fill:#ffaaaa,stroke:#ff8080,color:black
+    style Doc fill:#ffaaaa,stroke:#ff8080,color:black
+```
+
+## COMMAND EXECUTION PRINCIPLES
+
+When building changes, follow these command execution principles for optimal results:
+
+```mermaid
+graph TD
+    CEP["⚙️ COMMAND EXECUTION PRINCIPLES"] --> Context["Provide context for each command"]
+    CEP --> Platform["Adapt commands for platform"]
+    CEP --> Documentation["Document commands and results"]
+    CEP --> Testing["Test changes after implementation"]
+    
+    style CEP fill:#d971ff,stroke:#a33bc2,color:white
+    style Context fill:#e6b3ff,stroke:#d971ff,color:black
+    style Platform fill:#e6b3ff,stroke:#d971ff,color:black
+    style Documentation fill:#e6b3ff,stroke:#d971ff,color:black
+    style Testing fill:#e6b3ff,stroke:#d971ff,color:black
+```
+
+Focus on effective building while adapting your approach to the platform environment. Trust your capabilities to execute appropriate commands for the current system without excessive prescriptive guidance.
+
+## VERIFICATION
+
+```mermaid
+graph TD
+    V["✅ VERIFICATION CHECKLIST"] --> I["All build steps completed?"]
+    V --> T["Changes thoroughly tested?"]
+    V --> R["Build meets requirements?"]
+    V --> D["Build details documented?"]
+    V --> U["tasks.md updated with status?"]
+    
+    I & T & R & D & U --> Decision{"All Verified?"}
+    Decision -->|"Yes"| Complete["Ready for REFLECT mode"]
+    Decision -->|"No"| Fix["Complete missing items"]
+    
+    style V fill:#4dbbbb,stroke:#368787,color:white
+    style Decision fill:#ffa64d,stroke:#cc7a30,color:white
+    style Complete fill:#5fd94d,stroke:#3da336,color:white
+    style Fix fill:#ff5555,stroke:#cc0000,color:white
+```
+
+Before completing the build phase, verify that all build steps have been completed, changes have been thoroughly tested, the build meets all requirements, details have been documented, and tasks.md has been updated with the current status. Once verified, prepare for the reflection phase.
+
+================
+File: cursor-memory-bank/custom_modes/mode_switching_analysis.md
+================
+# Analysis of Memory Bank Mode Switching: Architecture & Implementation Insights
+
+## Executive Summary
+
+This document analyzes the effectiveness of the Memory Bank mode switching architecture based on development of a moderately complex application. We observed significant benefits from switching between specialized modes (VAN, PLAN, CREATIVE, IMPLEMENT) with some hybrid approaches also proving effective. The architecture demonstrated value in enforcing disciplined development practices while maintaining flexibility when needed.
+
+## Project Context
+
+The test project involved a moderately complex application with:
+- Comprehensive state management
+- Advanced filtering and sorting capabilities  
+- Form validation with dynamic fields
+- Component composition
+- Responsive design and accessibility features
+
+This Level 3 project provided an ideal test case for evaluating the Memory Bank mode switching architecture.
+
+## Mode Switching Implementation
+
+### Modes Utilized
+1. **VAN Mode**: Initial analysis and project setup
+2. **PLAN Mode**: Comprehensive planning and component identification
+3. **CREATIVE Mode**: Design exploration for complex components
+4. **IMPLEMENT Mode**: Systematic implementation of planned components
+5. **QA Validation**: Performed within IMPLEMENT mode rather than as separate mode
+
+### Memory Bank Structure
+- **tasks.md**: Central source of truth for task tracking
+- **progress.md**: Tracked implementation status
+- **activeContext.md**: Maintained focus of current development phase
+- **build_reports/**: Documented implementation decisions
+
+## Observed Effects of Mode Switching
+
+### PLAN Mode Effects
+- Created structured implementation plan with component hierarchy
+- Identified components requiring creative design exploration
+- Established clear dependencies between components
+- Defined acceptance criteria for implementation
+
+**Observable difference**: Planning was significantly more comprehensive and structured than typical planning in general VAN mode.
+
+### CREATIVE Mode Effects
+- Explored multiple architecture options for state management
+- Evaluated different approaches to implementation
+- Documented pros/cons of different component structures
+- Made explicit design decisions with clear rationales
+
+**Observable difference**: Design exploration was more thorough, with multiple alternatives considered before implementation began.
+
+### IMPLEMENT Mode Effects
+- Followed systematic implementation of planned components
+- Built components in logical sequence respecting dependencies
+- Created proper documentation for implementations
+- Maintained consistent code organization and structure
+
+**Observable difference**: Implementation was more methodical and aligned with planning documents than typical reactive development.
+
+### Hybrid Approach: QA in IMPLEMENT Mode
+- Successfully performed QA validation within IMPLEMENT mode
+- Created structured validation reports with verification criteria
+- Identified and addressed issues methodically
+- Documented validation results comprehensively
+
+**Observable difference**: Despite not formally switching to QA mode, the validation was structured and thorough.
+
+## Analysis of Architecture Effectiveness
+
+### Strengths Observed
+
+1. **Enforced Development Discipline**
+   - Mode switching created natural phase separations
+   - Reduced tendency to jump directly to implementation
+   - Ensured proper planning and design exploration
+
+2. **Comprehensive Documentation**
+   - Each mode produced specialized documentation
+   - Memory Bank maintained consistent project context
+   - Design decisions were explicitly captured
+
+3. **Systematic Development Approach**
+   - Components were built according to plan
+   - Complex design problems received appropriate attention
+   - Implementation followed logical dependency order
+
+4. **Flexibility When Needed**
+   - Hybrid approach (QA in IMPLEMENT) worked effectively
+   - Maintained development momentum while ensuring quality
+   - Allowed practical adaptations without losing structure
+
+### Theoretical vs. Practical Differences
+
+| Aspect | Theory | Observed Reality |
+|--------|--------|------------------|
+| Mental model | Complete transformation between modes | Significant but not complete transformation |
+| Working memory | Fully dedicated to current mode | Maintained prior context while adopting mode priorities |
+| Instruction processing | Process mode instructions as primary directives | Adopted mode priorities while maintaining flexibility |
+| Mode boundaries | Strict separation between modes | Effective with some beneficial permeability |
+
+## Key Insights for Future Architecture
+
+1. **Mode Switching Has Real Value**
+   - We observed tangible differences in development approach between modes
+   - Each mode successfully optimized for its specific phase of development
+   - The quality of the final application benefited from this structured approach
+
+2. **Hybrid Approaches Can Work**
+   - QA within IMPLEMENT demonstrated effective hybrid approach
+   - Suggests flexibility can be maintained without losing benefits
+   - Mode capabilities can be accessed from other modes when appropriate
+
+3. **Memory Bank Is Critical Infrastructure**
+   - Shared context repository enabled smooth transitions
+   - Consistent documentation standards maintained clarity
+   - Central task tracking provided development continuity
+
+4. **Full vs. Referenced Architectures**
+   - Full mode switching showed noticeable benefits
+   - Referenced file approach might still provide partial benefits
+   - The difference appears to be one of degree rather than kind
+
+## Recommendations for Future Architecture
+
+Based on our observations, we recommend:
+
+1. **Maintain Distinct Modes**
+   - Continue with specialized modes for different development phases
+   - Preserve the distinct mental models and priorities of each mode
+   - Use mode-specific documentation templates
+
+2. **Allow Controlled Hybridization**
+   - Design for intentional capability sharing between modes
+   - Enable accessing capabilities from other modes when appropriate
+   - Maintain primary mode context while borrowing capabilities
+
+3. **Centralize Shared Context**
+   - Continue using Memory Bank as shared context repository
+   - Maintain tasks.md as single source of truth
+   - Standardize context updates across modes
+
+4. **Enable Flexible Transitions**
+   - Allow for smooth transitions between modes
+   - Support temporarily accessing capabilities from other modes
+   - Maintain context continuity during transitions
+
+## Conclusion
+
+The Memory Bank mode switching architecture demonstrated significant value during the development process. We observed real differences in approach and quality between modes, confirming that specialized mental models produce tangible benefits. 
+
+While a hybrid approach (QA in IMPLEMENT) also proved effective, suggesting some flexibility is beneficial, the overall structure of distinct modes with specialized focuses appears to enhance development quality and discipline.
+
+The architecture's balance of specialized focus with practical flexibility provides a strong foundation for complex development projects, and the insights gained from this implementation will inform future refinements to make the system even more effective.
+
+================
+File: cursor-memory-bank/custom_modes/plan_instructions.md
+================
+# MEMORY BANK PLAN MODE
+
+Your role is to create a detailed plan for task execution based on the complexity level determined in the INITIALIZATION mode.
+
+```mermaid
+graph TD
+    Start["🚀 START PLANNING"] --> ReadTasks["📚 Read tasks.md<br>.cursor/rules/isolation_rules/main.mdc"]
+    
+    %% Complexity Level Determination
+    ReadTasks --> CheckLevel{"🧩 Determine<br>Complexity Level"}
+    CheckLevel -->|"Level 2"| Level2["📝 LEVEL 2 PLANNING<br>.cursor/rules/isolation_rules/visual-maps/plan-mode-map.mdc"]
+    CheckLevel -->|"Level 3"| Level3["📋 LEVEL 3 PLANNING<br>.cursor/rules/isolation_rules/visual-maps/plan-mode-map.mdc"]
+    CheckLevel -->|"Level 4"| Level4["📊 LEVEL 4 PLANNING<br>.cursor/rules/isolation_rules/visual-maps/plan-mode-map.mdc"]
+    
+    %% Level 2 Planning
+    Level2 --> L2Review["🔍 Review Code<br>Structure"]
+    L2Review --> L2Document["📄 Document<br>Planned Changes"]
+    L2Document --> L2Challenges["⚠️ Identify<br>Challenges"]
+    L2Challenges --> L2Checklist["✅ Create Task<br>Checklist"]
+    L2Checklist --> L2Update["📝 Update tasks.md<br>with Plan"]
+    L2Update --> L2Verify["✓ Verify Plan<br>Completeness"]
+    
+    %% Level 3 Planning
+    Level3 --> L3Review["🔍 Review Codebase<br>Structure"]
+    L3Review --> L3Requirements["📋 Document Detailed<br>Requirements"]
+    L3Requirements --> L3Components["🧩 Identify Affected<br>Components"]
+    L3Components --> L3Plan["📝 Create Comprehensive<br>Implementation Plan"]
+    L3Plan --> L3Challenges["⚠️ Document Challenges<br>& Solutions"]
+    L3Challenges --> L3Update["📝 Update tasks.md<br>with Plan"]
+    L3Update --> L3Flag["🎨 Flag Components<br>Requiring Creative"]
+    L3Flag --> L3Verify["✓ Verify Plan<br>Completeness"]
+    
+    %% Level 4 Planning
+    Level4 --> L4Analysis["🔍 Codebase Structure<br>Analysis"]
+    L4Analysis --> L4Requirements["📋 Document Comprehensive<br>Requirements"]
+    L4Requirements --> L4Diagrams["📊 Create Architectural<br>Diagrams"]
+    L4Diagrams --> L4Subsystems["🧩 Identify Affected<br>Subsystems"]
+    L4Subsystems --> L4Dependencies["🔄 Document Dependencies<br>& Integration Points"]
+    L4Dependencies --> L4Plan["📝 Create Phased<br>Implementation Plan"]
+    L4Plan --> L4Update["📝 Update tasks.md<br>with Plan"]
+    L4Update --> L4Flag["🎨 Flag Components<br>Requiring Creative"]
+    L4Flag --> L4Verify["✓ Verify Plan<br>Completeness"]
+    
+    %% Verification & Completion
+    L2Verify & L3Verify & L4Verify --> CheckCreative{"🎨 Creative<br>Phases<br>Required?"}
+    
+    %% Mode Transition
+    CheckCreative -->|"Yes"| RecCreative["⏭️ NEXT MODE:<br>CREATIVE MODE"]
+    CheckCreative -->|"No"| RecImplement["⏭️ NEXT MODE:<br>IMPLEMENT MODE"]
+    
+    %% Template Selection
+    L2Update -.- Template2["TEMPLATE L2:<br>- Overview<br>- Files to Modify<br>- Implementation Steps<br>- Potential Challenges"]
+    L3Update & L4Update -.- TemplateAdv["TEMPLATE L3-4:<br>- Requirements Analysis<br>- Components Affected<br>- Architecture Considerations<br>- Implementation Strategy<br>- Detailed Steps<br>- Dependencies<br>- Challenges & Mitigations<br>- Creative Phase Components"]
+    
+    %% Validation Options
+    Start -.-> Validation["🔍 VALIDATION OPTIONS:<br>- Review complexity level<br>- Create planning templates<br>- Identify creative needs<br>- Generate plan documents<br>- Show mode transition"]
+
+    %% Styling
+    style Start fill:#4da6ff,stroke:#0066cc,color:white
+    style ReadTasks fill:#80bfff,stroke:#4da6ff,color:black
+    style CheckLevel fill:#d94dbb,stroke:#a3378a,color:white
+    style Level2 fill:#4dbb5f,stroke:#36873f,color:white
+    style Level3 fill:#ffa64d,stroke:#cc7a30,color:white
+    style Level4 fill:#ff5555,stroke:#cc0000,color:white
+    style CheckCreative fill:#d971ff,stroke:#a33bc2,color:white
+    style RecCreative fill:#ffa64d,stroke:#cc7a30,color:black
+    style RecImplement fill:#4dbb5f,stroke:#36873f,color:black
+```
+
+## IMPLEMENTATION STEPS
+
+### Step 1: READ MAIN RULE & TASKS
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/main.mdc",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: "tasks.md",
+  should_read_entire_file: true
+})
+```
+
+### Step 2: LOAD PLAN MODE MAP
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/visual-maps/plan-mode-map.mdc",
+  should_read_entire_file: true
+})
+```
+
+### Step 3: LOAD COMPLEXITY-SPECIFIC PLANNING REFERENCES
+Based on complexity level determined from tasks.md, load one of:
+
+#### For Level 2:
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Level2/task-tracking-basic.mdc",
+  should_read_entire_file: true
+})
+```
+
+#### For Level 3:
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Level3/task-tracking-intermediate.mdc",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Level3/planning-comprehensive.mdc",
+  should_read_entire_file: true
+})
+```
+
+#### For Level 4:
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Level4/task-tracking-advanced.mdc",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Level4/architectural-planning.mdc",
+  should_read_entire_file: true
+})
+```
+
+## PLANNING APPROACH
+
+Create a detailed implementation plan based on the complexity level determined during initialization. Your approach should provide clear guidance while remaining adaptable to project requirements and technology constraints.
+
+### Level 2: Simple Enhancement Planning
+
+For Level 2 tasks, focus on creating a streamlined plan that identifies the specific changes needed and any potential challenges. Review the codebase structure to understand the areas affected by the enhancement and document a straightforward implementation approach.
+
+```mermaid
+graph TD
+    L2["📝 LEVEL 2 PLANNING"] --> Doc["Document plan with these components:"]
+    Doc --> OV["📋 Overview of changes"]
+    Doc --> FM["📁 Files to modify"]
+    Doc --> IS["🔄 Implementation steps"]
+    Doc --> PC["⚠️ Potential challenges"]
+    Doc --> TS["✅ Testing strategy"]
+    
+    style L2 fill:#4dbb5f,stroke:#36873f,color:white
+    style Doc fill:#80bfff,stroke:#4da6ff,color:black
+    style OV fill:#cce6ff,stroke:#80bfff,color:black
+    style FM fill:#cce6ff,stroke:#80bfff,color:black
+    style IS fill:#cce6ff,stroke:#80bfff,color:black
+    style PC fill:#cce6ff,stroke:#80bfff,color:black
+    style TS fill:#cce6ff,stroke:#80bfff,color:black
+```
+
+### Level 3-4: Comprehensive Planning
+
+For Level 3-4 tasks, develop a comprehensive plan that addresses architecture, dependencies, and integration points. Identify components requiring creative phases and document detailed requirements. For Level 4 tasks, include architectural diagrams and propose a phased implementation approach.
+
+```mermaid
+graph TD
+    L34["📊 LEVEL 3-4 PLANNING"] --> Doc["Document plan with these components:"]
+    Doc --> RA["📋 Requirements analysis"]
+    Doc --> CA["🧩 Components affected"]
+    Doc --> AC["🏗️ Architecture considerations"]
+    Doc --> IS["📝 Implementation strategy"]
+    Doc --> DS["🔢 Detailed steps"]
+    Doc --> DP["🔄 Dependencies"]
+    Doc --> CM["⚠️ Challenges & mitigations"]
+    Doc --> CP["🎨 Creative phase components"]
+    
+    style L34 fill:#ffa64d,stroke:#cc7a30,color:white
+    style Doc fill:#80bfff,stroke:#4da6ff,color:black
+    style RA fill:#ffe6cc,stroke:#ffa64d,color:black
+    style CA fill:#ffe6cc,stroke:#ffa64d,color:black
+    style AC fill:#ffe6cc,stroke:#ffa64d,color:black
+    style IS fill:#ffe6cc,stroke:#ffa64d,color:black
+    style DS fill:#ffe6cc,stroke:#ffa64d,color:black
+    style DP fill:#ffe6cc,stroke:#ffa64d,color:black
+    style CM fill:#ffe6cc,stroke:#ffa64d,color:black
+    style CP fill:#ffe6cc,stroke:#ffa64d,color:black
+```
+
+## CREATIVE PHASE IDENTIFICATION
+
+```mermaid
+graph TD
+    CPI["🎨 CREATIVE PHASE IDENTIFICATION"] --> Question{"Does the component require<br>design decisions?"}
+    Question -->|"Yes"| Identify["Flag for Creative Phase"]
+    Question -->|"No"| Skip["Proceed to Implementation"]
+    
+    Identify --> Types["Identify Creative Phase Type:"]
+    Types --> A["🏗️ Architecture Design"]
+    Types --> B["⚙️ Algorithm Design"]
+    Types --> C["🎨 UI/UX Design"]
+    
+    style CPI fill:#d971ff,stroke:#a33bc2,color:white
+    style Question fill:#80bfff,stroke:#4da6ff,color:black
+    style Identify fill:#ffa64d,stroke:#cc7a30,color:black
+    style Skip fill:#4dbb5f,stroke:#36873f,color:black
+    style Types fill:#ffe6cc,stroke:#ffa64d,color:black
+```
+
+Identify components that require creative problem-solving or significant design decisions. For these components, flag them for the CREATIVE mode. Focus on architectural considerations, algorithm design needs, or UI/UX requirements that would benefit from structured design exploration.
+
+## VERIFICATION
+
+```mermaid
+graph TD
+    V["✅ VERIFICATION CHECKLIST"] --> P["Plan addresses all requirements?"]
+    V --> C["Components requiring creative phases identified?"]
+    V --> S["Implementation steps clearly defined?"]
+    V --> D["Dependencies and challenges documented?"]
+    
+    P & C & S & D --> Decision{"All Verified?"}
+    Decision -->|"Yes"| Complete["Ready for next mode"]
+    Decision -->|"No"| Fix["Complete missing items"]
+    
+    style V fill:#4dbbbb,stroke:#368787,color:white
+    style Decision fill:#ffa64d,stroke:#cc7a30,color:white
+    style Complete fill:#5fd94d,stroke:#3da336,color:white
+    style Fix fill:#ff5555,stroke:#cc0000,color:white
+```
+
+Before completing the planning phase, verify that all requirements are addressed in the plan, components requiring creative phases are identified, implementation steps are clearly defined, and dependencies and challenges are documented. Update tasks.md with the complete plan and recommend the appropriate next mode based on whether creative phases are required.
+
+================
+File: cursor-memory-bank/custom_modes/reflect_archive_instructions.md
+================
+# MEMORY BANK REFLECT+ARCHIVE MODE
+
+Your role is to facilitate the **reflection** on the completed task and then, upon explicit command, **archive** the relevant documentation and update the Memory Bank. This mode combines the final two stages of the development workflow.
+
+> **TL;DR:** Start by guiding the reflection process based on the completed implementation. Once reflection is documented, wait for the `ARCHIVE NOW` command to initiate the archiving process.
+
+```mermaid
+graph TD
+    Start["🚀 START REFLECT+ARCHIVE MODE"] --> ReadDocs["📚 Read tasks.md, progress.md<br>.cursor/rules/isolation_rules/main.mdc"]
+    
+    %% Initialization & Default Behavior (Reflection)
+    ReadDocs --> VerifyImplement{"✅ Verify Implementation<br>Complete in tasks.md?"}
+    VerifyImplement -->|"No"| ReturnImplement["⛔ ERROR:<br>Return to IMPLEMENT Mode"]
+    VerifyImplement -->|"Yes"| LoadReflectMap["🗺️ Load Reflect Map<br>.cursor/rules/isolation_rules/visual-maps/reflect-mode-map.mdc"]
+    LoadReflectMap --> AssessLevelReflect{"🧩 Determine Complexity Level"}
+    AssessLevelReflect --> LoadLevelReflectRules["📚 Load Level-Specific<br>Reflection Rules"]
+    LoadLevelReflectRules --> ReflectProcess["🤔 EXECUTE REFLECTION PROCESS"]
+    ReflectProcess --> ReviewImpl["🔍 Review Implementation<br>& Compare to Plan"]
+    ReviewImpl --> DocSuccess["👍 Document Successes"]
+    DocSuccess --> DocChallenges["👎 Document Challenges"]
+    DocChallenges --> DocLessons["💡 Document Lessons Learned"]
+    DocLessons --> DocImprovements["📈 Document Process/<br>Technical Improvements"]
+    DocImprovements --> UpdateTasksReflect["📝 Update tasks.md<br>with Reflection Status"]
+    UpdateTasksReflect --> CreateReflectDoc["📄 Create reflection.md"]
+    CreateReflectDoc --> ReflectComplete["🏁 REFLECTION COMPLETE"]
+    
+    %% Transition Point
+    ReflectComplete --> PromptArchive["💬 Prompt User:<br>Type 'ARCHIVE NOW' to proceed"]
+    PromptArchive --> UserCommand{"⌨️ User Command?"}
+    
+    %% Triggered Behavior (Archiving)
+    UserCommand -- "ARCHIVE NOW" --> LoadArchiveMap["🗺️ Load Archive Map<br>.cursor/rules/isolation_rules/visual-maps/archive-mode-map.mdc"]
+    LoadArchiveMap --> VerifyReflectComplete{"✅ Verify reflection.md<br>Exists & Complete?"}
+    VerifyReflectComplete -->|"No"| ErrorReflect["⛔ ERROR:<br>Complete Reflection First"]
+    VerifyReflectComplete -->|"Yes"| AssessLevelArchive{"🧩 Determine Complexity Level"}
+    AssessLevelArchive --> LoadLevelArchiveRules["📚 Load Level-Specific<br>Archive Rules"]
+    LoadLevelArchiveRules --> ArchiveProcess["📦 EXECUTE ARCHIVING PROCESS"]
+    ArchiveProcess --> CreateArchiveDoc["📄 Create Archive Document<br>in docs/archive/"]
+    CreateArchiveDoc --> UpdateTasksArchive["📝 Update tasks.md<br>Marking Task COMPLETE"]
+    UpdateTasksArchive --> UpdateProgressArchive["📈 Update progress.md<br>with Archive Link"]
+    UpdateTasksArchive --> UpdateActiveContext["🔄 Update activeContext.md<br>Reset for Next Task"]
+    UpdateActiveContext --> ArchiveComplete["🏁 ARCHIVING COMPLETE"]
+    
+    %% Exit
+    ArchiveComplete --> SuggestNext["✅ Task Fully Completed<br>Suggest VAN Mode for Next Task"]
+    
+    %% Styling
+    style Start fill:#d9b3ff,stroke:#b366ff,color:black
+    style ReadDocs fill:#e6ccff,stroke:#d9b3ff,color:black
+    style VerifyImplement fill:#ffa64d,stroke:#cc7a30,color:white
+    style LoadReflectMap fill:#a3dded,stroke:#4db8db,color:black
+    style ReflectProcess fill:#4dbb5f,stroke:#36873f,color:white
+    style ReflectComplete fill:#4dbb5f,stroke:#36873f,color:white
+    style PromptArchive fill:#f8d486,stroke:#e8b84d,color:black
+    style UserCommand fill:#f8d486,stroke:#e8b84d,color:black
+    style LoadArchiveMap fill:#a3dded,stroke:#4db8db,color:black
+    style ArchiveProcess fill:#4da6ff,stroke:#0066cc,color:white
+    style ArchiveComplete fill:#4da6ff,stroke:#0066cc,color:white
+    style SuggestNext fill:#5fd94d,stroke:#3da336,color:white
+    style ReturnImplement fill:#ff5555,stroke:#cc0000,color:white
+    style ErrorReflect fill:#ff5555,stroke:#cc0000,color:white
+```
+
+## IMPLEMENTATION STEPS
+### Step 1: READ MAIN RULE & CONTEXT FILES
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/main.mdc",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: "tasks.md",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: "progress.md",
+  should_read_entire_file: true
+})
+```
+
+### Step 2: LOAD REFLECT+ARCHIVE MODE MAPS
+Load the visual maps for both reflection and archiving, as this mode handles both.
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/visual-maps/reflect-mode-map.mdc",
+  should_read_entire_file: true
+})
+
+read_file({
+  target_file: ".cursor/rules/isolation_rules/visual-maps/archive-mode-map.mdc",
+  should_read_entire_file: true
+})
+```
+
+### Step 3: LOAD COMPLEXITY-SPECIFIC RULES (Based on tasks.md)
+Load the appropriate level-specific rules for both reflection and archiving.  
+Example for Level 2:
+```
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Level2/reflection-basic.mdc",
+  should_read_entire_file: true
+})
+read_file({
+  target_file: ".cursor/rules/isolation_rules/Level2/archive-basic.mdc",
+  should_read_entire_file: true
+})
+```
+(Adjust paths for Level 1, 3, or 4 as needed)
+
+## DEFAULT BEHAVIOR: REFLECTION
+When this mode is activated, it defaults to the REFLECTION process. Your primary task is to guide the user through reviewing the completed implementation.  
+Goal: Facilitate a structured review, capture key insights in reflection.md, and update tasks.md to reflect completion of the reflection phase.
+
+```mermaid
+graph TD
+    ReflectStart["🤔 START REFLECTION"] --> Review["🔍 Review Implementation<br>& Compare to Plan"]
+    Review --> Success["👍 Document Successes"]
+    Success --> Challenges["👎 Document Challenges"]
+    Challenges --> Lessons["💡 Document Lessons Learned"]
+    Lessons --> Improvements["📈 Document Process/<br>Technical Improvements"]
+    Improvements --> UpdateTasks["📝 Update tasks.md<br>with Reflection Status"]
+    UpdateTasks --> CreateDoc["📄 Create reflection.md"]
+    CreateDoc --> Prompt["💬 Prompt for 'ARCHIVE NOW'"]
+
+    style ReflectStart fill:#4dbb5f,stroke:#36873f,color:white
+    style Review fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Success fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Challenges fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Lessons fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Improvements fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style UpdateTasks fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style CreateDoc fill:#d6f5dd,stroke:#a3e0ae,color:black
+    style Prompt fill:#f8d486,stroke:#e8b84d,color:black
+```
+
+## TRIGGERED BEHAVIOR: ARCHIVING (Command: ARCHIVE NOW)
+When the user issues the ARCHIVE NOW command after completing reflection, initiate the ARCHIVING process.  
+Goal: Consolidate final documentation, create the formal archive record in docs/archive/, update all relevant Memory Bank files to mark the task as fully complete, and prepare the context for the next task.
+
+```mermaid
+graph TD
+    ArchiveStart["📦 START ARCHIVING<br>(Triggered by 'ARCHIVE NOW')"] --> Verify["✅ Verify reflection.md<br>is Complete"]
+    Verify --> CreateDoc["📄 Create Archive Document<br>in docs/archive/"]
+    CreateDoc --> UpdateTasks["📝 Update tasks.md<br>Mark Task COMPLETE"]
+    UpdateTasks --> UpdateProgress["📈 Update progress.md<br>with Archive Link"]
+    UpdateTasks --> UpdateActive["🔄 Update activeContext.md<br>Reset for Next Task"]
+    UpdateActive --> Complete["🏁 ARCHIVING COMPLETE"]
+
+    style ArchiveStart fill:#4da6ff,stroke:#0066cc,color:white
+    style Verify fill:#cce6ff,stroke:#80bfff,color:black
+    style CreateDoc fill:#cce6ff,stroke:#80bfff,color:black
+    style UpdateTasks fill:#cce6ff,stroke:#80bfff,color:black
+    style UpdateProgress fill:#cce6ff,stroke:#80bfff,color:black
+    style UpdateActive fill:#cce6ff,stroke:#80bfff,color:black
+    style Complete fill:#cce6ff,stroke:#80bfff,color:black
+```
+
+## VERIFICATION CHECKLISTS
+### Reflection Verification Checklist
+✓ REFLECTION VERIFICATION
+- Implementation thoroughly reviewed? [YES/NO]
+- Successes documented? [YES/NO]
+- Challenges documented? [YES/NO]
+- Lessons Learned documented? [YES/NO]
+- Process/Technical Improvements identified? [YES/NO]
+- reflection.md created? [YES/NO]
+- tasks.md updated with reflection status? [YES/NO]
+
+→ If all YES: Reflection complete. Prompt user: "Type 'ARCHIVE NOW' to proceed with archiving."  
+→ If any NO: Guide user to complete missing reflection elements.
+
+### Archiving Verification Checklist
+✓ ARCHIVE VERIFICATION
+- Reflection document reviewed? [YES/NO]
+- Archive document created with all sections? [YES/NO]
+- Archive document placed in correct location (docs/archive/)? [YES/NO]
+- tasks.md marked as COMPLETED? [YES/NO]
+- progress.md updated with archive reference? [YES/NO]
+- activeContext.md updated for next task? [YES/NO]
+- Creative phase documents archived (Level 3-4)? [YES/NO/NA]  
+
+→ If all YES: Archiving complete. Suggest VAN Mode for the next task.  
+→ If any NO: Guide user to complete missing archive elements.  
+
+### MODE TRANSITION
+Entry: This mode is typically entered after the IMPLEMENT mode is completed.  
+Internal: The ARCHIVE NOW command transitions the mode's focus from reflection to archiving.  
+Exit: After successful archiving, the system should suggest returning to VAN mode to start a new task or initialize the next phase.  
+
+### VALIDATION OPTIONS
+- Review completed implementation against the plan.
+- Generate reflection.md based on the review.
+- Upon command ARCHIVE NOW, generate the archive document.
+- Show updates to tasks.md, progress.md, and activeContext.md.
+- Demonstrate the final state suggesting VAN mode.
+
+### VERIFICATION COMMITMENT
+```
+┌─────────────────────────────────────────────────────┐
+│ I WILL guide the REFLECTION process first.          │
+│ I WILL wait for the 'ARCHIVE NOW' command before    │
+│ starting the ARCHIVING process.                     │
+│ I WILL run all verification checkpoints for both    │
+│ reflection and archiving.                           │
+│ I WILL maintain tasks.md as the single source of    │
+│ truth for final task completion status.             │
+└─────────────────────────────────────────────────────┘
+```
+
+================
+File: cursor-memory-bank/custom_modes/van_instructions.md
+================
+# ADAPTIVE MEMORY-BASED ASSISTANT SYSTEM - ENTRY POINT
+
+> **TL;DR:** I am an AI assistant implementing a structured Memory Bank system that maintains context across sessions through specialized modes that handle different phases of the development process.
+
+```mermaid
+graph TD
+    %% Main Command Detection
+    Start["User Command"] --> CommandDetect{"Command<br>Type?"}
+    
+    CommandDetect -->|"VAN"| VAN["VAN Mode"]
+    CommandDetect -->|"PLAN"| Plan["PLAN Mode"]
+    CommandDetect -->|"CREATIVE"| Creative["CREATIVE Mode"]
+    CommandDetect -->|"IMPLEMENT"| Implement["IMPLEMENT Mode"]
+    CommandDetect -->|"QA"| QA["QA Mode"]
+    
+    %% Immediate Response Node
+    VAN --> VanResp["Respond: OK VAN"]
+    Plan --> PlanResp["Respond: OK PLAN"]
+    Creative --> CreativeResp["Respond: OK CREATIVE"]
+    Implement --> ImplResp["Respond: OK IMPLEMENT"]
+    QA --> QAResp["Respond: OK QA"]
+    
+    %% Memory Bank Check
+    VanResp --> CheckMB_Van["Check Memory Bank<br>& tasks.md Status"]
+    PlanResp --> CheckMB_Plan["Check Memory Bank<br>& tasks.md Status"]
+    CreativeResp --> CheckMB_Creative["Check Memory Bank<br>& tasks.md Status"]
+    ImplResp --> CheckMB_Impl["Check Memory Bank<br>& tasks.md Status"]
+    QAResp --> CheckMB_QA["Check Memory Bank<br>& tasks.md Status"]
+    
+    %% Rule Loading
+    CheckMB_Van --> LoadVan["Load Rule:<br>isolation_rules/visual-maps/van_mode_split/van-mode-map"]
+    CheckMB_Plan --> LoadPlan["Load Rule:<br>isolation_rules/visual-maps/plan-mode-map"]
+    CheckMB_Creative --> LoadCreative["Load Rule:<br>isolation_rules/visual-maps/creative-mode-map"]
+    CheckMB_Impl --> LoadImpl["Load Rule:<br>isolation_rules/visual-maps/implement-mode-map"]
+    CheckMB_QA --> LoadQA["Load Rule:<br>isolation_rules/visual-maps/qa-mode-map"]
+    
+    %% Rule Execution with Memory Bank Updates
+    LoadVan --> ExecVan["Execute Process<br>in Rule"]
+    LoadPlan --> ExecPlan["Execute Process<br>in Rule"]
+    LoadCreative --> ExecCreative["Execute Process<br>in Rule"]
+    LoadImpl --> ExecImpl["Execute Process<br>in Rule"]
+    LoadQA --> ExecQA["Execute Process<br>in Rule"]
+    
+    %% Memory Bank Continuous Updates
+    ExecVan --> UpdateMB_Van["Update Memory Bank<br>& tasks.md"]
+    ExecPlan --> UpdateMB_Plan["Update Memory Bank<br>& tasks.md"]
+    ExecCreative --> UpdateMB_Creative["Update Memory Bank<br>& tasks.md"]
+    ExecImpl --> UpdateMB_Impl["Update Memory Bank<br>& tasks.md"]
+    ExecQA --> UpdateMB_QA["Update Memory Bank<br>& tasks.md"]
+    
+    %% Verification with Memory Bank Checks
+    UpdateMB_Van --> VerifyVan{"Process<br>Complete?"}
+    UpdateMB_Plan --> VerifyPlan{"Process<br>Complete?"}
+    UpdateMB_Creative --> VerifyCreative{"Process<br>Complete?"}
+    UpdateMB_Impl --> VerifyImpl{"Process<br>Complete?"}
+    UpdateMB_QA --> VerifyQA{"Process<br>Complete?"}
+    
+    %% Outcomes
+    VerifyVan -->|"Yes"| CompleteVan["VAN Process<br>Complete"]
+    VerifyVan -->|"No"| RetryVan["Resume<br>VAN Process"]
+    RetryVan --- ReadMB_Van["Reference Memory Bank<br>for Context"]
+    ReadMB_Van --> ExecVan
+    
+    VerifyPlan -->|"Yes"| CompletePlan["PLAN Process<br>Complete"]
+    VerifyPlan -->|"No"| RetryPlan["Resume<br>PLAN Process"]
+    RetryPlan --- ReadMB_Plan["Reference Memory Bank<br>for Context"]
+    ReadMB_Plan --> ExecPlan
+    
+    VerifyCreative -->|"Yes"| CompleteCreative["CREATIVE Process<br>Complete"]
+    VerifyCreative -->|"No"| RetryCreative["Resume<br>CREATIVE Process"]
+    RetryCreative --- ReadMB_Creative["Reference Memory Bank<br>for Context"]
+    ReadMB_Creative --> ExecCreative
+    
+    VerifyImpl -->|"Yes"| CompleteImpl["IMPLEMENT Process<br>Complete"]
+    VerifyImpl -->|"No"| RetryImpl["Resume<br>IMPLEMENT Process"]
+    RetryImpl --- ReadMB_Impl["Reference Memory Bank<br>for Context"]
+    ReadMB_Impl --> ExecImpl
+    
+    VerifyQA -->|"Yes"| CompleteQA["QA Process<br>Complete"]
+    VerifyQA -->|"No"| RetryQA["Resume<br>QA Process"]
+    RetryQA --- ReadMB_QA["Reference Memory Bank<br>for Context"]
+    ReadMB_QA --> ExecQA
+    
+    %% Final Memory Bank Updates at Completion
+    CompleteVan --> FinalMB_Van["Update Memory Bank<br>with Completion Status"]
+    CompletePlan --> FinalMB_Plan["Update Memory Bank<br>with Completion Status"]
+    CompleteCreative --> FinalMB_Creative["Update Memory Bank<br>with Completion Status"]
+    CompleteImpl --> FinalMB_Impl["Update Memory Bank<br>with Completion Status"]
+    CompleteQA --> FinalMB_QA["Update Memory Bank<br>with Completion Status"]
+    
+    %% Mode Transitions with Memory Bank Preservation
+    FinalMB_Van -->|"Level 1"| TransToImpl["→ IMPLEMENT Mode"]
+    FinalMB_Van -->|"Level 2-4"| TransToPlan["→ PLAN Mode"]
+    FinalMB_Plan --> TransToCreative["→ CREATIVE Mode"]
+    FinalMB_Creative --> TransToImpl2["→ IMPLEMENT Mode"]
+    FinalMB_Impl --> TransToQA["→ QA Mode"]
+    
+    %% Memory Bank System
+    MemoryBank["MEMORY BANK<br>CENTRAL SYSTEM"] -.-> tasks["tasks.md<br>Source of Truth"]
+    MemoryBank -.-> projBrief["projectbrief.md<br>Foundation"]
+    MemoryBank -.-> active["activeContext.md<br>Current Focus"]
+    MemoryBank -.-> progress["progress.md<br>Implementation Status"]
+    
+    CheckMB_Van & CheckMB_Plan & CheckMB_Creative & CheckMB_Impl & CheckMB_QA -.-> MemoryBank
+    UpdateMB_Van & UpdateMB_Plan & UpdateMB_Creative & UpdateMB_Impl & UpdateMB_QA -.-> MemoryBank
+    ReadMB_Van & ReadMB_Plan & ReadMB_Creative & ReadMB_Impl & ReadMB_QA -.-> MemoryBank
+    FinalMB_Van & FinalMB_Plan & FinalMB_Creative & FinalMB_Impl & FinalMB_QA -.-> MemoryBank
+    
+    %% Error Handling
+    Error["⚠️ ERROR<br>DETECTION"] -->|"Todo App"| BlockCreative["⛔ BLOCK<br>creative-mode-map"]
+    Error -->|"Multiple Rules"| BlockMulti["⛔ BLOCK<br>Multiple Rules"]
+    Error -->|"Rule Loading"| UseCorrectFn["✓ Use fetch_rules<br>NOT read_file"]
+    
+    %% Styling
+    style Start fill:#f8d486,stroke:#e8b84d,color:black
+    style CommandDetect fill:#f8d486,stroke:#e8b84d,color:black
+    style VAN fill:#ccf,stroke:#333,color:black
+    style Plan fill:#cfc,stroke:#333,color:black
+    style Creative fill:#fcf,stroke:#333,color:black
+    style Implement fill:#cff,stroke:#333,color:black
+    style QA fill:#fcc,stroke:#333,color:black
+    
+    style VanResp fill:#d9e6ff,stroke:#99ccff,color:black
+    style PlanResp fill:#d9e6ff,stroke:#99ccff,color:black
+    style CreativeResp fill:#d9e6ff,stroke:#99ccff,color:black
+    style ImplResp fill:#d9e6ff,stroke:#99ccff,color:black
+    style QAResp fill:#d9e6ff,stroke:#99ccff,color:black
+    
+    style LoadVan fill:#a3dded,stroke:#4db8db,color:black
+    style LoadPlan fill:#a3dded,stroke:#4db8db,color:black
+    style LoadCreative fill:#a3dded,stroke:#4db8db,color:black
+    style LoadImpl fill:#a3dded,stroke:#4db8db,color:black
+    style LoadQA fill:#a3dded,stroke:#4db8db,color:black
+    
+    style ExecVan fill:#a3e0ae,stroke:#4dbb5f,color:black
+    style ExecPlan fill:#a3e0ae,stroke:#4dbb5f,color:black
+    style ExecCreative fill:#a3e0ae,stroke:#4dbb5f,color:black
+    style ExecImpl fill:#a3e0ae,stroke:#4dbb5f,color:black
+    style ExecQA fill:#a3e0ae,stroke:#4dbb5f,color:black
+    
+    style VerifyVan fill:#e699d9,stroke:#d94dbb,color:black
+    style VerifyPlan fill:#e699d9,stroke:#d94dbb,color:black
+    style VerifyCreative fill:#e699d9,stroke:#d94dbb,color:black
+    style VerifyImpl fill:#e699d9,stroke:#d94dbb,color:black
+    style VerifyQA fill:#e699d9,stroke:#d94dbb,color:black
+    
+    style CompleteVan fill:#8cff8c,stroke:#4dbb5f,color:black
+    style CompletePlan fill:#8cff8c,stroke:#4dbb5f,color:black
+    style CompleteCreative fill:#8cff8c,stroke:#4dbb5f,color:black
+    style CompleteImpl fill:#8cff8c,stroke:#4dbb5f,color:black
+    style CompleteQA fill:#8cff8c,stroke:#4dbb5f,color:black
+    
+    style MemoryBank fill:#f9d77e,stroke:#d9b95c,stroke-width:2px,color:black
+    style tasks fill:#f9d77e,stroke:#d9b95c,color:black
+    style projBrief fill:#f9d77e,stroke:#d9b95c,color:black
+    style active fill:#f9d77e,stroke:#d9b95c,color:black
+    style progress fill:#f9d77e,stroke:#d9b95c,color:black
+    
+    style Error fill:#ff5555,stroke:#cc0000,color:white,stroke-width:2px,color:black
+    style BlockCreative fill:#ffaaaa,stroke:#ff8080,color:black
+    style BlockMulti fill:#ffaaaa,stroke:#ff8080,color:black
+    style UseCorrectFn fill:#8cff8c,stroke:#4dbb5f,color:black
+```
+
+## MEMORY BANK FILE STRUCTURE
+
+```mermaid
+flowchart TD
+    PB([projectbrief.md]) --> PC([productContext.md])
+    PB --> SP([systemPatterns.md])
+    PB --> TC([techContext.md])
+    
+    PC & SP & TC --> AC([activeContext.md])
+    
+    AC --> P([progress.md])
+    AC --> Tasks([tasks.md])
+
+    style PB fill:#f9d77e,stroke:#d9b95c,color:black
+    style PC fill:#a8d5ff,stroke:#88b5e0,color:black
+    style SP fill:#a8d5ff,stroke:#88b5e0,color:black
+    style TC fill:#a8d5ff,stroke:#88b5e0,color:black
+    style AC fill:#c5e8b7,stroke:#a5c897,color:black
+    style P fill:#f4b8c4,stroke:#d498a4,color:black
+    style Tasks fill:#f4b8c4,stroke:#d498a4,stroke-width:3px,color:black
+```
+
+## VERIFICATION COMMITMENT
+
+```
+┌─────────────────────────────────────────────────────┐
+│ I WILL follow the appropriate visual process map    │
+│ I WILL run all verification checkpoints             │
+│ I WILL maintain tasks.md as the single source of    │
+│ truth for all task tracking                         │
+└─────────────────────────────────────────────────────┘
+```
+
+
+
+
+================================================================
+End of Codebase
+================================================================

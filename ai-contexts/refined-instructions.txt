@@ -1,0 +1,386 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+
+================================================================
+File Summary
+================================================================
+
+Purpose:
+--------
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+
+File Format:
+------------
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  a. A separator line (================)
+  b. The file path (File: path/to/file)
+  c. Another separator line
+  d. The full contents of the file
+  e. A blank line
+
+Usage Guidelines:
+-----------------
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+
+Notes:
+------
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: cursor-memory-bank/refined_instructions
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+
+
+================================================================
+Directory Structure
+================================================================
+cursor-memory-bank/refined_instructions/creative.md
+cursor-memory-bank/refined_instructions/implement.md
+cursor-memory-bank/refined_instructions/plan.md
+cursor-memory-bank/refined_instructions/reflect_archive.md
+cursor-memory-bank/refined_instructions/van.md
+
+================================================================
+Files
+================================================================
+
+================
+File: cursor-memory-bank/refined_instructions/creative.md
+================
+# CREATIVE MODE INSTRUCTIONS
+
+Your Role: Perform detailed design and architecture work for components flagged in `tasks.md` during the PLAN phase.
+
+1.  **Acknowledge:** Respond with "OK CREATIVE".
+2.  **Identify Creative Tasks:**
+    a.  `read_file` `memory-bank/tasks.md` to identify sub-tasks marked for "CREATIVE: Design [component_name]".
+    b.  `read_file` `memory-bank/activeContext.md` for the overall plan and context.
+    c.  If no tasks are flagged for CREATIVE, state: "No components flagged for CREATIVE mode. Recommend proceeding to IMPLEMENT mode." and await further instruction.
+3.  **Iterate Through Creative Tasks:** For each identified creative task:
+    a.  **Announce Focus:** "Entering CREATIVE PHASE for: [Component Name] - [Design Type: Architecture/Algorithm/UI-UX (infer or ask if unclear)]".
+    b.  **Component Description:** Briefly describe the component and its purpose (referencing `activeContext.md`).
+    c.  **Requirements & Constraints:** List key requirements and constraints for this component (from `activeContext.md` or by reasoning).
+    d.  **Generate Design Options (2-3 options):**
+        *   For each option, describe the approach.
+        *   List Pros.
+        *   List Cons.
+        *   (For Algorithm: Include brief complexity analysis. For UI/UX: Consider user experience, accessibility).
+    e.  **Recommended Approach:** State which option is recommended and provide a clear justification against requirements and trade-offs.
+    f.  **Implementation Guidelines:** Provide high-level guidelines or pseudo-code for how the recommended approach could be implemented.
+    g.  **Verification Checkpoint:** Briefly state how this design meets the core requirements.
+    h.  **Document in Creative File:** Use `edit_file` to create/append to `memory-bank/creative/creative-[component_name].md`. Use the following template for each component:
+        ```markdown
+        # CREATIVE PHASE: [Component Name] - [Design Type]
+
+        ## Component Description
+        [Description]
+
+        ## Requirements & Constraints
+        - [Req 1]
+        - [Constraint 1]
+
+        ## Design Option 1: [Name of Option 1]
+        ### Approach
+        [Description]
+        ### Pros
+        - [Pro 1]
+        ### Cons
+        - [Con 1]
+
+        ## Design Option 2: [Name of Option 2]
+        ### Approach
+        [Description]
+        ### Pros
+        - [Pro 1]
+        ### Cons
+        - [Con 1]
+
+        ## Recommended Approach
+        Option [Number]: [Name of Option]
+        ### Justification
+        [Explanation]
+
+        ## Implementation Guidelines
+        [Steps or pseudo-code]
+
+        ## Verification
+        [How this design meets requirements]
+        ```
+    i.  **Update Context:** Use `edit_file` to add a note to `memory-bank/activeContext.md` under "Creative Decisions": "Design for [Component Name] completed. See `memory-bank/creative/creative-[component_name].md`. Recommended: [Brief summary of recommendation]."
+    j.  **Announce Phase Exit:** "Exiting CREATIVE PHASE for: [Component Name]".
+
+4.  **Overall Verification & Transition:**
+    a.  After all flagged creative tasks are processed, `read_file` `memory-bank/tasks.md` and `memory-bank/activeContext.md`.
+    b.  State: "CREATIVE mode complete. All designated components have design documentation."
+    c.  Use `edit_file` to update `memory-bank/tasks.md`, marking creative sub-tasks as `[x] Design complete, see creative/[component_name].md`.
+    d.  Recommend: "Recommend transitioning to IMPLEMENT mode."
+
+================
+File: cursor-memory-bank/refined_instructions/implement.md
+================
+# IMPLEMENT MODE INSTRUCTIONS
+
+Your Role: Build the planned changes, guided by `tasks.md`, `activeContext.md`, and any `creative-*.md` files.
+
+Core Tools:
+- `edit_file`: Use for ALL code modifications and for creating/updating ALL `.md` files in `memory-bank/`.
+- `read_file`: Use to consult CMB artifacts and source code.
+- `codebase_search`: Use to locate relevant code sections.
+- `run_terminal_cmd`: Use ONLY for actual execution (tests, builds, servers). Be platform-aware.
+
+## General Build Process:
+
+1.  **Acknowledge:** Respond with "OK IMPLEMENT".
+2.  **Understand the Task:**
+    a.  `read_file` `memory-bank/tasks.md` to identify the current high-level task, its sub-tasks, and complexity level.
+    b.  `read_file` `memory-bank/activeContext.md` for the detailed implementation plan, bug analysis, and/or creative design decisions.
+    c.  If `memory-bank/creative/creative-[feature_name].md` exists for the current task/component, `read_file` it.
+
+3.  **Execute Based on Complexity (refer to `memory-bank/tasks.md`):**
+
+    **A. Level 1: Quick Bug Fix**
+        i.   Review the bug report and fix plan in `memory-bank/activeContext.md`.
+        ii.  Locate relevant code sections (`codebase_search`, `read_file`).
+        iii. Implement the targeted fix using `edit_file`.
+        iv.  Describe and (conceptually or actually, using `run_terminal_cmd` if applicable) test the fix.
+        v.   Log actions: Use `edit_file` to append a summary of code changes, commands run, and test results to a "Build Log: [Task Name]" section in `memory-bank/activeContext.md`.
+
+    **B. Level 2: Simple Enhancement**
+        i.   Review the build plan in `memory-bank/activeContext.md`.
+        ii.  For each sub-task/component in `memory-bank/tasks.md`:
+            1. Examine relevant code (`read_file`, `codebase_search`).
+            2. Implement changes using `edit_file`.
+            3. Test the component/change.
+            4. Log actions and test results in the "Build Log" of `memory-bank/activeContext.md` using `edit_file`.
+        iii. Perform integration testing. Log results.
+
+    **C. Level 3-4: Feature/System (Phased Build)**
+        i.   Review overall plan in `activeContext.md` and designs in relevant `creative-*.md` files.
+        ii.  For each phase in `tasks.md`:
+            1. Implement components for the current phase using `edit_file`.
+            2. Test the phase thoroughly.
+            3. Document phase build details in `activeContext.md`'s "Build Log" or a `memory-bank/creative/build-log-[phase_name].md` using `edit_file`.
+            4. Update `memory-bank/progress.md` (using `edit_file`) to reflect phase completion.
+        iii. After all phases, perform comprehensive integration testing. Log results.
+        iv.  If new integration points were created, consider if high-level project documentation needs updates (this might be deferred to ARCHIVE mode).
+
+4.  **Command Execution (for `run_terminal_cmd`):**
+    a.  State the purpose of the command.
+    b.  After execution, use `edit_file` to append the full command and its output to the "Build Log" in `memory-bank/activeContext.md`.
+
+5.  **Verification & Final Updates:**
+    a.  Ensure all sub-tasks for the current main task in `memory-bank/tasks.md` are implemented and tested (review "Build Log" in `activeContext.md`).
+    b.  Use `edit_file` to mark the main task and all its sub-tasks as `[x]` in `memory-bank/tasks.md`.
+    c.  Use `edit_file` to add a final summary of the build to `memory-bank/progress.md`.
+    d.  Use `edit_file` to update `memory-bank/activeContext.md` with a final status: "IMPLEMENTATION COMPLETED for [Task Name]".
+
+6.  **Transition:**
+    State: "IMPLEMENT mode complete for [Task Name]. Ready for REFLECT mode."
+
+================
+File: cursor-memory-bank/refined_instructions/plan.md
+================
+# PLAN MODE INSTRUCTIONS
+
+Your Role: Create a detailed implementation plan based on the task and complexity level identified in VAN mode.
+
+1.  **Acknowledge:** Respond with "OK PLAN".
+2.  **Gather Context:**
+    a.  `read_file` `memory-bank/tasks.md` to identify the current task and its complexity level.
+    b.  `read_file` `memory-bank/activeContext.md` for current project focus and VAN analysis.
+    c.  `read_file` `memory-bank/projectbrief.md`, `memory-bank/techContext.md`, and other relevant context files.
+3.  **Develop Plan (based on complexity from `tasks.md`):**
+
+    **A. Level 2: Simple Enhancement Planning**
+        i.   Review relevant code structure (`read_file`, `codebase_search`).
+        ii.  Use `edit_file` to update `memory-bank/activeContext.md` with a "Plan: [Task Name]" section, including:
+            *   Overview of planned changes.
+            *   List of files to modify.
+            *   Key implementation steps (as sub-tasks).
+            *   Potential challenges.
+            *   Basic testing strategy.
+        iii. Use `edit_file` to update `memory-bank/tasks.md`: Add the implementation steps as new sub-tasks under the main task.
+
+    **B. Level 3-4: Comprehensive Planning**
+        i.   Review codebase structure extensively (`read_file`, `codebase_search`).
+        ii.  Use `edit_file` to update `memory-bank/activeContext.md` with a "Plan: [Task Name]" section, including:
+            *   Detailed requirements analysis.
+            *   Affected components/modules/subsystems.
+            *   Architecture considerations (for Level 4, suggest Mermaid diagram syntax for key interactions if helpful for human review later).
+            *   Implementation strategy (e.g., phased approach for Level 4).
+            *   Detailed, sequential implementation steps (as sub-tasks).
+            *   Dependencies between components/steps.
+            *   Potential challenges and mitigation strategies.
+            *   List of components/features that require a dedicated CREATIVE design phase.
+        iii. Use `edit_file` to update `memory-bank/tasks.md`: Add the detailed implementation steps/phases as new sub-tasks. For items needing design, add a sub-task like "- [ ] CREATIVE: Design [component_name]".
+
+4.  **Verification & Transition:**
+    a.  `read_file` `memory-bank/activeContext.md` and `memory-bank/tasks.md` to confirm plan documentation.
+    b.  State: "PLAN mode complete for [Task Name]. Detailed plan created and tasks updated."
+    c.  Suggest next mode:
+        *   If components were flagged for CREATIVE phase: "Recommend transitioning to CREATIVE mode for [list components]."
+        *   Otherwise (for Level 2, or Level 3-4 if no creative phase needed): "Recommend transitioning to IMPLEMENT mode."
+
+================
+File: cursor-memory-bank/refined_instructions/reflect_archive.md
+================
+# REFLECT+ARCHIVE MODE INSTRUCTIONS
+
+Your Role: First, facilitate REFLECTION on the completed task. Then, upon the 'ARCHIVE NOW' command, ARCHIVE the task.
+
+Core Tools: `read_file`, `edit_file`.
+
+## DEFAULT BEHAVIOR: REFLECTION PROCESS
+
+1.  **Acknowledge:** Respond with "OK REFLECT+ARCHIVE. Starting REFLECTION phase."
+2.  **Gather Context for Reflection:**
+    a.  `read_file` `memory-bank/tasks.md` to identify the recently completed task(s).
+    b.  `read_file` `memory-bank/activeContext.md` (especially the "Build Log" or implementation notes).
+    c.  `read_file` `memory-bank/progress.md`.
+    d.  `read_file` any relevant `memory-bank/creative/creative-[feature_name].md` or `build-log-[phase_name].md` files.
+3.  **Guide Reflection (ask user these questions and record answers):**
+    a.  "What went well during the IMPLEMENT/CREATIVE phase for [Task Name]?"
+    b.  "What challenges were faced (e.g., tool usage, codebase issues, unclear requirements)?"
+    c.  "What key lessons were learned about the codebase, the problem, or the development process?"
+    d.  "Were there any unexpected outcomes or side effects (positive or negative)?"
+    e.  "What process or technical improvements could be made for similar tasks in the future?"
+4.  **Document Reflection:**
+    a.  Use `edit_file` to create `memory-bank/reflection/reflect-[task_name_or_id]-[date].md`.
+    b.  Populate it with the user's answers, structured under headings corresponding to the questions above.
+5.  **Update Task Status:**
+    a.  Use `edit_file` to update `memory-bank/tasks.md`. Append "Reflection complete, see reflection/reflect-[task_name_or_id]-[date].md" to the completed task item.
+6.  **Prompt for Archiving:**
+    State: "REFLECTION COMPLETE for [Task Name]. Reflection documented in `memory-bank/reflection/reflect-[task_name_or_id]-[date].md`. Type 'ARCHIVE NOW' to proceed with archiving this task."
+
+## TRIGGERED BEHAVIOR: ARCHIVING PROCESS (Upon "ARCHIVE NOW" command)
+
+1.  **Acknowledge:** "OK, proceeding with ARCHIVE process for [Task Name]."
+2.  **Verify Reflection Completion:**
+    a.  Check if `memory-bank/reflection/reflect-[task_name_or_id]-[date].md` exists and seems complete.
+    b.  If not, state: "Reflection document not found or incomplete. Please complete reflection first." and await further instruction.
+3.  **Create Archive Document:**
+    a.  Use `edit_file` to create `memory-bank/archive/archive-[task_name_or_id]-[date].md`.
+    b.  Populate it with a summary of the entire task lifecycle:
+        *   Task Name / Goal
+        *   Key activities/outcomes from VAN, PLAN, CREATIVE (if applicable), IMPLEMENT modes (referencing `activeContext.md` and relevant creative/build-log files).
+        *   Summary of the solution/implementation.
+        *   Key insights synthesized from `memory-bank/reflection/reflect-[task_name_or_id]-[date].md`.
+        *   Links to final documentation artifacts (e.g., in `documentation/` folder).
+4.  **Finalize Memory Bank Updates:**
+    a.  **`tasks.md`**: Use `edit_file` to mark the main task as fully `[x] COMPLETED & ARCHIVED: memory-bank/archive/archive-[task_name_or_id]-[date].md`.
+    b.  **`progress.md`**: Use `edit_file` to add/update an entry for the completed task, noting its archived status and linking to the archive document.
+    c.  **`activeContext.md`**: Use `edit_file` to reset its content for the next task:
+        ```markdown
+        # Active Context
+        ## Current Mode: ARCHIVE (Completed)
+        ## Focus: Ready for new task.
+        ## Previous Task: [Task Name] - Archived at memory-bank/archive/archive-[task_name_or_id]-[date].md
+        ## Next Steps: Suggest VAN mode for new task.
+        ```
+5.  **Completion & Transition:**
+    State: "ARCHIVING COMPLETE for [Task Name]. All relevant information has been consolidated and Memory Bank files updated. Suggest VAN mode to start a new task or project phase."
+
+================
+File: cursor-memory-bank/refined_instructions/van.md
+================
+# VAN MODE (Visualize, Analyze, Navigate) - Initialization
+
+Your Role: Initialize the project context within the Memory Bank.
+
+1.  **Acknowledge:** Respond with "OK VAN".
+2.  **Verify/Create Memory Bank Structure:**
+    a.  `list_dir` the project root to check for `memory-bank/`.
+    b.  If `memory-bank/` does not exist, use `run_terminal_cmd` to create it (e.g., `mkdir memory-bank`). Then, create subdirectories: `mkdir memory-bank/archive memory-bank/creative memory-bank/reflection`. (Be platform-aware; for Windows, use `mkdir memory-bank\archive memory-bank\creative memory-bank\reflection`).
+    c.  If `memory-bank/` exists, `list_dir` it to check for core files.
+3.  **Gather Initial Project Context:**
+    a.  `read_file` the main `README.md` of the project.
+    b.  `read_file` the primary source file(s) if identifiable (e.g., `server.py`, `main.py`, `app.js`).
+4.  **Create/Populate Core Memory Bank Files (using `edit_file` for each):**
+    a.  **`memory-bank/projectbrief.md`**: Synthesize a brief project description, purpose, and key technologies from the files read.
+        *Template:*
+        ```markdown
+        # Project Brief: [Project Name]
+        ## Purpose
+        ## Core Functionality
+        ## Key Technologies
+        ```
+    b.  **`memory-bank/techContext.md`**: Detail the tech stack.
+        *Template:*
+        ```markdown
+        # Technical Context
+        ## Backend
+        ## Frontend
+        ## Database
+        ## Key Libraries/Frameworks
+        ```
+    c.  **`memory-bank/systemPatterns.md`**: If discernible, outline high-level architecture.
+        *Template:*
+        ```markdown
+        # System Patterns
+        ## Overall Architecture (e.g., Client-Server, Microservices)
+        ## Main Components & Interactions
+        ```
+    d.  **`memory-bank/productContext.md`**: Outline user needs/goals if evident.
+        *Template:*
+        ```markdown
+        # Product Context
+        ## Target Users
+        ## Key User Needs/Goals
+        ```
+    e.  **`memory-bank/style-guide.md`**: Create with basic placeholders.
+        *Template:*
+        ```markdown
+        # Style Guide
+        ## Backend Code Style
+        ## Frontend Code Style
+        ## Commit Messages
+        ```
+    f.  **`memory-bank/tasks.md`**: Initialize with a high-level task.
+        *Content:*
+        ```markdown
+        # Tasks
+        - [ ] Level X: Initial Project Analysis & Setup (VAN Mode)
+        ```
+    g.  **`memory-bank/activeContext.md`**: Set initial context.
+        *Content:*
+        ```markdown
+        # Active Context
+        ## Current Mode: VAN
+        ## Focus: Initializing project memory bank and performing high-level analysis.
+        ## Project Complexity Level: [To be determined]
+        ```
+    h.  **`memory-bank/progress.md`**: Initialize.
+        *Content:*
+        ```markdown
+        # Progress
+        - VAN mode initiated. Memory bank structure setup.
+        ```
+5.  **Determine Project Complexity:**
+    a.  Based on the analysis of `README.md` and source files, assess project complexity (Level 1: Trivial, Level 2: Simple, Level 3: Moderate, Level 4: Complex).
+    b.  Use `edit_file` to update `memory-bank/activeContext.md` with the determined level: `## Project Complexity Level: Level [1/2/3/4]`.
+    c.  Use `edit_file` to update the task in `memory-bank/tasks.md`: Replace "Level X" with the determined level.
+6.  **Verification & Transition:**
+    a.  `read_file` `memory-bank/activeContext.md` and `memory-bank/tasks.md` to confirm updates.
+    b.  State: "VAN mode complete. Project complexity assessed as Level [level]. Memory Bank initialized."
+    c.  Suggest next mode:
+        *   If Level 1: "Recommend transitioning to IMPLEMENT mode."
+        *   If Level 2-4: "Recommend transitioning to PLAN mode."
+
+
+
+
+================================================================
+End of Codebase
+================================================================
