@@ -1,190 +1,61 @@
 ---
-description: Streamlined workflow for Level 1 Quick Bug Fix tasks
-globs: "**/level1/**", "**/workflow/**"
+description: Streamlined workflow for Level 1 (Quick Bug Fix) tasks. Guides AI through minimal initialization, direct implementation, and quick documentation using `edit_file`.
+globs: **/Level1/workflow-level1.mdc
 alwaysApply: false
 ---
-# STREAMLINED WORKFLOW FOR LEVEL 1 TASKS
+# STREAMLINED WORKFLOW FOR LEVEL 1 TASKS (AI Instructions)
 
-> **TL;DR:** This document outlines a streamlined workflow for Level 1 (Quick Bug Fix) tasks, focusing on efficient problem resolution with minimal overhead while maintaining adequate documentation.
+> **TL;DR:** This rule guides the AI through a minimal workflow for Level 1 (Quick Bug Fix) tasks. It emphasizes rapid issue resolution and concise documentation, primarily using `edit_file`.
 
-## 🔍 LEVEL 1 WORKFLOW OVERVIEW
+## 🧭 LEVEL 1 WORKFLOW PHASES (AI Actions)
 
-```mermaid
-graph LR
-    Init["1. INITIALIZATION"] --> Impl["2. IMPLEMENTATION"]
-    Impl --> Doc["3. DOCUMENTATION"]
-    
-    %% Document connections for each phase
-    Init -.-> InitDocs["Quick setup<br>Issue understanding"]
-    Impl -.-> ImplDocs["Focused fix<br>Verify resolution"]
-    Doc -.-> DocDocs["Document solution<br>Update tracking"]
-```
+This workflow is typically fetched after VAN mode has confirmed the task as Level 1.
 
-## 📋 WORKFLOW PHASES
+### Phase 1: INITIALIZATION (Quick Confirmation)
 
-### Phase 1: INITIALIZATION
+1.  **Acknowledge & Context:**
+    a.  State: "Initiating Level 1 Workflow for [Task Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` to confirm the specific issue details.
+    c.  `read_file memory-bank/activeContext.md` for current focus.
+2.  **Environment Setup (Conceptual):**
+    a.  No complex setup expected for L1. Assume environment is ready.
+3.  **Task Entry Check:**
+    a.  Ensure a minimal task entry exists in `tasks.md` for the issue. If VAN mode created a detailed one, that's fine. If not, ensure at least a line item is there.
+    b.  `edit_file memory-bank/activeContext.md` to confirm: "Focus: L1 Fix - [Task Name]".
+4.  **Milestone:** State "L1 Initialization complete. Proceeding to Implementation."
 
-```mermaid
-graph TD
-    Start["Start Level 1 Task"] --> Identify["Identify<br>Issue"]
-    Identify --> Understand["Understand<br>Problem"]
-    Understand --> Setup["Quick<br>Environment Setup"]
-    Setup --> TaskEntry["Create Quick<br>Task Entry"]
-    TaskEntry --> InitComplete["Initialization<br>Complete"]
-```
+### Phase 2: IMPLEMENTATION (Direct Fix)
 
-**Steps:**
-1. Identify the specific issue to fix
-2. Understand the problem and its impact
-3. Set up environment for quick fix
-4. Create minimal task entry in tasks.md
+1.  **Locate Issue Source:**
+    a.  If `tasks.md` or `activeContext.md` specifies file(s) and line(s), use that.
+    b.  If not, use `codebase_search` or `search_files` with keywords from the issue description to find the relevant code.
+2.  **Develop & Apply Fix:**
+    a.  Use `edit_file` to make the targeted code change.
+    b.  The fix should be small and localized, consistent with Level 1.
+3.  **Test & Verify:**
+    a.  Perform a simple verification. This might be:
+        *   Visual inspection of the change.
+        *   Running a linter on the modified file (`run_terminal_cmd`).
+        *   If a very specific unit test covers the change and is easy to run, consider `run_terminal_cmd` for that single test.
+    b.  State the verification method and outcome.
+4.  **Milestone:** State "L1 Implementation and verification complete. Proceeding to Documentation."
 
-**Milestone Checkpoint:**
-```
-✓ INITIALIZATION CHECKPOINT
-- Issue clearly identified? [YES/NO]
-- Problem understood? [YES/NO]
-- Environment set up? [YES/NO]
-- Task entry created? [YES/NO]
+### Phase 3: DOCUMENTATION (Quick & Concise)
 
-→ If all YES: Proceed to Implementation
-→ If any NO: Complete initialization steps
-```
+1.  **Update `tasks.md`:**
+    a.  `fetch_rules` for `.cursor/rules/isolation_rules/Level1/quick-documentation.mdc`.
+    b.  Follow the template provided in `quick-documentation.mdc` to update the task entry in `memory-bank/tasks.md` using `edit_file`. This includes issue, cause (if known), solution, files changed, and verification. Mark as COMPLETED with date.
+2.  **Update `activeContext.md`:**
+    a.  Use `edit_file` to clear the "Focus" section in `memory-bank/activeContext.md` or set it to "Awaiting next task."
+    b.  Optionally, add a one-line summary to a "Recent L1 Fixes" log in `activeContext.md`.
+3.  **Notify Stakeholders (Conceptual):**
+    a.  For L1, direct notification is usually not needed unless specified. The `tasks.md` update serves as the record.
+4.  **Milestone:** State "L1 Documentation complete. Task [Task Name] is fully resolved."
 
-### Phase 2: IMPLEMENTATION
+## 🚨 TASK ESCALATION
+*   If during IMPLEMENTATION, the issue is found to be more complex than L1 (e.g., requires changes to multiple components, design decisions, or significant testing):
+    a.  State: "ESCALATION: Issue [Task Name] is more complex than initially assessed. It appears to be Level [2/3]. Recommend halting L1 workflow and re-evaluating in VAN or PLAN mode."
+    b.  Use `edit_file` to update `tasks.md` and `activeContext.md` with this assessment.
+    c.  Await user guidance.
 
-```mermaid
-graph TD
-    Start["Begin<br>Implementation"] --> Locate["Locate<br>Issue Source"]
-    Locate --> Develop["Develop<br>Fix"]
-    Develop --> Test["Test<br>Solution"]
-    Test --> Verify["Verify<br>Resolution"]
-    Verify --> ImplComplete["Implementation<br>Complete"]
-```
-
-**Steps:**
-1. Locate the source of the issue
-2. Develop a targeted fix
-3. Test the solution thoroughly
-4. Verify that the issue is resolved
-
-**Milestone Checkpoint:**
-```
-✓ IMPLEMENTATION CHECKPOINT
-- Issue source located? [YES/NO]
-- Fix developed? [YES/NO]
-- Solution tested? [YES/NO]
-- Resolution verified? [YES/NO]
-
-→ If all YES: Proceed to Documentation
-→ If any NO: Complete implementation steps
-```
-
-### Phase 3: DOCUMENTATION
-
-```mermaid
-graph TD
-    Start["Begin<br>Documentation"] --> Update["Update<br>tasks.md"]
-    Update --> Solution["Document<br>Solution"]
-    Solution --> References["Create Minimal<br>Cross-References"]
-    References --> NotifyStakeholders["Notify<br>Stakeholders"]
-    NotifyStakeholders --> DocComplete["Documentation<br>Complete"]
-```
-
-**Steps:**
-1. Update tasks.md with fix details
-2. Document the solution concisely
-3. Create minimal cross-references
-4. Notify stakeholders as needed
-
-**Milestone Checkpoint:**
-```
-✓ DOCUMENTATION CHECKPOINT
-- tasks.md updated? [YES/NO]
-- Solution documented? [YES/NO]
-- Cross-references created? [YES/NO]
-- Stakeholders notified? [YES/NO]
-
-→ If all YES: Task Complete
-→ If any NO: Complete documentation steps
-```
-
-## 📋 TASK STRUCTURE IN TASKS.MD
-
-For Level 1 tasks, use this minimal structure:
-
-```markdown
-## Bug Fixes in Progress
-- [ ] [Level 1] Fix: [Bug description] (Est: XX mins)
-
-## Completed Bug Fixes
-- [X] [Level 1] Fixed: [Bug description] (Completed: YYYY-MM-DD)
-  - Issue: [Brief issue description]
-  - Solution: [Brief solution description]
-  - Files changed: [File paths]
-```
-
-## 📋 MEMORY BANK UPDATES
-
-For Level 1 tasks, make minimal Memory Bank updates:
-
-1. **tasks.md**: Update with fix details
-2. **activeContext.md**: Brief mention of fix if relevant
-3. **progress.md**: Add to list of completed fixes
-
-## 📋 WORKFLOW VERIFICATION CHECKLIST
-
-```
-✓ FINAL WORKFLOW VERIFICATION
-- Issue identified and understood? [YES/NO]
-- Fix implemented and verified? [YES/NO]
-- tasks.md updated? [YES/NO]
-- Solution documented? [YES/NO]
-- Memory Bank minimally updated? [YES/NO]
-
-→ If all YES: Level 1 Task Successfully Completed
-→ If any NO: Address outstanding items
-```
-
-## 📋 TASK ESCALATION
-
-If during the Level 1 process you discover the task is more complex:
-
-```
-⚠️ TASK ESCALATION NEEDED
-Current Level: Level 1
-Recommended Level: Level [2/3/4]
-Reason: [Brief explanation]
-
-Would you like me to escalate this task to Level [2/3/4]?
-```
-
-Escalation indicators:
-1. Fix requires changes to multiple components
-2. Solution requires design decisions
-3. Testing reveals broader issues
-4. Fix impacts core functionality
-
-## 🔄 INTEGRATION WITH MEMORY BANK
-
-```mermaid
-graph TD
-    Workflow["Level 1<br>Workflow"] --> TM["Update<br>tasks.md"]
-    Workflow --> AC["Minimal Update<br>activeContext.md"]
-    Workflow --> PM["Brief Update<br>progress.md"]
-    
-    TM & AC & PM --> MB["Memory Bank<br>Integration"]
-    MB --> NextTask["Transition to<br>Next Task"]
-```
-
-## 🚨 EFFICIENCY PRINCIPLE
-
-Remember:
-
-```
-┌─────────────────────────────────────────────────────┐
-│ Level 1 workflow prioritizes SPEED and EFFICIENCY.  │
-│ Minimize process overhead while ensuring adequate   │
-│ documentation of the solution.                     │
-└─────────────────────────────────────────────────────┘
-``` 
+This workflow prioritizes speed and efficiency for simple fixes.

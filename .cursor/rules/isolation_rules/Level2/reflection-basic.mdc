@@ -1,178 +1,69 @@
 ---
-description: Basic reflection format for Level 2 Simple Enhancement tasks
-globs: "**/level2/**", "**/reflection/**"
+description: Basic reflection for Level 2 (Simple Enhancement) tasks. Guides AI to create a structured reflection document using `edit_file`.
+globs: **/Level2/reflection-basic.mdc
 alwaysApply: false
 ---
+# BASIC REFLECTION FOR LEVEL 2 TASKS (AI Instructions)
 
-# BASIC REFLECTION FOR LEVEL 2 TASKS
+> **TL;DR:** This rule guides the creation of a basic reflection document for a completed Level 2 task using `edit_file`. It focuses on key outcomes, challenges, and lessons.
 
-> **TL;DR:** This document outlines a basic reflection approach for Level 2 (Simple Enhancement) tasks, ensuring that key insights and lessons are captured without unnecessary overhead.
+This rule is typically fetched by the Level 2 workflow orchestrator or the main REFLECT mode orchestrator if the task is L2.
 
-## 🔍 REFLECTION OVERVIEW
+## ⚙️ AI ACTIONS FOR LEVEL 2 REFLECTION:
 
-Reflection is essential for improving future work, even for simpler Level 2 enhancements. This basic reflection approach focuses on key outcomes, challenges, and lessons learned while maintaining efficiency.
+1.  **Acknowledge & Context:**
+    a.  State: "Initiating Basic Reflection for Level 2 task: [Task Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` for the completed task details (original plan, requirements).
+    c.  `read_file memory-bank/progress.md` for the implementation journey and any logged challenges/successes.
+    d.  `read_file memory-bank/activeContext.md` to confirm implementation is marked complete.
+2.  **Prepare Reflection Content (Based on Template Below):**
+    a.  Synthesize information from `tasks.md` and `progress.md`.
+3.  **Create Reflection File:**
+    a.  Determine reflection filename: `reflect-[task_name_or_id]-[date].md` (e.g., `reflect-user-profile-update-20250515.md`).
+    b.  Use `edit_file` to create/update `memory-bank/reflection/[reflection_filename.md]` with the structured content.
+        **Basic Reflection Structure (Content for `edit_file`):**
+        ```markdown
+        # Level 2 Enhancement Reflection: [Feature Name from tasks.md]
 
-## 📋 REFLECTION PRINCIPLES
+        ## Task ID: [Task ID from tasks.md]
+        ## Date of Reflection: [Current Date]
+        ## Complexity Level: 2
 
-1. **Honesty**: Accurately represent successes and challenges
-2. **Specificity**: Include concrete examples and observations
-3. **Insight**: Go beyond surface observations to derive useful insights
-4. **Improvement**: Focus on actionable takeaways for future work
-5. **Efficiency**: Keep reflection concise and focused on key learnings
+        ## 1. Enhancement Summary
+        [Brief one-paragraph summary of the enhancement: What was the goal? What was achieved?]
 
-## 📋 BASIC REFLECTION STRUCTURE
+        ## 2. What Went Well?
+        [Identify 2-3 specific positive aspects of the development process for this enhancement.]
+        - Success point 1: [e.g., Integration with existing module was straightforward.]
+        - Success point 2: [e.g., Testing covered all main use cases effectively.]
 
-```markdown
-# Level 2 Enhancement Reflection: [Feature Name]
+        ## 3. Challenges Encountered & Solutions
+        [Identify 1-2 specific challenges and how they were addressed.]
+        - Challenge 1: [e.g., Initial approach for X was inefficient.]
+          - Solution: [e.g., Refactored to use Y pattern, improving performance.]
+        - Challenge 2: (if any)
 
-## Enhancement Summary
-[Brief one-paragraph summary of the enhancement]
+        ## 4. Key Learnings (Technical or Process)
+        [List 1-2 key insights or lessons learned.]
+        - Learning 1: [e.g., Realized library Z is better suited for this type of UI component.]
+        - Learning 2: [e.g., Updating `tasks.md` more frequently for sub-tasks helps maintain clarity.]
 
-## What Went Well
-- [Specific success point 1]
-- [Specific success point 2]
-- [Specific success point 3]
+        ## 5. Time Estimation Accuracy (If applicable)
+        - Estimated time: [From tasks.md, if estimated]
+        - Actual time: [Approximate actual time based on progress.md entries]
+        - Variance & Reason: [Briefly, e.g., "+2 hours due to unexpected CSS conflict."]
 
-## Challenges Encountered
-- [Specific challenge 1]
-- [Specific challenge 2]
-- [Specific challenge 3]
-
-## Solutions Applied
-- [Solution to challenge 1]
-- [Solution to challenge 2]
-- [Solution to challenge 3]
-
-## Key Technical Insights
-- [Technical insight 1]
-- [Technical insight 2]
-- [Technical insight 3]
-
-## Process Insights
-- [Process insight 1]
-- [Process insight 2]
-- [Process insight 3]
-
-## Action Items for Future Work
-- [Specific action item 1]
-- [Specific action item 2]
-- [Specific action item 3]
-
-## Time Estimation Accuracy
-- Estimated time: [X hours/days]
-- Actual time: [Y hours/days]
-- Variance: [Z%]
-- Reason for variance: [Brief explanation]
-```
-
-## 📋 REFLECTION QUALITY
-
-High-quality reflections for Level 2 tasks should:
-
-1. **Provide specific examples** rather than vague statements
-2. **Identify concrete takeaways** not general observations
-3. **Connect challenges to solutions** with clear reasoning
-4. **Analyze estimation accuracy** to improve future planning
-5. **Generate actionable improvements** for future work
-
-## 📋 REFLECTION PROCESS
-
-Follow these steps for effective Level 2 task reflection:
-
-1. **Schedule Reflection**:
-   - Allocate dedicated time for reflection
-   - Complete reflection within 24 hours of task completion
-
-2. **Gather Information**:
-   - Review the original task requirements
-   - Examine implementation details
-   - Consider challenges encountered
-   - Review time tracking data
-
-3. **Complete Template**:
-   - Fill in all sections of the reflection template
-   - Include specific, concrete examples
-   - Be honest about challenges
-
-4. **Extract Insights**:
-   - Identify patterns in challenges
-   - Connect challenges to potential future improvements
-   - Consider process improvements
-
-5. **Document Action Items**:
-   - Create specific, actionable improvements
-   - Link these to future tasks where applicable
-
-6. **Store Reflection**:
-   - Save reflection with the task archive
-   - Add cross-references to relevant documents
-
-## 📋 EXAMPLES: VAGUE VS. SPECIFIC ENTRIES
-
-### ❌ Vague Entries (Insufficient)
-
-- "The implementation went well."
-- "We had some challenges with the code."
-- "The feature works as expected."
-
-### ✅ Specific Entries (Sufficient)
-
-- "The modular approach allowed for easy integration with the existing codebase, specifically the clean separation between the UI layer and data processing logic."
-- "Challenge: The state management became complex when handling multiple user interactions. Solution: Implemented a more structured reducer pattern with clear actions and state transitions."
-- "Action Item: Create a reusable component for file selection that handles all the edge cases we encountered in this implementation."
-
-## 📋 REFLECTION VERIFICATION CHECKLIST
-
-```
-✓ REFLECTION VERIFICATION
-- All template sections completed? [YES/NO]
-- Specific examples provided? [YES/NO]
-- Challenges honestly addressed? [YES/NO]
-- Concrete solutions documented? [YES/NO]
-- Actionable insights generated? [YES/NO]
-- Time estimation analyzed? [YES/NO]
-
-→ If all YES: Reflection complete
-→ If any NO: Improve reflection quality
-```
-
-## 📋 MINIMAL MODE REFLECTION
-
-For minimal mode, use this format:
-
-```
-✓ REFLECTION: [Feature Name]
-✓ WENT WELL: [Key success]
-✓ CHALLENGE: [Key challenge]
-✓ SOLUTION: [Key solution]
-✓ INSIGHT: [Most important takeaway]
-✓ ACTION: [Top priority action item]
-✓ TIME: Est [X] vs. Actual [Y] ([Z%] variance)
-```
-
-## 🔄 INTEGRATION WITH MEMORY BANK
-
-Reflection integrates with Memory Bank:
-
-```mermaid
-graph TD
-    Reflection["Enhancement<br>Reflection"] --> Archive["Add to<br>Archive"]
-    Reflection --> ProgressUpdate["Update<br>progress.md"]
-    Reflection --> ActionItems["Document<br>Action Items"]
-    
-    ActionItems --> Tasks["Add to<br>tasks.md"]
-    Archive & ProgressUpdate & Tasks --> CrossLinks["Create<br>Cross-Links"]
-```
-
-## 🚨 CONTINUOUS IMPROVEMENT PRINCIPLE
-
-Remember:
-
-```
-┌─────────────────────────────────────────────────────┐
-│ Every reflection should produce at least ONE        │
-│ actionable improvement for future work.             │
-└─────────────────────────────────────────────────────┘
-```
-
-This ensures that reflection directly contributes to ongoing improvement of both the product and the process. 
+        ## 6. Action Items for Future Work (Optional for L2, but good practice)
+        [Any specific, actionable improvements for future tasks or for this feature.]
+        - Action item 1: [e.g., Document the new CSS utility class created.]
+        ```
+4.  **Update Core Memory Bank Files (using `edit_file`):**
+    a.  **`tasks.md`:**
+        *   Mark the Level 2 task's REFLECT phase as "COMPLETE".
+        *   Add a link to the reflection document: `Reflection: ../reflection/[reflection_filename.md]`.
+    b.  **`activeContext.md`:**
+        *   Update current focus: "Reflection complete for L2 task [Task Name]. Ready for ARCHIVE."
+        *   Add to log: "Completed reflection for L2 task [Task Name]. Document at `reflection/[reflection_filename.md]`."
+5.  **Completion:**
+    a.  State: "Basic reflection for Level 2 task [Task Name] complete. Reflection document created at `memory-bank/reflection/[reflection_filename.md]`."
+    b.  (Control returns to the fetching rule, e.g., `Level2/workflow-level2.mdc` or `visual-maps/reflect-mode-map.mdc`).

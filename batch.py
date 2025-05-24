@@ -1396,7 +1396,1666 @@ For example:
 
 **You typically don't construct this XML. You just follow the instruction "fetch rule X" and the system handles the invocation.** The key is providing the correct, full path to the `.mdc` file as specified in the instructions.
 """
-        }
+        },
+        # --- Level 1 Files ---
+        {
+            "path": ".cursor/rules/isolation_rules/Level1/optimized-workflow-level1.mdc",
+    "description": "Optimized Level 1 workflow for quick bug fixes, emphasizing speed, token efficiency, and consolidated documentation using `edit_file`.",
+    "globs": "**/Level1/optimized-workflow-level1.mdc",
+    "alwaysApply": False,
+    "body": """
+# OPTIMIZED LEVEL 1 WORKFLOW (AI Instructions)
+
+> **TL;DR:** This streamlined workflow for Level 1 tasks (quick bug fixes) optimizes for speed and token efficiency. Focus on direct implementation and consolidated documentation using `edit_file`.
+
+## 🔧 LEVEL 1 PROCESS FLOW (AI Actions)
+
+1.  **Acknowledge & Context (Assumes VAN mode has confirmed Level 1):**
+    a.  State: "Initiating Optimized Level 1 Workflow for [Task Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` to understand the specific issue.
+    c.  `read_file memory-bank/activeContext.md` for any specific file paths or context.
+2.  **Analyze & Locate:**
+    a.  Briefly analyze the issue described in `tasks.md`.
+    b.  If file paths are not provided, use `codebase_search` or `search_files` to locate the relevant code section(s).
+3.  **Implement Fix:**
+    a.  Use `edit_file` to make the necessary code changes directly.
+    b.  Keep changes minimal and targeted, as expected for Level 1.
+4.  **Verify (Conceptually or via Simple Test):**
+    a.  Mentally review the change.
+    b.  If a very simple test command is appropriate (e.g., linting the changed file, running a single specific test if available), use `run_terminal_cmd`.
+5.  **Document (Consolidated):**
+    a.  Use `edit_file` to update `memory-bank/tasks.md` with a concise record of the fix. Use a consolidated format.
+        **Example Content for `tasks.md` (append under relevant task or in a 'Completed L1 Fixes' section):**
+        ```markdown
+        - **L1 Fix:** [Issue Name/ID]
+          - **Problem:** [Brief description from original task]
+          - **Cause:** [Brief root cause, if obvious]
+          - **Solution:** [Implemented fix, e.g., "Corrected variable name in `auth.py` line 42."]
+          - **Files Changed:** `[path/to/file.py]`
+          - **Verification:** [e.g., "Visual inspection", "Ran linter"]
+          - **Status:** COMPLETED - [Date]
+        ```
+    b.  Optionally, add a one-line entry to `memory-bank/progress.md` using `edit_file`:
+        `[Date] - L1 Fix: [Issue Name] - Completed. See tasks.md for details.`
+    c.  Update `memory-bank/activeContext.md` using `edit_file` to clear current L1 task focus and indicate readiness for next task.
+6.  **Notify Completion:**
+    a.  State: "Level 1 task '[Task Name]' completed and documented efficiently. Ready for next task."
+
+## ⚡ TOKEN-OPTIMIZED TEMPLATE (for AI to structure the `tasks.md` update via `edit_file`)
+When updating `tasks.md`, aim for a structure like this:
+```markdown
+- **L1 Fix:** [Issue Title]
+  - **Problem:** [Brief description]
+  - **Cause:** [Root cause, if clear]
+  - **Solution:** [Implemented fix details]
+  - **Files:** `[path/to/file1]`, `[path/to/file2]`
+  - **Tested:** [How verified, e.g., "Visual check", "Linter pass"]
+  - **Status:** COMPLETED - [Date]
+```
+This rule prioritizes direct action and minimal, consolidated documentation using `edit_file`.
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level1/quick-documentation.mdc",
+    "description": "Defines the content and structure for quick documentation of Level 1 (Quick Bug Fix) tasks, primarily within `tasks.md` using `edit_file`.",
+    "globs": "**/Level1/quick-documentation.mdc",
+    "alwaysApply": False,
+    "body": """
+# QUICK DOCUMENTATION FOR LEVEL 1 TASKS (AI Instructions)
+
+> **TL;DR:** This rule outlines the concise documentation approach for Level 1 tasks. The primary record is made in `memory-bank/tasks.md` using `edit_file`.
+
+## 📋 DOCUMENTATION PRINCIPLES (AI Self-Guide)
+*   **Conciseness:** Brief but complete.
+*   **Focus:** Only essential information to understand the fix.
+*   **Findability:** Ensure the fix can be referenced via `tasks.md`.
+
+## 📝 QUICK FIX DOCUMENTATION TEMPLATE (For `tasks.md` update via `edit_file`)
+When a Level 1 task is completed, use `edit_file` to update its entry or add a new entry in `memory-bank/tasks.md` under a "Completed Level 1 Fixes" or similar section, following this structure:
+
+```markdown
+- **L1 Fix:** [Issue Title/ID from original task]
+  - **Issue:** [Brief description of the problem - 1-2 sentences]
+  - **Root Cause:** [Concise description of what caused the issue - 1-2 sentences, if readily apparent]
+  - **Solution:** [Brief description of the fix implemented - 2-3 sentences, e.g., "Modified `user_controller.js` line 75 to correctly handle null input for username."]
+  - **Files Changed:**
+    - `[path/to/file1.ext]`
+    - `[path/to/file2.ext]` (if applicable)
+  - **Verification:** [How the fix was tested/verified - 1-2 sentences, e.g., "Manually tested login with empty username field.", "Ran linter on changed file."]
+  - **Status:** COMPLETED - [Date]
+```
+
+## 🔄 MEMORY BANK UPDATES (AI Actions)
+
+1.  **`tasks.md` (Primary Record):**
+    *   Use `edit_file` to add/update the entry as per the template above. This is the main documentation for L1 fixes.
+2.  **`activeContext.md` (Minimal Update):**
+    *   Use `edit_file` to append a brief note to `memory-bank/activeContext.md` if desired, e.g.:
+        ```markdown
+        ### Recent L1 Fixes - [Date]
+        - Fixed [Issue Title] in `[main_file_changed]`. See `tasks.md` for details.
+        ```
+    *   More importantly, clear the L1 task from the "Current Focus" in `activeContext.md`.
+3.  **`progress.md` (Optional Minimal Update):**
+    *   Use `edit_file` to append a one-liner to `memory-bank/progress.md` if desired, e.g.:
+        `[Date] - L1 Fix: Completed [Issue Title].`
+
+**Focus:** The goal is efficient capture of essential information directly in `tasks.md` using `edit_file`.
+(This rule provides the *content structure*. The actual workflow is often directed by `Level1/workflow-level1.mdc` or `Level1/optimized-workflow-level1.mdc` which might refer to these content guidelines).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level1/workflow-level1.mdc",
+    "description": "Streamlined workflow for Level 1 (Quick Bug Fix) tasks. Guides AI through minimal initialization, direct implementation, and quick documentation using `edit_file`.",
+    "globs": "**/Level1/workflow-level1.mdc",
+    "alwaysApply": False,
+    "body": """
+# STREAMLINED WORKFLOW FOR LEVEL 1 TASKS (AI Instructions)
+
+> **TL;DR:** This rule guides the AI through a minimal workflow for Level 1 (Quick Bug Fix) tasks. It emphasizes rapid issue resolution and concise documentation, primarily using `edit_file`.
+
+## 🧭 LEVEL 1 WORKFLOW PHASES (AI Actions)
+
+This workflow is typically fetched after VAN mode has confirmed the task as Level 1.
+
+### Phase 1: INITIALIZATION (Quick Confirmation)
+
+1.  **Acknowledge & Context:**
+    a.  State: "Initiating Level 1 Workflow for [Task Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` to confirm the specific issue details.
+    c.  `read_file memory-bank/activeContext.md` for current focus.
+2.  **Environment Setup (Conceptual):**
+    a.  No complex setup expected for L1. Assume environment is ready.
+3.  **Task Entry Check:**
+    a.  Ensure a minimal task entry exists in `tasks.md` for the issue. If VAN mode created a detailed one, that's fine. If not, ensure at least a line item is there.
+    b.  `edit_file memory-bank/activeContext.md` to confirm: "Focus: L1 Fix - [Task Name]".
+4.  **Milestone:** State "L1 Initialization complete. Proceeding to Implementation."
+
+### Phase 2: IMPLEMENTATION (Direct Fix)
+
+1.  **Locate Issue Source:**
+    a.  If `tasks.md` or `activeContext.md` specifies file(s) and line(s), use that.
+    b.  If not, use `codebase_search` or `search_files` with keywords from the issue description to find the relevant code.
+2.  **Develop & Apply Fix:**
+    a.  Use `edit_file` to make the targeted code change.
+    b.  The fix should be small and localized, consistent with Level 1.
+3.  **Test & Verify:**
+    a.  Perform a simple verification. This might be:
+        *   Visual inspection of the change.
+        *   Running a linter on the modified file (`run_terminal_cmd`).
+        *   If a very specific unit test covers the change and is easy to run, consider `run_terminal_cmd` for that single test.
+    b.  State the verification method and outcome.
+4.  **Milestone:** State "L1 Implementation and verification complete. Proceeding to Documentation."
+
+### Phase 3: DOCUMENTATION (Quick & Concise)
+
+1.  **Update `tasks.md`:**
+    a.  `fetch_rules` for `.cursor/rules/isolation_rules/Level1/quick-documentation.mdc`.
+    b.  Follow the template provided in `quick-documentation.mdc` to update the task entry in `memory-bank/tasks.md` using `edit_file`. This includes issue, cause (if known), solution, files changed, and verification. Mark as COMPLETED with date.
+2.  **Update `activeContext.md`:**
+    a.  Use `edit_file` to clear the "Focus" section in `memory-bank/activeContext.md` or set it to "Awaiting next task."
+    b.  Optionally, add a one-line summary to a "Recent L1 Fixes" log in `activeContext.md`.
+3.  **Notify Stakeholders (Conceptual):**
+    a.  For L1, direct notification is usually not needed unless specified. The `tasks.md` update serves as the record.
+4.  **Milestone:** State "L1 Documentation complete. Task [Task Name] is fully resolved."
+
+## 🚨 TASK ESCALATION
+*   If during IMPLEMENTATION, the issue is found to be more complex than L1 (e.g., requires changes to multiple components, design decisions, or significant testing):
+    a.  State: "ESCALATION: Issue [Task Name] is more complex than initially assessed. It appears to be Level [2/3]. Recommend halting L1 workflow and re-evaluating in VAN or PLAN mode."
+    b.  Use `edit_file` to update `tasks.md` and `activeContext.md` with this assessment.
+    c.  Await user guidance.
+
+This workflow prioritizes speed and efficiency for simple fixes.
+"""
+},
+# --- Level 2 Files ---
+{
+    "path": ".cursor/rules/isolation_rules/Level2/archive-basic.mdc",
+    "description": "Basic archiving for Level 2 (Simple Enhancement) tasks. Guides AI to create a structured archive document using `edit_file`.",
+    "globs": "**/Level2/archive-basic.mdc",
+    "alwaysApply": False,
+    "body": """
+# BASIC ARCHIVING FOR LEVEL 2 TASKS (AI Instructions)
+
+> **TL;DR:** This rule guides the creation of a basic archive document for a completed Level 2 task using `edit_file`. It ensures key information is preserved.
+
+This rule is typically fetched by the Level 2 workflow orchestrator or the main ARCHIVE mode orchestrator if the task is L2.
+
+## ⚙️ AI ACTIONS FOR LEVEL 2 ARCHIVING:
+
+1.  **Acknowledge & Context:**
+    a.  State: "Initiating Basic Archiving for Level 2 task: [Task Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` for the completed task details (requirements, sub-tasks).
+    c.  `read_file memory-bank/reflection/reflect-[task_name_or_id]-[date].md` for lessons learned.
+    d.  `read_file memory-bank/progress.md` for implementation summary.
+2.  **Prepare Archive Content (Based on Template Below):**
+    a.  Synthesize information from `tasks.md`, `reflection-*.md`, and `progress.md`.
+3.  **Create Archive File:**
+    a.  Determine archive filename: `archive-[task_name_or_id]-[date].md` (e.g., `archive-user-profile-update-20250515.md`).
+    b.  Use `edit_file` to create/update `memory-bank/archive/[archive_filename.md]` with the structured content.
+        **Basic Archive Structure (Content for `edit_file`):**
+        ```markdown
+        # Enhancement Archive: [Feature Name from tasks.md]
+
+        ## Task ID: [Task ID from tasks.md]
+        ## Date Completed: [Date from tasks.md or reflection document]
+        ## Complexity Level: 2
+
+        ## 1. Summary of Enhancement
+        [Brief summary of what was enhanced or added. Extract from tasks.md or reflection summary.]
+
+        ## 2. Key Requirements Addressed
+        [List the main requirements from tasks.md that this enhancement fulfilled.]
+        - Requirement 1
+        - Requirement 2
+
+        ## 3. Implementation Overview
+        [Brief description of how the enhancement was implemented. Summarize from progress.md or reflection document.]
+        - Key files modified:
+          - `[path/to/file1.ext]`
+          - `[path/to/file2.ext]`
+        - Main components changed: [List components]
+
+        ## 4. Testing Performed
+        [Summary of testing done, e.g., "Unit tests for new logic passed. Manual UI verification completed." From progress.md or reflection.]
+
+        ## 5. Lessons Learned
+        [Copy key lessons learned from `memory-bank/reflection/reflect-[task_name_or_id]-[date].md` or summarize them.]
+        - Lesson 1
+        - Lesson 2
+
+        ## 6. Related Documents
+        - Reflection: `../../reflection/reflect-[task_name_or_id]-[date].md`
+        - (Link to specific creative docs if any were exceptionally made for L2)
+
+        ## Notes
+        [Any additional brief notes.]
+        ```
+4.  **Update Core Memory Bank Files (using `edit_file`):**
+    a.  **`tasks.md`:**
+        *   Mark the Level 2 task as "ARCHIVED".
+        *   Add a link to the archive document: `Archived: ../archive/[archive_filename.md]`.
+    b.  **`progress.md`:**
+        *   Add a final entry: `[Date] - Task [Task Name] ARCHIVED. See archive/[archive_filename.md]`.
+    c.  **`activeContext.md`:**
+        *   Clear current task focus.
+        *   Add to log: "Archived Level 2 task [Task Name]. Archive at `archive/[archive_filename.md]`."
+5.  **Completion:**
+    a.  State: "Basic archiving for Level 2 task [Task Name] complete. Archive document created at `memory-bank/archive/[archive_filename.md]`."
+    b.  (Control returns to the fetching rule, e.g., `Level2/workflow-level2.mdc` or `visual-maps/archive-mode-map.mdc`).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level2/reflection-basic.mdc",
+    "description": "Basic reflection for Level 2 (Simple Enhancement) tasks. Guides AI to create a structured reflection document using `edit_file`.",
+    "globs": "**/Level2/reflection-basic.mdc",
+    "alwaysApply": False,
+    "body": """
+# BASIC REFLECTION FOR LEVEL 2 TASKS (AI Instructions)
+
+> **TL;DR:** This rule guides the creation of a basic reflection document for a completed Level 2 task using `edit_file`. It focuses on key outcomes, challenges, and lessons.
+
+This rule is typically fetched by the Level 2 workflow orchestrator or the main REFLECT mode orchestrator if the task is L2.
+
+## ⚙️ AI ACTIONS FOR LEVEL 2 REFLECTION:
+
+1.  **Acknowledge & Context:**
+    a.  State: "Initiating Basic Reflection for Level 2 task: [Task Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` for the completed task details (original plan, requirements).
+    c.  `read_file memory-bank/progress.md` for the implementation journey and any logged challenges/successes.
+    d.  `read_file memory-bank/activeContext.md` to confirm implementation is marked complete.
+2.  **Prepare Reflection Content (Based on Template Below):**
+    a.  Synthesize information from `tasks.md` and `progress.md`.
+3.  **Create Reflection File:**
+    a.  Determine reflection filename: `reflect-[task_name_or_id]-[date].md` (e.g., `reflect-user-profile-update-20250515.md`).
+    b.  Use `edit_file` to create/update `memory-bank/reflection/[reflection_filename.md]` with the structured content.
+        **Basic Reflection Structure (Content for `edit_file`):**
+        ```markdown
+        # Level 2 Enhancement Reflection: [Feature Name from tasks.md]
+
+        ## Task ID: [Task ID from tasks.md]
+        ## Date of Reflection: [Current Date]
+        ## Complexity Level: 2
+
+        ## 1. Enhancement Summary
+        [Brief one-paragraph summary of the enhancement: What was the goal? What was achieved?]
+
+        ## 2. What Went Well?
+        [Identify 2-3 specific positive aspects of the development process for this enhancement.]
+        - Success point 1: [e.g., Integration with existing module was straightforward.]
+        - Success point 2: [e.g., Testing covered all main use cases effectively.]
+
+        ## 3. Challenges Encountered & Solutions
+        [Identify 1-2 specific challenges and how they were addressed.]
+        - Challenge 1: [e.g., Initial approach for X was inefficient.]
+          - Solution: [e.g., Refactored to use Y pattern, improving performance.]
+        - Challenge 2: (if any)
+
+        ## 4. Key Learnings (Technical or Process)
+        [List 1-2 key insights or lessons learned.]
+        - Learning 1: [e.g., Realized library Z is better suited for this type of UI component.]
+        - Learning 2: [e.g., Updating `tasks.md` more frequently for sub-tasks helps maintain clarity.]
+
+        ## 5. Time Estimation Accuracy (If applicable)
+        - Estimated time: [From tasks.md, if estimated]
+        - Actual time: [Approximate actual time based on progress.md entries]
+        - Variance & Reason: [Briefly, e.g., "+2 hours due to unexpected CSS conflict."]
+
+        ## 6. Action Items for Future Work (Optional for L2, but good practice)
+        [Any specific, actionable improvements for future tasks or for this feature.]
+        - Action item 1: [e.g., Document the new CSS utility class created.]
+        ```
+4.  **Update Core Memory Bank Files (using `edit_file`):**
+    a.  **`tasks.md`:**
+        *   Mark the Level 2 task's REFLECT phase as "COMPLETE".
+        *   Add a link to the reflection document: `Reflection: ../reflection/[reflection_filename.md]`.
+    b.  **`activeContext.md`:**
+        *   Update current focus: "Reflection complete for L2 task [Task Name]. Ready for ARCHIVE."
+        *   Add to log: "Completed reflection for L2 task [Task Name]. Document at `reflection/[reflection_filename.md]`."
+5.  **Completion:**
+    a.  State: "Basic reflection for Level 2 task [Task Name] complete. Reflection document created at `memory-bank/reflection/[reflection_filename.md]`."
+    b.  (Control returns to the fetching rule, e.g., `Level2/workflow-level2.mdc` or `visual-maps/reflect-mode-map.mdc`).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level2/task-tracking-basic.mdc",
+    "description": "Basic task tracking for Level 2 (Simple Enhancement) tasks. Guides AI to structure `tasks.md` using `edit_file`.",
+    "globs": "**/Level2/task-tracking-basic.mdc",
+    "alwaysApply": False,
+    "body": """
+# BASIC TASK TRACKING FOR LEVEL 2 (AI Instructions)
+
+> **TL;DR:** This rule outlines a streamlined task tracking approach for Level 2 (Simple Enhancement) tasks. Use `edit_file` to update `memory-bank/tasks.md` with the defined structure.
+
+This rule is typically fetched by the PLAN mode orchestrator when a task is identified as Level 2.
+
+## ⚙️ AI ACTIONS FOR LEVEL 2 TASK TRACKING (Updating `tasks.md`):
+
+1.  **Acknowledge & Context:**
+    a.  State: "Applying Basic Task Tracking for Level 2 task: [Task Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` to locate the existing entry for this task (likely created minimally by VAN mode).
+2.  **Update Task Entry in `tasks.md` (using `edit_file`):**
+    a.  Ensure the task entry in `memory-bank/tasks.md` includes the following sections. If the task entry is new or minimal, create/populate these sections. If it exists, update them.
+
+        **Task Structure for Level 2 (Content for `edit_file` on `tasks.md`):**
+        ```markdown
+        ## Task: [Task Name/ID - e.g., L2-001: Enhance User Profile Page]
+
+        - **Status:** IN_PROGRESS_PLANNING (or update as planning proceeds)
+        - **Priority:** [High/Medium/Low - user may specify, or default to Medium]
+        - **Estimated Effort:** [Small/Medium - L2 tasks are generally not Large]
+        - **Complexity Level:** 2
+        - **Assigned To:** AI
+
+        ### 1. Description
+        [Brief description of the enhancement. What is the goal? What user problem does it solve? Synthesize from user request or `projectbrief.md`.]
+
+        ### 2. Requirements / Acceptance Criteria
+        [List 2-5 clear, testable requirements or acceptance criteria for the enhancement.]
+        - [ ] Requirement 1: [e.g., User can upload a profile picture.]
+        - [ ] Requirement 2: [e.g., Uploaded picture is displayed on the profile page.]
+        - [ ] Requirement 3: [e.g., Error message shown if upload fails.]
+
+        ### 3. Sub-tasks (Implementation Steps)
+        [Break the enhancement into 3-7 high-level sub-tasks. These are for planning and will be checked off during IMPLEMENT mode.]
+        - [ ] Sub-task 1: [e.g., Add file input field to profile form.]
+        - [ ] Sub-task 2: [e.g., Implement backend endpoint for image upload.]
+        - [ ] Sub-task 3: [e.g., Store image reference in user model.]
+        - [ ] Sub-task 4: [e.g., Display uploaded image on profile page.]
+        - [ ] Sub-task 5: [e.g., Add basic error handling for upload.]
+        - [ ] Sub-task 6: [e.g., Write unit tests for upload endpoint.]
+        - [ ] Sub-task 7: [e.g., Manual test of upload and display.]
+
+        ### 4. Dependencies (If any)
+        [List any other tasks, modules, or external factors this enhancement depends on. For L2, these should be minimal.]
+        - Dependency 1: [e.g., User authentication module must be functional.]
+
+        ### 5. Notes
+        [Any additional brief notes, context, or links relevant to planning this enhancement.]
+        - [e.g., Max image size should be 2MB.]
+        ```
+3.  **Log Update:**
+    a.  Use `edit_file` to add a note to `memory-bank/activeContext.md`:
+        `[Timestamp] - Updated `tasks.md` with detailed plan for L2 task: [Task Name].`
+4.  **Completion:**
+    a.  State: "Basic task tracking structure applied to `tasks.md` for Level 2 task [Task Name]."
+    b.  (Control returns to the PLAN mode orchestrator, which will then typically recommend CREATIVE (if any minor design needed and flagged) or IMPLEMENT mode).
+
+**Key Principle:** For L2 tasks, `tasks.md` should provide a clear, actionable plan without excessive detail. Sub-tasks guide implementation.
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level2/workflow-level2.mdc",
+    "description": "Basic workflow for Level 2 (Simple Enhancement) tasks. Guides AI through Initialization, Documentation Setup, Planning, Implementation, Reflection, and Archiving using `fetch_rules` for level-specific details.",
+    "globs": "**/Level2/workflow-level2.mdc",
+    "alwaysApply": False,
+    "body": """
+# WORKFLOW FOR LEVEL 2 TASKS (AI Instructions)
+
+> **TL;DR:** This rule orchestrates the workflow for Level 2 (Simple Enhancement) tasks. It guides the AI through 6 key phases, fetching specific Level 2 rules for planning, reflection, and archiving.
+
+This workflow is typically fetched after VAN mode has confirmed the task as Level 2.
+
+## 🧭 LEVEL 2 WORKFLOW PHASES (AI Actions)
+
+### Phase 1: INITIALIZATION (Confirmation & Context)
+1.  **Acknowledge & Confirm L2:**
+    a.  State: "Initiating Level 2 Workflow for [Task Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` and `memory-bank/activeContext.md` to confirm task is indeed Level 2 and gather initial scope.
+2.  **Platform & File Verification (If not done by VAN):**
+    a.  If VAN mode didn't fully complete platform detection or Memory Bank setup (e.g., if transitioning from a different context), briefly ensure core setup:
+        i.  `fetch_rules` for `.cursor/rules/isolation_rules/Core/platform-awareness.mdc`.
+        ii. `fetch_rules` for `.cursor/rules/isolation_rules/Core/file-verification.mdc`.
+3.  **Task Entry:**
+    a.  Ensure `tasks.md` has an entry for this L2 task. `activeContext.md` should reflect "Focus: L2 Task - [Task Name]".
+4.  **Milestone:** State "L2 Initialization complete. Proceeding to Documentation Setup."
+
+### Phase 2: DOCUMENTATION SETUP (Minimal Context Update)
+1.  **Update `projectbrief.md` (If necessary):**
+    a.  `read_file memory-bank/projectbrief.md`.
+    b.  If the L2 enhancement significantly alters or adds to project goals, use `edit_file` to add a brief note. Often not needed for L2.
+2.  **Update `activeContext.md`:**
+    a.  Use `edit_file` to ensure `memory-bank/activeContext.md` clearly states: "Current Focus: Planning Level 2 Enhancement - [Task Name]".
+3.  **Milestone:** State "L2 Documentation Setup complete. Proceeding to Task Planning."
+
+### Phase 3: TASK PLANNING (PLAN Mode Actions)
+1.  **Fetch L2 Planning Rule:**
+    a.  State: "Fetching Level 2 task planning guidelines."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/Level2/task-tracking-basic.mdc`.
+2.  **Follow Fetched Rule:**
+    a.  The `task-tracking-basic.mdc` rule will guide you to use `edit_file` to update `memory-bank/tasks.md` with:
+        *   Clear requirements/acceptance criteria.
+        *   A list of 3-7 high-level sub-tasks for implementation.
+        *   Minimal dependencies and notes.
+3.  **Update Context & Recommend:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md`: "Planning complete for L2 task [Task Name]. Ready for Implementation."
+    b.  State: "Level 2 Planning complete. Sub-tasks defined in `tasks.md`. Recommend IMPLEMENT mode."
+4.  **Milestone:** Await user confirmation to proceed to IMPLEMENT mode.
+
+### Phase 4: IMPLEMENTATION (IMPLEMENT Mode Actions)
+1.  **Acknowledge & Review Plan:**
+    a.  State: "Initiating Implementation for L2 task [Task Name]."
+    b.  `read_file memory-bank/tasks.md` to review the sub-tasks.
+    c.  `fetch_rules` for `.cursor/rules/isolation_rules/Core/command-execution.mdc` for tool usage guidelines.
+2.  **Implement Sub-tasks:**
+    a.  Iterate through sub-tasks in `tasks.md`.
+    b.  For each sub-task:
+        i.  Use `edit_file` for code changes.
+        ii. Use `run_terminal_cmd` for simple builds or tests if applicable (platform-aware).
+        iii. Use `edit_file` to update `memory-bank/progress.md` with actions taken and outcomes.
+        iv. Use `edit_file` to mark the sub-task as complete in `tasks.md`.
+3.  **Final Verification:**
+    a.  Perform basic overall verification of the enhancement.
+4.  **Update Context & Recommend:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md`: "Implementation complete for L2 task [Task Name]. Ready for Reflection."
+    b.  State: "Level 2 Implementation complete. Recommend REFLECT mode."
+5.  **Milestone:** Await user confirmation to proceed to REFLECT mode.
+
+### Phase 5: REFLECTION (REFLECT Mode Actions)
+1.  **Fetch L2 Reflection Rule:**
+    a.  State: "Fetching Level 2 reflection guidelines."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/Level2/reflection-basic.mdc`.
+2.  **Follow Fetched Rule:**
+    a.  The `reflection-basic.mdc` rule will guide you to use `edit_file` to create `memory-bank/reflection/reflect-[task_name_or_id]-[date].md` with sections for summary, what went well, challenges, and key learnings.
+3.  **Update Context & Recommend:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md`: "Reflection complete for L2 task [Task Name]. Ready for Archiving."
+    b.  State: "Level 2 Reflection complete. Reflection document created. Recommend ARCHIVE mode."
+4.  **Milestone:** Await user confirmation to proceed to ARCHIVE mode.
+
+### Phase 6: ARCHIVING (ARCHIVE Mode Actions)
+1.  **Fetch L2 Archiving Rule:**
+    a.  State: "Fetching Level 2 archiving guidelines."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/Level2/archive-basic.mdc`.
+2.  **Follow Fetched Rule:**
+    a.  The `archive-basic.mdc` rule will guide you to use `edit_file` to create `memory-bank/archive/archive-[task_name_or_id]-[date].md`, summarizing the enhancement, implementation, and linking to the reflection doc.
+    b.  It will also guide updates to `tasks.md` (mark ARCHIVED) and `progress.md`.
+3.  **Finalize Context:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md` to clear focus from the completed L2 task and state: "L2 Task [Task Name] archived. Ready for new task (VAN mode)."
+4.  **Milestone:** State "Level 2 Task [Task Name] fully completed and archived. Recommend VAN mode for new task."
+"""
+},
+# --- Level 3 Files ---
+{
+    "path": ".cursor/rules/isolation_rules/Level3/archive-intermediate.mdc",
+    "description": "Intermediate archiving for Level 3 features. Guides AI to create a detailed archive document, linking to creative/reflection docs, using `edit_file`.",
+    "globs": "**/Level3/archive-intermediate.mdc",
+    "alwaysApply": False,
+    "body": """
+# LEVEL 3 ARCHIVE: INTERMEDIATE FEATURE DOCUMENTATION (AI Instructions)
+
+> **TL;DR:** This rule guides the creation of an intermediate archive document for a completed Level 3 feature using `edit_file`. It ensures key information, including links to creative and reflection documents, is preserved.
+
+This rule is typically fetched by the Level 3 workflow orchestrator or the main ARCHIVE mode orchestrator if the task is L3.
+
+## ⚙️ AI ACTIONS FOR LEVEL 3 ARCHIVING:
+
+1.  **Acknowledge & Context:**
+    a.  State: "Initiating Intermediate Archiving for Level 3 feature: [Feature Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` for the completed feature details (original plan, requirements, links to creative docs).
+    c.  `read_file memory-bank/reflection/reflect-[feature_name_or_id]-[date].md` for detailed lessons learned.
+    d.  `read_file memory-bank/progress.md` for implementation summary and key milestones.
+    e.  `read_file` all relevant `memory-bank/creative/creative-[aspect_name]-[date].md` documents associated with this feature.
+2.  **Pre-Archive Checklist (AI Self-Correction):**
+    a.  Confirm from `tasks.md` that the REFLECT phase for this L3 feature is marked complete.
+    b.  Verify `memory-bank/reflection/reflect-[feature_name_or_id]-[date].md` exists and is finalized.
+    c.  Verify all `memory-bank/creative/creative-*.md` documents linked in `tasks.md` for this feature exist.
+    d.  If checks fail, state: "L3 ARCHIVE BLOCKED: Prerequisite documents (Reflection, Creative) are missing or incomplete for feature [Feature Name]. Please complete REFLECT / CREATIVE modes first." Await user.
+3.  **Prepare Archive Content (Based on Template Below):**
+    a.  Synthesize information from all gathered documents.
+4.  **Create Archive File:**
+    a.  Determine archive filename: `archive-[feature_name_or_id]-[date].md` (e.g., `archive-user-profile-enhancement-20250515.md`).
+    b.  Use `edit_file` to create/update `memory-bank/archive/[archive_filename.md]` with the structured content.
+        **L3 Archive Structure (Content for `edit_file`):**
+        ```markdown
+        # Feature Archive: [Feature Name from tasks.md]
+
+        ## Feature ID: [Feature ID from tasks.md]
+        ## Date Archived: [Current Date]
+        ## Complexity Level: 3
+        ## Status: COMPLETED & ARCHIVED
+
+        ## 1. Feature Overview
+        [Brief description of the feature and its purpose. Extract from `tasks.md` (original plan) or `projectbrief.md`.]
+
+        ## 2. Key Requirements Met
+        [List the main functional and non-functional requirements this feature addressed, from `tasks.md`.]
+        - Requirement 1
+        - Requirement 2
+
+        ## 3. Design Decisions & Creative Outputs
+        [Summary of key design choices made during the CREATIVE phase(s).]
+        - **Links to Creative Documents:**
+          - `../../creative/creative-[aspect1_name]-[date].md`
+          - `../../creative/creative-[aspect2_name]-[date].md`
+          - (Add all relevant creative docs)
+        - Link to Style Guide (if applicable): `../../style-guide.md` (version used, if known)
+
+        ## 4. Implementation Summary
+        [High-level overview of how the feature was implemented. Summarize from `progress.md` or reflection document.]
+        - Primary new components/modules created: [List]
+        - Key technologies/libraries utilized: [List]
+        - Link to main feature branch merge commit / PR (if available from `progress.md`): [URL]
+
+        ## 5. Testing Overview
+        [Brief summary of the testing strategy (unit, integration, E2E) and outcomes. From `progress.md` or reflection.]
+
+        ## 6. Reflection & Lessons Learned
+        - **Link to Reflection Document:** `../../reflection/reflect-[feature_name_or_id]-[date].md`
+        - **Critical Lessons (copied from reflection for quick summary):**
+          - Lesson 1: [Critical lesson]
+          - Lesson 2: [Critical lesson]
+
+        ## 7. Known Issues or Future Considerations (Optional)
+        [Any minor known issues deferred or potential future enhancements related to this feature, from reflection doc.]
+
+        ## 8. Affected Files/Components (Summary from `tasks.md` plan)
+        [List key files/components that were created or significantly modified.]
+        ```
+5.  **Update Core Memory Bank Files (using `edit_file`):**
+    a.  **`tasks.md`:**
+        *   Mark the Level 3 feature task as "ARCHIVED".
+        *   Add a link to the archive document: `Archived: ../archive/[archive_filename.md]`.
+    b.  **`progress.md`:**
+        *   Add a final entry: `[Date] - Feature [Feature Name] ARCHIVED. See archive/[archive_filename.md]`.
+    c.  **`activeContext.md`:**
+        *   Clear current feature focus.
+        *   Add to log: "Archived Level 3 feature [Feature Name]. Archive at `archive/[archive_filename.md]`."
+6.  **Completion:**
+    a.  State: "Intermediate archiving for Level 3 feature [Feature Name] complete. Archive document created at `memory-bank/archive/[archive_filename.md]`."
+    b.  (Control returns to the fetching rule).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level3/implementation-intermediate.mdc",
+    "description": "Implementation guidelines for Level 3 intermediate features. Guides AI on modular development, design adherence, testing, and documentation using `edit_file` and `run_terminal_cmd`.",
+    "globs": "**/Level3/implementation-intermediate.mdc",
+    "alwaysApply": False,
+    "body": """
+# LEVEL 3 IMPLEMENTATION: BUILDING INTERMEDIATE FEATURES (AI Instructions)
+
+> **TL;DR:** This rule guides the systematic implementation of a planned and designed Level 3 feature. Emphasize modular development, strict adherence to creative decisions and style guide, integration, testing, and ongoing Memory Bank updates using `edit_file` and `run_terminal_cmd`.
+
+This rule is typically fetched by the IMPLEMENT mode orchestrator if the task is L3.
+
+## ⚙️ AI ACTIONS FOR LEVEL 3 IMPLEMENTATION:
+
+1.  **Acknowledge & Preparation:**
+    a.  State: "Initiating Level 3 Implementation for feature: [Feature Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` for the detailed feature plan, sub-tasks, and links to creative documents.
+    c.  `read_file` all relevant `memory-bank/creative/creative-[aspect_name]-[date].md` documents.
+    d.  `read_file memory-bank/style-guide.md`.
+    e.  `read_file memory-bank/techContext.md` for existing tech stack details.
+    f.  `fetch_rules` for `.cursor/rules/isolation_rules/Core/command-execution.mdc` for tool usage guidelines.
+2.  **Development Environment Setup (Conceptual):**
+    a.  Assume user has set up the dev environment (branch, tools, dependencies). If specific new dependencies were noted in PLAN/CREATIVE, remind user if they haven't confirmed installation.
+3.  **Iterative Module/Component Implementation (Follow `tasks.md` sub-tasks):**
+    a.  For each implementation sub-task in `tasks.md` for the L3 feature:
+        i.  State: "Starting sub-task: [Sub-task description]."
+        ii. **Code Module/Component:**
+            *   Use `edit_file` to create/modify source code files.
+            *   Adhere strictly to designs from `creative-*.md` docs and `style-guide.md`.
+            *   Implement with modularity, encapsulation, and coding standards in mind.
+            *   Address state management, API interactions, error handling, performance, and security as per designs or best practices.
+        iii. **Write & Run Unit Tests:**
+            *   Use `edit_file` to write unit tests for new/modified logic.
+            *   Use `run_terminal_cmd` to execute these tests (e.g., `npm test [test_file_spec]`). Log output.
+        iv. **Self-Review/Linting:**
+            *   Conceptually review code against requirements and style guide.
+            *   If linters are part of the project, use `run_terminal_cmd` to run linter on changed files.
+        v.  **Update Memory Bank:**
+            *   Use `edit_file` to update `memory-bank/progress.md` with details of the completed sub-task, files changed, test results, and any decisions made.
+            *   Use `edit_file` to mark the sub-task as complete in `memory-bank/tasks.md`.
+            *   Use `edit_file` to update `memory-bank/activeContext.md` with current sub-task progress.
+4.  **Integrate Feature Modules/Components:**
+    a.  Once individual modules/components are built, ensure they integrate correctly.
+    b.  This may involve `edit_file` changes to connect them.
+5.  **Perform Integration Testing:**
+    a.  Use `run_terminal_cmd` to execute integration tests that cover interactions between the new feature's components and with existing system parts. Log output.
+    b.  If UI is involved, perform manual or automated UI integration tests.
+6.  **End-to-End Feature Testing:**
+    a.  Validate the complete feature against user stories and requirements from `tasks.md`.
+    b.  If UI involved, check accessibility and responsiveness.
+7.  **Code Cleanup & Refinement:**
+    a.  Review all new/modified code for clarity, efficiency, and adherence to standards. Use `edit_file` for refinements.
+8.  **Final Memory Bank Updates & Completion:**
+    a.  Ensure `tasks.md` implementation phase is marked complete.
+    b.  Ensure `progress.md` has a comprehensive log of the implementation.
+    c.  Use `edit_file` to update `memory-bank/activeContext.md`: "Level 3 Implementation for [Feature Name] complete. Ready for REFLECT mode."
+    d.  State: "Level 3 feature [Feature Name] implementation complete. All sub-tasks and tests passed. Recommend REFLECT mode."
+    e.  (Control returns to the fetching rule).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level3/planning-comprehensive.mdc",
+    "description": "Comprehensive planning for Level 3 intermediate features. Guides AI to update `tasks.md` with detailed requirements, components, strategy, risks, and flag CREATIVE needs, using `edit_file`.",
+    "globs": "**/Level3/planning-comprehensive.mdc",
+    "alwaysApply": False,
+    "body": """
+# LEVEL 3 COMPREHENSIVE PLANNING (AI Instructions)
+
+> **TL;DR:** This rule guides the comprehensive planning for Level 3 (Intermediate Feature) tasks. Use `edit_file` to update `memory-bank/tasks.md` with detailed requirements, component analysis, implementation strategy, dependencies, risks, and critically, flag aspects needing CREATIVE mode.
+
+This rule is typically fetched by the PLAN mode orchestrator when a task is identified as Level 3.
+
+## ⚙️ AI ACTIONS FOR LEVEL 3 COMPREHENSIVE PLANNING (Updating `tasks.md`):
+
+1.  **Acknowledge & Context:**
+    a.  State: "Initiating Comprehensive Planning for Level 3 feature: [Feature Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` to locate the existing entry for this L3 feature.
+    c.  `read_file memory-bank/projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md` for broader context.
+2.  **Define/Refine Task Entry in `tasks.md` (using `edit_file`):**
+    a.  Ensure the task entry in `memory-bank/tasks.md` for the L3 feature is structured with the following sections. Create or elaborate on these sections.
+
+        **Comprehensive L3 Task Structure (Content for `edit_file` on `tasks.md`):**
+        ```markdown
+        ## Task: [Task Name/ID - e.g., L3-001: Implement User Profile Feature]
+
+        - **Status:** IN_PROGRESS_PLANNING
+        - **Priority:** [High/Medium/Low - user may specify, or default to Medium]
+        - **Complexity Level:** 3
+        - **Assigned To:** AI
+        - **Target Completion Date (Optional):** [User may specify]
+
+        ### 1. Feature Description & Goals
+        [Detailed description of the feature, its purpose, business value, and key objectives. What problems does it solve? What are the success criteria?]
+
+        ### 2. Detailed Requirements
+        #### 2.1. Functional Requirements
+        [List specific functional requirements. Use actionable language. e.g., "FR1: System MUST allow users to upload an avatar image." ]
+        - [ ] FR1: ...
+        - [ ] FR2: ...
+        #### 2.2. Non-Functional Requirements
+        [List NFRs like performance, security, usability, maintainability. e.g., "NFR1: Profile page MUST load within 2 seconds."]
+        - [ ] NFR1: ...
+        - [ ] NFR2: ...
+
+        ### 3. Component Analysis
+        #### 3.1. New Components to be Created
+        [List new components/modules needed for this feature. For each, briefly describe its responsibility.]
+        - Component A: [Responsibility]
+        - Component B: [Responsibility]
+        #### 3.2. Existing Components to be Modified
+        [List existing components/modules that will be affected or need modification.]
+        - Component X: [Nature of modification]
+        - Component Y: [Nature of modification]
+        #### 3.3. Component Interactions
+        [Describe or diagram (textually) how new/modified components will interact with each other and existing system parts.]
+
+        ### 4. Implementation Strategy & High-Level Steps
+        [Outline the overall approach to building the feature. Break it down into major phases or steps. These will become more detailed sub-tasks later.]
+        1.  Step 1: [e.g., Design database schema changes for user profile.]
+        2.  Step 2: [e.g., Develop backend API endpoints for profile data.]
+        3.  Step 3: [e.g., Build frontend UI for profile page.]
+        4.  Step 4: [e.g., Integrate frontend with backend.]
+        5.  Step 5: [e.g., Write comprehensive tests.]
+
+        ### 5. Dependencies & Integrations
+        [List any technical dependencies (libraries, tools), data dependencies, or integrations with other systems/features.]
+        - Dependency 1: [e.g., Requires `ImageMagick` library for image processing.]
+        - Integration 1: [e.g., Integrates with existing Authentication service.]
+
+        ### 6. Risk Assessment & Mitigation
+        [Identify potential risks (technical, resource, schedule) and suggest mitigation strategies.]
+        - Risk 1: [e.g., Performance of image upload at scale.]
+          - Mitigation: [e.g., Implement asynchronous processing and CDN for images.]
+        - Risk 2: [e.g., Compatibility with older browsers.]
+          - Mitigation: [e.g., Use polyfills and perform cross-browser testing.]
+
+        ### 7. Creative Phase Requirements (CRITICAL for L3)
+        [Identify specific aspects of this feature that require dedicated design exploration in CREATIVE mode. Be specific.]
+        - [ ] CREATIVE: Design UI/UX for the new User Profile page. (Type: UI/UX)
+        - [ ] CREATIVE: Architect the avatar storage and processing pipeline. (Type: Architecture)
+        - [ ] CREATIVE: Develop algorithm for profile data recommendations (if applicable). (Type: Algorithm)
+        (If no creative phase is deemed necessary for a particular aspect, note "CREATIVE: Not required for [aspect]" or omit.)
+
+        ### 8. Testing Strategy Overview
+        [Briefly outline the testing approach: unit tests, integration tests, E2E tests, UAT focus areas.]
+
+        ### 9. Notes & Open Questions
+        [Any other relevant notes, assumptions, or questions to be resolved.]
+        ```
+3.  **Log Update:**
+    a.  Use `edit_file` to add a note to `memory-bank/activeContext.md`:
+        `[Timestamp] - Comprehensive plan for L3 feature [Feature Name] updated in tasks.md. Creative phases identified.`
+4.  **Completion & Recommendation:**
+    a.  State: "Comprehensive planning for Level 3 feature [Feature Name] is complete. `tasks.md` has been updated with the detailed plan."
+    b.  **If Creative Phase Requirements were identified:** "The plan indicates that creative design is needed for [list aspects]. Recommend transitioning to CREATIVE mode."
+    c.  **If NO Creative Phase Requirements were identified (uncommon for L3 but possible):** "No specific creative design phases were flagged. Recommend proceeding to IMPLEMENT mode (or VAN QA if complex tech setup is anticipated)."
+    d.  (Control returns to the PLAN mode orchestrator).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level3/reflection-intermediate.mdc",
+    "description": "Intermediate reflection for Level 3 features. Guides AI to create a detailed reflection document in `memory-bank/reflection/`, reviewing all development phases using `edit_file`.",
+    "globs": "**/Level3/reflection-intermediate.mdc",
+    "alwaysApply": False,
+    "body": """
+# LEVEL 3 REFLECTION: INTERMEDIATE FEATURE REVIEW (AI Instructions)
+
+> **TL;DR:** This rule structures the reflection process for a completed Level 3 intermediate feature. Use `edit_file` to create a comprehensive `memory-bank/reflection/reflect-[feature_name_or_id]-[date].md` document, analyzing the entire development lifecycle.
+
+This rule is typically fetched by the REFLECT mode orchestrator if the task is L3.
+
+## ⚙️ AI ACTIONS FOR LEVEL 3 REFLECTION:
+
+1.  **Acknowledge & Context Gathering:**
+    a.  State: "Initiating Intermediate Reflection for Level 3 feature: [Feature Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` for the original plan, requirements, and links to creative docs.
+    c.  `read_file memory-bank/progress.md` for the detailed implementation journey.
+    d.  `read_file` all relevant `memory-bank/creative/creative-[aspect_name]-[date].md` documents.
+    e.  `read_file memory-bank/activeContext.md` to confirm implementation is marked complete.
+2.  **Prepare Reflection Content (Based on Template Below):**
+    a.  Synthesize information from all gathered documents. Analyze each phase of the L3 workflow.
+3.  **Create Reflection File:**
+    a.  Determine reflection filename: `reflect-[feature_name_or_id]-[date].md`.
+    b.  Use `edit_file` to create/update `memory-bank/reflection/[reflection_filename.md]` with the structured content.
+        **L3 Reflection Structure (Content for `edit_file`):**
+        ```markdown
+        # Feature Reflection: [Feature Name from tasks.md]
+
+        ## Feature ID: [Feature ID from tasks.md]
+        ## Date of Reflection: [Current Date]
+        ## Complexity Level: 3
+
+        ## 1. Brief Feature Summary & Overall Outcome
+        [What was the feature? What was its main goal? How well was the goal achieved? Did it meet all critical requirements from `tasks.md`?]
+
+        ## 2. Planning Phase Review
+        - How effective was the comprehensive planning (`Level3/planning-comprehensive.mdc`)?
+        - Was the initial breakdown in `tasks.md` (components, strategy, risks) accurate?
+        - What worked well in planning? What could have been planned better?
+        - Were estimations (if made) accurate? Reasons for variance?
+
+        ## 3. Creative Phase(s) Review (if applicable)
+        - Were the correct aspects of the feature flagged for CREATIVE mode?
+        - Review each `creative-*.md` document:
+          - How effective were the design decisions?
+          - Did the designs translate well into practical implementation? Any friction?
+          - Was the `style-guide.md` sufficient?
+        - What could improve the creative process for similar features?
+
+        ## 4. Implementation Phase Review
+        - What were the major successes during implementation (e.g., efficient module development, good use of libraries)?
+        - What were the biggest challenges or roadblocks? How were they overcome?
+        - Were there any unexpected technical difficulties or complexities?
+        - How was adherence to the style guide and coding standards during implementation?
+        - Review `progress.md` for key implementation notes: were there deviations from plan? Why?
+
+        ## 5. Testing Phase Review
+        - Was the testing strategy (unit, integration, E2E for the feature) effective?
+        - Did testing uncover significant issues early enough?
+        - What could improve the testing process for similar features?
+        - Were there any bugs found post-implementation that testing should have caught?
+
+        ## 6. What Went Well? (Overall - Highlight 3-5 key positives for this feature)
+        - [Positive 1]
+        - [Positive 2]
+        - [Positive 3]
+
+        ## 7. What Could Have Been Done Differently? (Overall - Identify 3-5 areas for improvement)
+        - [Improvement Area 1]
+        - [Improvement Area 2]
+        - [Improvement Area 3]
+
+        ## 8. Key Lessons Learned
+        ### 8.1. Technical Lessons
+        [New insights about technologies, patterns, architecture specific to this feature.]
+        - Technical Lesson 1:
+        ### 8.2. Process Lessons
+        [Insights about the L3 workflow, communication, task management, tool usage.]
+        - Process Lesson 1:
+        ### 8.3. Estimation Lessons (if applicable)
+        [Lessons about estimating work for features of this scale.]
+        - Estimation Lesson 1:
+
+        ## 9. Actionable Improvements for Future L3 Features
+        [Specific, actionable suggestions for future intermediate feature development.]
+        - Improvement 1: [e.g., "Standardize API error response format across modules."]
+        - Improvement 2: [e.g., "Allocate more time for integration testing between X and Y components."]
+        ```
+4.  **Update Core Memory Bank Files (using `edit_file`):**
+    a.  **`tasks.md`:**
+        *   Mark the Level 3 feature's REFLECT phase as "COMPLETE".
+        *   Add a link to the reflection document: `Reflection: ../reflection/[reflection_filename.md]`.
+    b.  **`activeContext.md`:**
+        *   Update current focus: "Reflection complete for L3 feature [Feature Name]. Ready for ARCHIVE."
+        *   Add to log: "Completed reflection for L3 feature [Feature Name]. Document at `reflection/[reflection_filename.md]`."
+5.  **Completion:**
+    a.  State: "Intermediate reflection for Level 3 feature [Feature Name] complete. Reflection document created at `memory-bank/reflection/[reflection_filename.md]`."
+    b.  (Control returns to the fetching rule).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level3/task-tracking-intermediate.mdc",
+    "description": "Intermediate task tracking for Level 3 features. Guides AI to update `tasks.md` with structured components, steps, creative markers, and checkpoints using `edit_file`.",
+    "globs": "**/Level3/task-tracking-intermediate.mdc",
+    "alwaysApply": False,
+    "body": """
+# LEVEL 3 INTERMEDIATE TASK TRACKING (AI Instructions)
+
+> **TL;DR:** This rule provides guidelines for structured task tracking in `memory-bank/tasks.md` for Level 3 (Intermediate Feature) tasks. Use `edit_file` to create and maintain this structure.
+
+This rule is typically fetched by the PLAN mode orchestrator (`Level3/planning-comprehensive.mdc` will refer to this structure).
+
+## ⚙️ AI ACTIONS FOR LEVEL 3 TASK TRACKING (Structure for `tasks.md`):
+
+When `Level3/planning-comprehensive.mdc` guides you to detail the plan in `tasks.md`, use `edit_file` to ensure the entry for the Level 3 feature includes the following structure.
+
+**Task Entry Template for `tasks.md` (L3 Feature):**
+```markdown
+## Task: [L3-ID: Feature Name, e.g., L3-001: Implement User Profile Page with Avatar Upload]
+
+- **Status:** [e.g., IN_PROGRESS_PLANNING, PENDING_CREATIVE, IN_PROGRESS_IMPLEMENTATION, etc.]
+- **Priority:** [High/Medium/Low]
+- **Complexity Level:** 3
+- **Assigned To:** AI
+- **Target Completion Date (Optional):** [YYYY-MM-DD]
+- **Links:**
+    - Project Brief: `../projectbrief.md`
+    - Creative Docs: (List links as they are created, e.g., `../creative/creative-profile-ui-20250515.md`)
+    - Reflection Doc: (Link when created)
+    - Archive Doc: (Link when created)
+
+### 1. Feature Description & Goals
+[As defined in `planning-comprehensive.mdc` guidance]
+
+### 2. Detailed Requirements
+#### 2.1. Functional Requirements
+[As defined in `planning-comprehensive.mdc` guidance]
+- [ ] FR1: ...
+#### 2.2. Non-Functional Requirements
+[As defined in `planning-comprehensive.mdc` guidance]
+- [ ] NFR1: ...
+
+### 3. Component Analysis
+#### 3.1. New Components
+[As defined in `planning-comprehensive.mdc` guidance]
+- Component A: ...
+#### 3.2. Modified Components
+[As defined in `planning-comprehensive.mdc` guidance]
+- Component X: ...
+#### 3.3. Component Interactions
+[As defined in `planning-comprehensive.mdc` guidance]
+
+### 4. Implementation Strategy & Sub-Tasks
+[Break down the high-level steps from `planning-comprehensive.mdc` into more granular, checkable sub-tasks for implementation. Prefix with `IMPL:`]
+- **Phase 1: Backend API Development**
+  - [ ] IMPL: Define data models for user profile and avatar.
+  - [ ] IMPL: Create API endpoint for fetching profile data.
+  - [ ] IMPL: Create API endpoint for updating profile data.
+  - [ ] IMPL: Create API endpoint for avatar image upload.
+  - [ ] IMPL: Write unit tests for API endpoints.
+- **Phase 2: Frontend UI Development**
+  - [ ] IMPL: Build profile display component.
+  - [ ] IMPL: Build profile edit form component.
+  - [ ] IMPL: Implement avatar upload UI.
+  - [ ] IMPL: Integrate frontend components with backend APIs.
+  - [ ] IMPL: Write component tests for UI.
+- **Phase 3: Testing & Refinement**
+  - [ ] IMPL: Perform integration testing.
+  - [ ] IMPL: Address any bugs found.
+  - [ ] IMPL: Code review and cleanup.
+
+### 5. Dependencies & Integrations
+[As defined in `planning-comprehensive.mdc` guidance]
+
+### 6. Risk Assessment & Mitigation
+[As defined in `planning-comprehensive.mdc` guidance]
+
+### 7. Creative Phase Requirements & Outcomes
+[List aspects flagged for CREATIVE mode in `planning-comprehensive.mdc`. Update with status and link to creative doc once done.]
+- [ ] CREATIVE: Design UI/UX for the new User Profile page. (Type: UI/UX)
+  - Status: [PENDING/IN_PROGRESS/COMPLETED]
+  - Document: `../creative/creative-profile-ui-[date].md` (once created)
+- [ ] CREATIVE: Architect avatar storage. (Type: Architecture)
+  - Status: [PENDING/IN_PROGRESS/COMPLETED]
+  - Document: `../creative/creative-avatar-storage-[date].md` (once created)
+
+### 8. Testing Strategy Overview
+[As defined in `planning-comprehensive.mdc` guidance]
+
+### 9. Checkpoints & Phase Gates
+- [ ] **PLAN Phase Complete:** [Date]
+- [ ] **CREATIVE Phase(s) Complete:** [Date] (All creative sub-tasks in section 7 marked complete)
+- [ ] **IMPLEMENT Phase Complete:** [Date] (All IMPL sub-tasks in section 4 marked complete)
+- [ ] **REFLECT Phase Complete:** [Date]
+- [ ] **ARCHIVE Phase Complete:** [Date] (Feature fully archived)
+
+### 10. Notes & Open Questions
+[As defined in `planning-comprehensive.mdc` guidance]
+```
+
+## 🔄 PROGRESS TRACKING (AI Actions during IMPLEMENT, REFLECT, etc.)
+*   As sub-tasks (IMPL, CREATIVE, etc.) are completed, use `edit_file` to mark them `[x]` in `tasks.md`.
+*   Update the main `Status:` field of the L3 task entry.
+*   Update the `Checkpoints & Phase Gates` section as each major phase concludes.
+*   Log detailed activities in `memory-bank/progress.md`.
+
+**Key Principle:** `tasks.md` for L3 features should be a living document, meticulously updated via `edit_file` to reflect the comprehensive plan and ongoing progress through all CMB modes.
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level3/workflow-level3.mdc",
+    "description": "Orchestrates the workflow for Level 3 (Intermediate Feature) tasks, guiding AI through comprehensive planning, creative design, structured implementation, reflection, and archiving by fetching specific L3 and Core rules.",
+    "globs": "**/Level3/workflow-level3.mdc",
+    "alwaysApply": False,
+    "body": """
+# LEVEL 3 WORKFLOW: INTERMEDIATE FEATURE DEVELOPMENT (AI Instructions)
+
+> **TL;DR:** This rule orchestrates the structured workflow for Level 3 (Intermediate Feature) tasks. It guides the AI through comprehensive planning, targeted creative design, systematic implementation, in-depth reflection, and feature-specific archiving by fetching appropriate L3 and Core rules.
+
+This workflow is typically fetched after VAN mode has confirmed the task as Level 3.
+
+## 🧭 LEVEL 3 WORKFLOW PHASES (AI Actions)
+
+### Phase 1: INITIALIZATION (Confirmation & Context)
+1.  **Acknowledge & Confirm L3:**
+    a.  State: "Initiating Level 3 Workflow for [Feature Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` and `memory-bank/activeContext.md` to confirm task is Level 3 and gather initial scope.
+2.  **Core Setup Verification (If not fully done by VAN):**
+    a.  Ensure platform awareness: `fetch_rules` for `.cursor/rules/isolation_rules/Core/platform-awareness.mdc`.
+    b.  Ensure Memory Bank structure: `fetch_rules` for `.cursor/rules/isolation_rules/Core/file-verification.mdc`.
+3.  **Task Entry & Context:**
+    a.  Verify `tasks.md` has an entry for this L3 feature.
+    b.  `edit_file memory-bank/activeContext.md` to set focus: "Focus: L3 Feature - [Feature Name] - Initializing."
+4.  **Milestone:** State "L3 Initialization complete. Proceeding to Documentation Setup."
+
+### Phase 2: DOCUMENTATION SETUP (L3 Specific)
+1.  **Update `projectbrief.md` (Briefly):**
+    a.  `read_file memory-bank/projectbrief.md`. Use `edit_file` to add a note if this L3 feature significantly impacts overall project goals.
+2.  **Update `activeContext.md`:**
+    a.  Use `edit_file` to set `memory-bank/activeContext.md` focus: "Current Focus: Planning Level 3 Feature - [Feature Name]".
+3.  **Prepare `tasks.md` for L3 Planning:**
+    a.  Acknowledge that `tasks.md` will be updated extensively in the next phase.
+4.  **Milestone:** State "L3 Documentation Setup complete. Proceeding to Feature Planning."
+
+### Phase 3: FEATURE PLANNING (PLAN Mode Actions)
+1.  **Fetch L3 Planning Rules:**
+    a.  State: "Fetching Level 3 comprehensive planning and task tracking guidelines."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/Level3/planning-comprehensive.mdc`.
+    c.  (The `planning-comprehensive.mdc` rule will internally reference the structure from `Level3/task-tracking-intermediate.mdc` for `tasks.md` updates).
+2.  **Follow Fetched Rule (`planning-comprehensive.mdc`):**
+    a.  This rule will guide you to use `edit_file` to update `memory-bank/tasks.md` with:
+        *   Detailed feature description, goals, requirements (functional & non-functional).
+        *   Component analysis (new, modified, interactions).
+        *   Implementation strategy and high-level steps.
+        *   Dependencies, risks, and mitigations.
+        *   **Crucially: Flag aspects requiring CREATIVE mode.**
+        *   Testing strategy overview.
+3.  **Update Context & Recommend Next Mode:**
+    a.  `read_file memory-bank/tasks.md` to see if any "CREATIVE: ..." items were flagged.
+    b.  Use `edit_file` to update `memory-bank/activeContext.md`: "Planning complete for L3 feature [Feature Name]. Creative phases [identified/not identified]."
+    c.  **If CREATIVE phases flagged:** State "Level 3 Planning complete. Creative design phases identified in `tasks.md`. Recommend CREATIVE mode." Await user.
+    d.  **If NO CREATIVE phases flagged:** State "Level 3 Planning complete. No specific creative design phases flagged. Recommend IMPLEMENT mode (or VAN QA if complex tech setup anticipated)." Await user.
+4.  **Milestone:** Planning phase complete. Await user confirmation for next mode.
+
+### Phase 4: CREATIVE PHASES (CREATIVE Mode Actions - If Triggered)
+1.  **Acknowledge & Fetch Creative Orchestrator:**
+    a.  State: "Initiating CREATIVE mode for L3 feature [Feature Name] as per plan."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/visual-maps/creative-mode-map.mdc`.
+2.  **Follow Fetched Rule (`creative-mode-map.mdc`):**
+    a.  This rule will guide you to:
+        *   Identify "CREATIVE: Design..." sub-tasks from `tasks.md`.
+        *   For each, fetch the appropriate `Phases/CreativePhase/[design-type].mdc` rule.
+        *   Generate design options, make decisions, and document in `memory-bank/creative/creative-[aspect]-[date].md` using `edit_file`.
+        *   Update `tasks.md` to mark creative sub-tasks complete and link to documents.
+3.  **Update Context & Recommend:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md`: "Creative design phases complete for L3 feature [Feature Name]. Ready for Implementation."
+    b.  State: "Level 3 Creative phases complete. Design documents created. Recommend IMPLEMENT mode."
+4.  **Milestone:** Creative phase complete. Await user confirmation for IMPLEMENT mode.
+
+### Phase 5: IMPLEMENTATION (IMPLEMENT Mode Actions)
+1.  **Fetch L3 Implementation Rule:**
+    a.  State: "Initiating Implementation for L3 feature [Feature Name]."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/Level3/implementation-intermediate.mdc`.
+2.  **Follow Fetched Rule (`implementation-intermediate.mdc`):**
+    a.  This rule will guide you to:
+        *   Review `tasks.md` (plan) and `creative-*.md` (designs).
+        *   Implement feature modules iteratively using `edit_file` for code.
+        *   Adhere to `style-guide.md`.
+        *   Write and run unit/integration tests using `run_terminal_cmd`.
+        *   Update `tasks.md` (sub-tasks) and `progress.md` regularly.
+        *   Perform end-to-end feature testing.
+3.  **Update Context & Recommend:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md`: "Implementation complete for L3 feature [Feature Name]. Ready for Reflection."
+    b.  State: "Level 3 Implementation complete. Recommend REFLECT mode."
+4.  **Milestone:** Implementation phase complete. Await user confirmation for REFLECT mode.
+
+### Phase 6: REFLECTION (REFLECT Mode Actions)
+1.  **Fetch L3 Reflection Rule:**
+    a.  State: "Initiating Reflection for L3 feature [Feature Name]."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/Level3/reflection-intermediate.mdc`.
+2.  **Follow Fetched Rule (`reflection-intermediate.mdc`):**
+    a.  This rule will guide you to use `edit_file` to create `memory-bank/reflection/reflect-[feature_name_or_id]-[date].md`, analyzing all development phases, lessons learned, and improvements.
+3.  **Update Context & Recommend:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md`: "Reflection complete for L3 feature [Feature Name]. Ready for Archiving."
+    b.  State: "Level 3 Reflection complete. Reflection document created. Recommend ARCHIVE mode."
+4.  **Milestone:** Reflection phase complete. Await user confirmation for ARCHIVE mode.
+
+### Phase 7: ARCHIVING (ARCHIVE Mode Actions)
+1.  **Fetch L3 Archiving Rule:**
+    a.  State: "Initiating Archiving for L3 feature [Feature Name]."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/Level3/archive-intermediate.mdc`.
+2.  **Follow Fetched Rule (`archive-intermediate.mdc`):**
+    a.  This rule will guide you to use `edit_file` to create `memory-bank/archive/archive-[feature_name_or_id]-[date].md`, summarizing the feature and linking to plan, creative, and reflection docs.
+    b.  It will also guide updates to `tasks.md` (mark ARCHIVED) and `progress.md`.
+3.  **Finalize Context:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md` to clear focus from the completed L3 feature: "L3 Feature [Feature Name] archived. Ready for new task (VAN mode)."
+4.  **Milestone:** State "Level 3 Feature [Feature Name] fully completed and archived. Recommend VAN mode for new task."
+"""
+},
+# --- Level 4 Files ---
+{
+    "path": ".cursor/rules/isolation_rules/Level4/architectural-planning.mdc",
+    "description": "Architectural planning guidelines for Level 4 (Complex System) tasks. Guides AI to create comprehensive architectural documentation using `edit_file` and link to `tasks.md`.",
+    "globs": "**/Level4/architectural-planning.mdc",
+    "alwaysApply": False,
+    "body": """
+# ARCHITECTURAL PLANNING FOR LEVEL 4 TASKS (AI Instructions)
+
+> **TL;DR:** This rule guides comprehensive architectural planning for Level 4 (Complex System) tasks. Use `edit_file` to create detailed architectural documents (or sections within `tasks.md` / linked documents), covering requirements, context, vision, principles, alternatives, decisions (ADRs), and diagrams (descriptively).
+
+This rule is typically fetched by the PLAN mode orchestrator (`Level4/workflow-level4.mdc` will fetch this after `Level4/task-tracking-advanced.mdc`).
+
+## ⚙️ AI ACTIONS FOR LEVEL 4 ARCHITECTURAL PLANNING:
+
+1.  **Acknowledge & Context:**
+    a.  State: "Initiating Architectural Planning for Level 4 system: [System Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` (for the L4 task structure created by `task-tracking-advanced.mdc`).
+    c.  `read_file memory-bank/projectbrief.md`, `productContext.md`, `systemPatterns.md` (existing patterns), `techContext.md`.
+2.  **Document Architectural Plan (using `edit_file` to update `tasks.md` or a dedicated `memory-bank/architecture/system-[system_name]-arch-plan-[date].md` linked from `tasks.md`):**
+
+    Create/Populate the following sections:
+
+    ```markdown
+    ### Section X: Architectural Planning for [System Name] (L4)
+
+    #### X.1. Architectural Requirements Analysis (Derived from main requirements)
+    - **Key Functional Drivers for Architecture:** [e.g., High concurrency user access, Real-time data processing, Complex workflow orchestration]
+    - **Key Non-Functional Requirements (Quality Attributes):**
+      - Performance: [Specific targets, e.g., Sub-second API response under X load]
+      - Scalability: [e.g., Support Y concurrent users, Z TPS, linear scaling strategy]
+      - Availability: [e.g., 99.99% uptime, fault tolerance mechanisms]
+      - Security: [e.g., Compliance with PCI-DSS, data encryption at rest and in transit, robust authN/authZ]
+      - Maintainability: [e.g., Modular design, clear interfaces, comprehensive testability]
+      - Extensibility: [e.g., Ability to add new service types with minimal core changes]
+    - **Domain Model Overview:** [Briefly describe key entities and relationships relevant to architecture].
+
+    #### X.2. Business Context for Architecture
+    - **Business Objectives Driving Architecture:** [e.g., Reduce operational costs by 20%, Enable new market entry]
+    - **Key Stakeholder Concerns (Architectural):** [e.g., CTO requires use of existing Kubernetes infrastructure]
+    - **Architectural Constraints (Technical, Organizational, External, Regulatory):**
+      - Technical: [e.g., Must integrate with legacy System Z via SOAP API]
+      - Organizational: [e.g., Development team skill set primarily Java and Python]
+      - Budgetary: [e.g., Preference for open-source technologies where feasible]
+
+    #### X.3. Architectural Vision & Goals
+    - **Vision Statement:** [A concise statement for the system's architecture, e.g., "A resilient, scalable microservices architecture enabling rapid feature development..."]
+    - **Strategic Architectural Goals:** [e.g., Achieve loose coupling between services, Ensure data consistency across distributed components]
+
+    #### X.4. Architectural Principles (Guiding Decisions)
+    [List 3-5 core architectural principles for this system, e.g.:]
+    - Principle 1: Event-Driven Design for asynchronous operations.
+    - Principle 2: API-First approach for all service interactions.
+    - Principle 3: Design for Failure - anticipate and handle component failures gracefully.
+
+    #### X.5. Architectural Alternatives Explored (High-Level)
+    [Briefly describe 1-2 major architectural patterns/styles considered and why the chosen one (or a hybrid) is preferred. E.g., "Considered monolithic vs. microservices. Chose microservices for scalability..."]
+
+    #### X.6. Key Architectural Decisions (ADRs - Create separate ADRs or summarize here)
+    [For each major architectural decision, document using an ADR-like format or link to separate ADR files in `memory-bank/architecture/adrs/`.]
+    - **ADR-001: Choice of Messaging Queue**
+      - Status: Decided
+      - Context: Need for asynchronous communication between services A and B.
+      - Decision: Use RabbitMQ.
+      - Rationale: Proven reliability, supports required messaging patterns, team familiarity.
+      - Alternatives Considered: Kafka (overkill for current needs), Redis Streams (less mature).
+    - **ADR-002: Database Technology for Service C**
+      - ...
+
+    #### X.7. High-Level Architecture Diagrams (Textual Descriptions)
+    [AI describes diagrams. User might create actual diagrams based on these descriptions.]
+    - **System Context Diagram Description:** [Describe the system, its users, and external systems it interacts with.]
+    - **Component Diagram Description:** [Describe major logical components/services and their primary interactions/dependencies.]
+    - **Data Flow Diagram Description (Key Flows):** [Describe how data flows through the system for 1-2 critical use cases.]
+    - **Deployment View Description (Conceptual):** [Describe how components might be deployed, e.g., "Services A, B, C as Docker containers in Kubernetes. Database D as a managed cloud service."]
+
+    #### X.8. Technology Stack (Key Choices)
+    [List key technologies chosen for backend, frontend, database, messaging, caching, etc., with brief rationale if not covered in ADRs.]
+    - Backend: [e.g., Java Spring Boot]
+    - Database: [e.g., PostgreSQL]
+
+    #### X.9. Architectural Risks & Mitigation
+    [Identify key risks related to the chosen architecture and how they will be mitigated.]
+    - Risk: [e.g., Complexity of managing distributed transactions in microservices.]
+      - Mitigation: [e.g., Employ SAGA pattern, implement robust monitoring and compensating transactions.]
+    ```
+3.  **Log Update:**
+    a.  Use `edit_file` to add a note to `memory-bank/activeContext.md`:
+        `[Timestamp] - Architectural planning for L4 system [System Name] documented in tasks.md / linked architecture plan.`
+4.  **Completion & Recommendation:**
+    a.  State: "Architectural planning for Level 4 system [System Name] is complete. Key decisions and structure documented."
+    b.  "Recommend proceeding to CREATIVE phases for detailed design of specific components/services identified in the architectural plan, or directly to Phased Implementation planning if architecture is sufficiently detailed."
+    c.  (Control returns to the PLAN mode orchestrator / L4 Workflow orchestrator).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level4/archive-comprehensive.mdc",
+    "description": "Comprehensive archiving for Level 4 (Complex System) tasks. Guides AI to create extensive archive documentation using `edit_file`, consolidating all project artifacts.",
+    "globs": "**/Level4/archive-comprehensive.mdc",
+    "alwaysApply": False,
+    "body": """
+# COMPREHENSIVE ARCHIVING FOR LEVEL 4 TASKS (AI Instructions)
+
+> **TL;DR:** This rule guides the creation of a comprehensive archive for a completed Level 4 (Complex System) task using `edit_file`. It involves consolidating all system knowledge, design decisions, implementation details, and lessons learned into a structured archive.
+
+This rule is typically fetched by the Level 4 workflow orchestrator or the main ARCHIVE mode orchestrator if the task is L4.
+
+## ⚙️ AI ACTIONS FOR LEVEL 4 COMPREHENSIVE ARCHIVING:
+
+1.  **Acknowledge & Context Gathering:**
+    a.  State: "Initiating Comprehensive Archiving for Level 4 system: [System Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` (for the entire L4 task history, links to architectural plans, creative docs, etc.).
+    c.  `read_file memory-bank/reflection/reflect-[system_name_or_id]-[date].md` (for the comprehensive reflection).
+    d.  `read_file memory-bank/progress.md` (for the full development log).
+    e.  `read_file` all relevant `memory-bank/architecture/`, `memory-bank/creative/`, and other supporting documents.
+    f.  `read_file memory-bank/projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`.
+2.  **Pre-Archive Checklist (AI Self-Correction):**
+    a.  Confirm from `tasks.md` that the REFLECT phase for this L4 system is marked complete.
+    b.  Verify `memory-bank/reflection/reflect-[system_name_or_id]-[date].md` exists and is finalized.
+    c.  If checks fail, state: "L4 ARCHIVE BLOCKED: Comprehensive Reflection is not complete for system [System Name]. Please complete REFLECT mode first." Await user.
+3.  **Create Archive Document Structure (Main Archive File):**
+    a.  Determine archive filename: `archive-system-[system_name_or_id]-[date].md`.
+    b.  Use `edit_file` to create/update `memory-bank/archive/[archive_filename.md]`. This will be the main archive document.
+4.  **Populate Archive Document (Using `edit_file` and Template Below):**
+    a.  Iteratively populate the sections of the main archive document by synthesizing information from all gathered Memory Bank files.
+        **L4 Comprehensive Archive Structure (Content for `edit_file` into `archive-system-*.md`):**
+        ```markdown
+        # System Archive: [System Name from tasks.md]
+
+        ## System ID: [System ID from tasks.md]
+        ## Date Archived: [Current Date]
+        ## Complexity Level: 4
+        ## Status: COMPLETED & ARCHIVED
+
+        ## 1. System Overview
+        ### 1.1. System Purpose and Scope
+        [Synthesize from `projectbrief.md`, initial `tasks.md` description.]
+        ### 1.2. Final System Architecture
+        [Summarize key architectural decisions from architectural planning docs/ADRs. Link to detailed architecture documents if they exist in `memory-bank/architecture/` or `documentation/`.]
+        ### 1.3. Key Components & Modules
+        [List final key components and their purpose. From `tasks.md` component breakdown and implementation details.]
+        ### 1.4. Integration Points
+        [Describe internal and external integration points. From architectural plan / `techContext.md`.]
+        ### 1.5. Technology Stack
+        [Final technology stack used. From `techContext.md` / implementation details.]
+        ### 1.6. Deployment Environment Overview
+        [Brief overview of how the system is deployed. From `techContext.md` / deployment plans.]
+
+        ## 2. Requirements and Design Documentation Links
+        - Business Requirements: [Link to relevant section in `productContext.md` or `tasks.md`]
+        - Functional Requirements: [Link to detailed FRs in `tasks.md`]
+        - Non-Functional Requirements: [Link to NFRs in `tasks.md` or architectural plan]
+        - Architecture Decision Records (ADRs): [Link to `memory-bank/architecture/adrs/` or summaries in arch plan]
+        - Creative Design Documents:
+          - [Link to `../../creative/creative-[aspect1]-[date].md`]
+          - [Link to `../../creative/creative-[aspect2]-[date].md`]
+          - (List all relevant creative docs)
+
+        ## 3. Implementation Documentation Summary
+        ### 3.1. Phased Implementation Overview (if applicable)
+        [Summary of how phased implementation (`Level4/phased-implementation.mdc`) was executed. From `progress.md`.]
+        ### 3.2. Key Implementation Details & Challenges
+        [Highlight significant implementation details or challenges overcome. From `progress.md` / reflection doc.]
+        ### 3.3. Code Repository & Key Branches/Tags
+        [Link to Git repository. Note main branch, key feature branches, and final release tag/commit.]
+        ### 3.4. Build and Packaging Details
+        [Summary of build process and key artifacts. From `techContext.md` / `progress.md`.]
+
+        ## 4. API Documentation (If applicable)
+        [Link to or summarize key API endpoint documentation. If extensive, this might be a separate document in `documentation/` linked here.]
+
+        ## 5. Data Model and Schema Documentation (If applicable)
+        [Link to or summarize data model and schema. If extensive, separate document in `documentation/` linked here.]
+
+        ## 6. Security Documentation Summary
+        [Summary of key security measures implemented. Link to detailed security design if available.]
+
+        ## 7. Testing Documentation Summary
+        - Test Strategy: [Overall strategy. From `tasks.md` / reflection.]
+        - Test Results: [Summary of final test outcomes, key bugs fixed. Link to detailed test reports if any.]
+        - Known Issues & Limitations (at time of archive): [From reflection doc.]
+
+        ## 8. Deployment Documentation Summary
+        [Link to or summarize deployment procedures, environment configs. From `techContext.md` / `progress.md`.]
+
+        ## 9. Operational Documentation Summary
+        [Link to or summarize key operational procedures, monitoring, backup/recovery. From `techContext.md` / reflection.]
+
+        ## 10. Knowledge Transfer & Lessons Learned
+        - **Link to Comprehensive Reflection Document:** `../../reflection/reflect-[system_name_or_id]-[date].md`
+        - **Key Strategic Learnings (copied from reflection):**
+          - [Learning 1]
+          - [Learning 2]
+        - **Recommendations for Future Similar Systems (copied from reflection):**
+          - [Recommendation 1]
+
+        ## 11. Project History Summary
+        [Brief overview of project timeline and key milestones achieved. From `progress.md`.]
+        ```
+5.  **Update Core Memory Bank Files (using `edit_file`):**
+    a.  **`tasks.md`:**
+        *   Mark the Level 4 system task as "ARCHIVED".
+        *   Add a link to the main archive document: `Archived: ../archive/[archive_filename.md]`.
+    b.  **`progress.md`:**
+        *   Add a final entry: `[Date] - System [System Name] ARCHIVED. Comprehensive archive at archive/[archive_filename.md]`.
+    c.  **`activeContext.md`:**
+        *   Clear current system focus.
+        *   Add to log: "Archived Level 4 system [System Name]. Archive at `archive/[archive_filename.md]`."
+    d.  Consider updating `projectbrief.md` with a note about the system's completion and link to its archive.
+6.  **Completion:**
+    a.  State: "Comprehensive archiving for Level 4 system [System Name] complete. Main archive document created at `memory-bank/archive/[archive_filename.md]`."
+    b.  (Control returns to the fetching rule).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level4/phased-implementation.mdc",
+    "description": "Phased Implementation for Level 4 (Complex System) tasks. Guides AI to manage implementation in distinct phases (Foundation, Core, Extension, Integration, Finalization) using `edit_file` and `run_terminal_cmd`.",
+    "globs": "**/Level4/phased-implementation.mdc",
+    "alwaysApply": False,
+    "body": """
+# PHASED IMPLEMENTATION FOR LEVEL 4 TASKS (AI Instructions)
+
+> **TL;DR:** This rule guides the structured, phased implementation of a Level 4 (Complex System) task. It involves breaking down the implementation into logical phases, each with its own objectives, tasks, and verification. Use `edit_file` for code and documentation, `run_terminal_cmd` for builds/tests.
+
+This rule is typically fetched by the IMPLEMENT mode orchestrator if the task is L4.
+
+## ⚙️ AI ACTIONS FOR LEVEL 4 PHASED IMPLEMENTATION:
+
+1.  **Acknowledge & Preparation:**
+    a.  State: "Initiating Phased Implementation for Level 4 system: [System Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` for the architectural plan, component breakdown, and any pre-defined implementation phases.
+    c.  `read_file` all relevant `memory-bank/architecture/` and `memory-bank/creative/` documents.
+    d.  `read_file memory-bank/style-guide.md` and `memory-bank/techContext.md`.
+    e.  `fetch_rules` for `.cursor/rules/isolation_rules/Core/command-execution.mdc` for tool usage guidelines.
+2.  **Define/Confirm Implementation Phases (if not already detailed in `tasks.md`):**
+    a.  Based on the architectural plan, propose or confirm a phased approach (e.g., Foundation, Core Services, Feature Extensions, Integration, Finalization).
+    b.  For each phase, define:
+        *   Primary objectives.
+        *   Key components/modules to be built/integrated.
+        *   High-level sub-tasks within that phase.
+        *   Exit criteria / verification for the phase.
+    c.  Use `edit_file` to document these phases and their sub-tasks within the L4 task entry in `memory-bank/tasks.md`.
+3.  **Iterate Through Implementation Phases:**
+    a.  For each defined phase (e.g., "Foundation Phase"):
+        i.  State: "Starting [Phase Name] for system [System Name]."
+        ii. `edit_file memory-bank/activeContext.md` to set focus: "Current Focus: L4 Implementation - [System Name] - [Phase Name]."
+        iii. **Implement Sub-tasks for the Current Phase (from `tasks.md`):**
+            *   For each sub-task in the current phase:
+                *   Perform coding using `edit_file`, adhering to architectural designs, creative specs, and style guide.
+                *   Write unit tests using `edit_file`.
+                *   Run tests using `run_terminal_cmd`.
+                *   Log actions, code changes, test results in `memory-bank/progress.md` using `edit_file`.
+                *   Mark sub-task complete in `memory-bank/tasks.md` using `edit_file`.
+        iv. **Phase Verification:**
+            *   Once all sub-tasks for the phase are complete, perform verification as per the phase's exit criteria (e.g., specific integration tests, review of foundational components).
+            *   Log verification results in `memory-bank/progress.md`.
+        v.  If phase verification fails, identify issues, create new sub-tasks in `tasks.md` to address them, and re-iterate implementation/verification for those parts.
+        vi. State: "[Phase Name] complete and verified for system [System Name]."
+        vii. `edit_file memory-bank/tasks.md` to mark the phase as complete.
+4.  **System-Wide Integration & Testing (Typically after Core/Extension phases):**
+    a.  Perform broader integration tests across major components.
+    b.  Conduct end-to-end system testing against key user scenarios and NFRs.
+    c.  Log results in `memory-bank/progress.md`.
+5.  **Finalization Phase (Last Phase):**
+    a.  Performance tuning, final security reviews, documentation cleanup.
+    b.  User Acceptance Testing (UAT) coordination (AI supports by providing info, user executes UAT).
+    c.  Preparation for deployment (e.g., final build scripts, deployment notes).
+6.  **Final Memory Bank Updates & Completion:**
+    a.  Ensure `tasks.md` L4 implementation is marked complete.
+    b.  Ensure `progress.md` has a comprehensive log.
+    c.  Use `edit_file` to update `memory-bank/activeContext.md`: "Level 4 Phased Implementation for [System Name] complete. Ready for REFLECT mode."
+    d.  State: "Level 4 system [System Name] phased implementation complete. All phases and tests passed. Recommend REFLECT mode."
+    e.  (Control returns to the fetching rule).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level4/reflection-comprehensive.mdc",
+    "description": "Comprehensive reflection for Level 4 (Complex System) tasks. Guides AI to create an extensive reflection document in `memory-bank/reflection/` using `edit_file`.",
+    "globs": "**/Level4/reflection-comprehensive.mdc",
+    "alwaysApply": False,
+    "body": """
+# COMPREHENSIVE REFLECTION FOR LEVEL 4 TASKS (AI Instructions)
+
+> **TL;DR:** This rule structures the comprehensive reflection process for a completed Level 4 (Complex System) task. Use `edit_file` to create an extensive `memory-bank/reflection/reflect-[system_name_or_id]-[date].md` document, analyzing all aspects of the project lifecycle.
+
+This rule is typically fetched by the REFLECT mode orchestrator if the task is L4.
+
+## ⚙️ AI ACTIONS FOR LEVEL 4 COMPREHENSIVE REFLECTION:
+
+1.  **Acknowledge & Extensive Context Gathering:**
+    a.  State: "Initiating Comprehensive Reflection for Level 4 system: [System Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` (for the entire L4 task history, architectural plans, links to creative docs, phased implementation details).
+    c.  `read_file memory-bank/progress.md` (for the full development log, challenges, decisions).
+    d.  `read_file` all relevant `memory-bank/architecture/`, `memory-bank/creative/` documents.
+    e.  `read_file memory-bank/projectbrief.md`, `productContext.md`, `systemPatterns.md`, `techContext.md`.
+    f.  `read_file memory-bank/activeContext.md` to confirm implementation is marked complete.
+2.  **Prepare Reflection Content (Based on Detailed Template Below):**
+    a.  Synthesize information from all gathered documents. Analyze each phase of the L4 workflow (VAN, Plan (Arch), Creative, Phased Implement).
+3.  **Create Reflection File:**
+    a.  Determine reflection filename: `reflect-[system_name_or_id]-[date].md`.
+    b.  Use `edit_file` to create/update `memory-bank/reflection/[reflection_filename.md]` with the structured content.
+        **L4 Comprehensive Reflection Structure (Content for `edit_file`):**
+        ```markdown
+        # System Reflection: [System Name from tasks.md]
+
+        ## System ID: [System ID from tasks.md]
+        ## Date of Reflection: [Current Date]
+        ## Complexity Level: 4
+
+        ## 1. System Overview & Final State
+        - **Original Purpose & Scope:** [From `projectbrief.md` / initial `tasks.md`]
+        - **Achieved Functionality:** [Describe the final state of the system and its key features.]
+        - **Alignment with Business Objectives:** [How well did the final system meet the business goals?]
+
+        ## 2. Project Performance Analysis
+        - **Timeline Performance:**
+          - Planned vs. Actual Duration (Overall and per phase): [Details]
+          - Reasons for major variances: [Analysis]
+        - **Resource Utilization (if tracked):** [Planned vs. Actual]
+        - **Quality Metrics (if defined):** [How did the project fare against quality targets? E.g., bug density, test coverage achieved.]
+        - **Risk Management Effectiveness:** [Were identified risks managed well? Any unforeseen major risks?]
+
+        ## 3. Architectural Planning & Design Phase Review
+        - **Effectiveness of Architectural Plan:** [Review `Level4/architectural-planning.mdc` outputs. Were decisions sound? Did the architecture scale/perform as expected?]
+        - **Creative Phase Outcomes:** [Review key `creative-*.md` documents. How well did designs translate to implementation? Any design flaws discovered late?]
+        - **Adherence to Architectural Principles & Patterns:** [From `systemPatterns.md` and arch plan.]
+
+        ## 4. Phased Implementation Review (`Level4/phased-implementation.mdc`)
+        - **Foundation Phase:** [Successes, challenges]
+        - **Core Phase:** [Successes, challenges]
+        - **Extension Phase(s):** [Successes, challenges]
+        - **Integration Phase:** [Successes, challenges, integration issues]
+        - **Finalization Phase:** [Successes, challenges]
+        - **Overall Implementation Challenges & Solutions:** [Major hurdles and how they were overcome.]
+
+        ## 5. Testing & Quality Assurance Review
+        - **Effectiveness of Testing Strategy:** [Unit, integration, system, UAT. Were tests comprehensive? Did they catch critical issues?]
+        - **Test Automation:** [Successes, challenges with test automation.]
+        - **Post-Release Defect Rate (if applicable/known):**
+
+        ## 6. Achievements and Successes (Overall Project)
+        [List 3-5 significant achievements or successes beyond just feature completion.]
+        - Achievement 1: [e.g., Successful integration of a complex new technology.]
+        - Achievement 2: [e.g., High team collaboration leading to rapid problem-solving.]
+
+        ## 7. Major Challenges & How They Were Addressed (Overall Project)
+        [List 3-5 major challenges encountered throughout the project and their resolutions.]
+        - Challenge 1: [e.g., Unexpected performance bottlenecks in Service X.]
+          - Resolution: [e.g., Re-architected data flow and implemented caching.]
+
+        ## 8. Key Lessons Learned
+        ### 8.1. Technical Lessons
+        [Deep technical insights, e.g., "Using GraphQL for this specific data aggregation pattern proved highly effective because..."]
+        ### 8.2. Architectural Lessons
+        [e.g., "The decision to use event sourcing for X module added complexity but significantly improved auditability..."]
+        ### 8.3. Process & Workflow Lessons (CMB Usage)
+        [e.g., "The phased implementation approach for L4 was crucial for managing complexity. More detailed upfront planning for inter-service contracts would have been beneficial."]
+        ### 8.4. Team & Collaboration Lessons
+        [e.g., "Regular cross-functional syncs for API design were vital."]
+
+        ## 9. Strategic Actions & Recommendations
+        ### 9.1. For This System (Maintenance, Future Enhancements)
+        [e.g., "Recommend refactoring Module Y for better testability in Q3."]
+        ### 9.2. For Future L4 Projects (Process, Tools, Architecture)
+        [e.g., "Adopt a more formal ADR process for all L4 architectural decisions."]
+        [e.g., "Invest in better performance testing tools earlier in the lifecycle."]
+
+        ## 10. Knowledge Transfer Summary
+        - Key areas of knowledge to transfer: [e.g., Service Z's deployment intricacies, Data model for Module A.]
+        - Suggested methods for transfer: [e.g., Update `documentation/`, conduct team workshops.]
+
+        ## 11. Final Assessment
+        [Overall summary of the project's execution, outcomes, and strategic value.]
+        ```
+4.  **Update Core Memory Bank Files (using `edit_file`):**
+    a.  **`tasks.md`:**
+        *   Mark the Level 4 system's REFLECT phase as "COMPLETE".
+        *   Add a link to the reflection document: `Reflection: ../reflection/[reflection_filename.md]`.
+    b.  **`activeContext.md`:**
+        *   Update current focus: "Comprehensive reflection complete for L4 system [System Name]. Ready for ARCHIVE."
+        *   Add to log: "Completed comprehensive reflection for L4 system [System Name]. Document at `reflection/[reflection_filename.md]`."
+5.  **Completion:**
+    a.  State: "Comprehensive reflection for Level 4 system [System Name] complete. Reflection document created at `memory-bank/reflection/[reflection_filename.md]`."
+    b.  (Control returns to the fetching rule).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level4/task-tracking-advanced.mdc",
+    "description": "Advanced task tracking for Level 4 (Complex System) tasks. Guides AI to structure `tasks.md` with detailed hierarchy, dependencies, milestones, risks, and progress visualization using `edit_file`.",
+    "globs": "**/Level4/task-tracking-advanced.mdc",
+    "alwaysApply": False,
+    "body": """
+# ADVANCED TASK TRACKING FOR LEVEL 4 TASKS (AI Instructions)
+
+> **TL;DR:** This rule outlines a comprehensive task tracking approach for Level 4 (Complex System) tasks. Use `edit_file` to structure `memory-bank/tasks.md` with a detailed hierarchy (System > Component > Feature > Task > Subtask), explicit dependencies, milestones, risk register, resource allocation, and progress visualizations (textual descriptions).
+
+This rule is typically fetched by the PLAN mode orchestrator (`Level4/workflow-level4.mdc` will fetch this as part of architectural planning).
+
+## ⚙️ AI ACTIONS FOR LEVEL 4 ADVANCED TASK TRACKING (Structuring `tasks.md`):
+
+1.  **Acknowledge & Context:**
+    a.  State: "Applying Advanced Task Tracking for Level 4 system: [System Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` (to establish or update the L4 system entry).
+    c.  This rule works in conjunction with `Level4/architectural-planning.mdc`. The architectural plan will define many of the components and features.
+2.  **Establish/Update L4 System Entry in `tasks.md` (using `edit_file`):**
+    a.  Ensure the main entry for the L4 system in `memory-bank/tasks.md` is structured to accommodate advanced tracking details.
+
+        **Comprehensive L4 Task Structure (Main Sections in `tasks.md` for the L4 System):**
+        ```markdown
+        # System: [System-ID: System Name, e.g., L4-001: Enterprise Resource Planning System]
+
+        - **Overall Status:** [e.g., IN_PROGRESS_PLANNING, PENDING_ARCH_REVIEW, IN_PROGRESS_IMPLEMENT_FOUNDATION_PHASE, etc.]
+        - **Complexity Level:** 4
+        - **Lead Architect/Team (if known):** [User may specify]
+        - **Target Go-Live Date (Optional):** [User may specify]
+        - **Links:**
+            - Project Brief: `../projectbrief.md`
+            - Architectural Plan: `../architecture/system-[System_Name]-arch-plan-[date].md` (or relevant section in this tasks.md)
+            - Comprehensive Reflection: (Link when created)
+            - Comprehensive Archive: (Link when created)
+
+        ## 1. System Overview & Goals
+        [Brief summary from architectural plan or project brief.]
+
+        ## 2. Key Milestones
+        [List major project milestones with target dates and status. Update as project progresses.]
+        - [ ] MILE-01: Architectural Plan Approved - Target: [YYYY-MM-DD] - Status: [PENDING/COMPLETE]
+        - [ ] MILE-02: Foundation Phase Complete - Target: [YYYY-MM-DD] - Status: [PENDING/COMPLETE]
+        - [ ] MILE-03: Core Services Implemented & Tested - Target: [YYYY-MM-DD] - Status: [PENDING/COMPLETE]
+        - ...
+        - [ ] MILE-XX: System Go-Live - Target: [YYYY-MM-DD] - Status: [PENDING/COMPLETE]
+
+        ## 3. Work Breakdown Structure (WBS) - Components & Features
+        [This section will detail Components, their Features, and then Tasks/Sub-tasks. Update iteratively as planning and implementation proceed.]
+
+        ### 3.1. Component: [COMP-ID-A: Component A Name, e.g., User Management Service]
+        - **Purpose:** [Brief description]
+        - **Status:** [PLANNING/IN_PROGRESS/COMPLETED]
+        - **Lead (if applicable):**
+        - **Dependencies (other components):** [e.g., COMP-ID-B: Authentication Service]
+
+        #### 3.1.1. Feature: [FEAT-ID-A1: Feature A1 Name, e.g., User Registration]
+        - **Description:** [Detailed description]
+        - **Status:** [PLANNING/PENDING_CREATIVE/IN_PROGRESS_IMPL/COMPLETED]
+        - **Priority:** [Critical/High/Medium/Low]
+        - **Quality Criteria:** [Specific acceptance criteria]
+        - **Creative Docs (if any):** `../../creative/creative-[Feature_A1_aspect]-[date].md`
+
+        ##### Tasks for Feature A1:
+        - [ ] TASK-A1.1: [Detailed task description] - Status: [TODO/WIP/DONE] - Assignee: [AI/User] - Est. Effort: [e.g., 2d]
+          - Sub-tasks:
+            - [ ] SUB-A1.1.1: [Sub-task description]
+            - [ ] SUB-A1.1.2: [Sub-task description]
+          - Dependencies: [e.g., TASK-B2.3]
+          - Risks: [Brief risk note]
+        - [ ] TASK-A1.2: [...]
+
+        #### 3.1.2. Feature: [FEAT-ID-A2: Feature A2 Name, e.g., Profile Update]
+        [...]
+
+        ### 3.2. Component: [COMP-ID-B: Component B Name, e.g., Authentication Service]
+        [...]
+
+        ## 4. System-Wide Tasks (Cross-Cutting Concerns)
+        [Tasks that span multiple components, e.g., setting up CI/CD, defining logging standards.]
+        - [ ] SYS-TASK-01: Establish CI/CD Pipeline - Status: [...]
+        - [ ] SYS-TASK-02: Define System-Wide Logging Strategy - Status: [...]
+
+        ## 5. Dependency Matrix (High-Level Inter-Component/Inter-Feature)
+        [Summarize critical dependencies. Detailed task dependencies are within WBS.]
+        - Feature A1 (COMP-A) depends on Core Auth API (COMP-B).
+        - Component C integration requires completion of Feature B2 (COMP-B).
+
+        ## 6. Risk Register
+        [Track major system-level risks. Task-specific risks can be in WBS.]
+        | ID      | Risk Description                     | Probability | Impact | Mitigation Strategy                      | Status    |
+        |---------|--------------------------------------|-------------|--------|------------------------------------------|-----------|
+        | RISK-01 | Scalability of notification service  | Medium      | High   | Load testing, optimize message queue     | OPEN      |
+        | RISK-02 | Integration with legacy System X     | High        | Medium | Develop anti-corruption layer, mock tests | MITIGATED |
+
+        ## 7. Resource Allocation Overview (Optional - User Managed)
+        [High-level notes on team allocation if provided by user.]
+
+        ## 8. Progress Visualization (Textual - AI describes, user might visualize)
+        - **Overall System Progress (Conceptual):** [e.g., "Estimated 20% complete based on milestone tracking."]
+        - **Component Progress (Conceptual):**
+          - User Management Service: [e.g., "Foundation built, registration feature in progress."]
+          - Authentication Service: [e.g., "Core APIs complete, awaiting integration."]
+
+        ## 9. Latest Updates & Decisions Log
+        [Chronological log of major updates, decisions, or changes to the plan. More detailed logs go in `progress.md`.]
+        - [Date]: Architectural decision ADR-003 (Data Storage) finalized.
+        - [Date]: Milestone MILE-01 (Arch Plan Approved) completed.
+        ```
+3.  **Iterative Updates:**
+    a.  This `tasks.md` structure for L4 is a living document. As the project progresses through architectural planning, creative phases, and phased implementation, use `edit_file` to:
+        *   Add/refine components, features, tasks, and sub-tasks.
+        *   Update statuses and progress percentages.
+        *   Mark milestones as complete.
+        *   Log new risks or update existing ones.
+        *   Record key decisions in the "Latest Updates" section.
+4.  **Log Update:**
+    a.  Use `edit_file` to add a note to `memory-bank/activeContext.md`:
+        `[Timestamp] - Advanced task tracking structure for L4 system [System Name] established/updated in tasks.md.`
+5.  **Completion (of this rule's execution):**
+    a.  State: "Advanced task tracking structure for Level 4 system [System Name] applied to `tasks.md`. This document will be updated throughout the project lifecycle."
+    b.  (Control returns to the PLAN mode orchestrator / L4 Workflow orchestrator).
+"""
+},
+{
+    "path": ".cursor/rules/isolation_rules/Level4/workflow-level4.mdc",
+    "description": "Orchestrates the comprehensive workflow for Level 4 (Complex System) tasks, guiding AI through all 7 CMB modes by fetching specific L4 and Core rules.",
+    "globs": "**/Level4/workflow-level4.mdc",
+    "alwaysApply": False,
+    "body": """
+# COMPREHENSIVE WORKFLOW FOR LEVEL 4 TASKS (AI Instructions)
+
+> **TL;DR:** This rule orchestrates the full, comprehensive workflow for Level 4 (Complex System) tasks. It guides the AI through all 7 CMB modes (Initialization, Documentation Setup, Architectural Planning, Creative Phases, Phased Implementation, Reflection, and Archiving) by fetching specific L4 and Core rules.
+
+This workflow is typically fetched after VAN mode has confirmed the task as Level 4.
+
+## 🧭 LEVEL 4 WORKFLOW PHASES (AI Actions)
+
+### Phase 1: INITIALIZATION (Confirmation & Deep Context)
+1.  **Acknowledge & Confirm L4:**
+    a.  State: "Initiating Level 4 Workflow for system: [System Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` and `memory-bank/activeContext.md` to confirm task is Level 4 and gather initial high-level scope.
+2.  **Core Setup Verification (Crucial for L4):**
+    a.  Ensure platform awareness: `fetch_rules` for `.cursor/rules/isolation_rules/Core/platform-awareness.mdc`.
+    b.  Ensure Memory Bank structure: `fetch_rules` for `.cursor/rules/isolation_rules/Core/file-verification.mdc`.
+3.  **Task Framework & Enterprise Context:**
+    a.  Verify `tasks.md` has a main entry for this L4 system.
+    b.  `edit_file memory-bank/activeContext.md` to set focus: "Focus: L4 System - [System Name] - Initializing & Documentation Setup."
+    c.  (User might provide initial enterprise context, or AI might need to synthesize from `projectbrief.md`).
+4.  **Milestone:** State "L4 Initialization complete. Proceeding to Documentation Setup."
+
+### Phase 2: DOCUMENTATION SETUP (L4 Comprehensive)
+1.  **Load Comprehensive Templates (Conceptual):** AI should be aware of the need for detailed documentation.
+2.  **Update Core Memory Bank Files:**
+    a.  Use `edit_file` to extensively update/populate:
+        *   `memory-bank/projectbrief.md` (detailed system description, goals, scope).
+        *   `memory-bank/productContext.md` (business drivers, stakeholders, market needs).
+        *   `memory-bank/systemPatterns.md` (any known enterprise patterns to adhere to, or placeholder for new patterns).
+        *   `memory-bank/techContext.md` (existing tech landscape, constraints, preferred stack).
+3.  **Establish Documentation Framework:**
+    a.  If not already present, use `run_terminal_cmd` to create `memory-bank/architecture/` and `memory-bank/architecture/adrs/` directories.
+4.  **Milestone:** State "L4 Documentation Setup complete. Proceeding to Architectural Planning."
+
+### Phase 3: ARCHITECTURAL PLANNING (PLAN Mode Actions for L4)
+1.  **Fetch L4 Planning Rules:**
+    a.  State: "Fetching Level 4 architectural planning and advanced task tracking guidelines."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/Level4/task-tracking-advanced.mdc`. (This sets up the detailed structure in `tasks.md`).
+    c.  `fetch_rules` for `.cursor/rules/isolation_rules/Level4/architectural-planning.mdc`.
+2.  **Follow Fetched Rules:**
+    a.  `task-tracking-advanced.mdc` guides structuring `tasks.md` for L4 complexity.
+    b.  `architectural-planning.mdc` guides defining the architecture (requirements, context, vision, principles, alternatives, ADRs, diagrams) within `tasks.md` or linked documents. Use `edit_file` for all documentation.
+3.  **Update Context & Recommend Next Mode:**
+    a.  `read_file memory-bank/tasks.md` (specifically the architectural plan and WBS) to identify components/features needing CREATIVE design.
+    b.  Use `edit_file` to update `memory-bank/activeContext.md`: "Architectural planning complete for L4 system [System Name]. Creative phases for [list key components/features] identified."
+    c.  State: "Level 4 Architectural Planning complete. Detailed plan and architecture documented. Recommend CREATIVE mode for designated components." Await user.
+4.  **Milestone:** Architectural Planning phase complete. Await user confirmation for CREATIVE mode.
+
+### Phase 4: CREATIVE PHASES (CREATIVE Mode Actions for L4)
+1.  **Acknowledge & Fetch Creative Orchestrator:**
+    a.  State: "Initiating CREATIVE mode for L4 system [System Name] components as per architectural plan."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/visual-maps/creative-mode-map.mdc`.
+2.  **Follow Fetched Rule (`creative-mode-map.mdc`):**
+    a.  This orchestrator will guide identifying "CREATIVE: Design..." tasks from the L4 plan in `tasks.md` and fetching specific `Phases/CreativePhase/*.mdc` rules for each.
+    b.  Ensure detailed design documents are created in `memory-bank/creative/` using `edit_file`.
+3.  **Update Context & Recommend:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md`: "Creative design phases complete for L4 system [System Name]. Ready for Phased Implementation."
+    b.  State: "Level 4 Creative phases complete. Design documents finalized. Recommend IMPLEMENT mode for phased development."
+4.  **Milestone:** Creative phase complete. Await user confirmation for IMPLEMENT mode.
+
+### Phase 5: PHASED IMPLEMENTATION (IMPLEMENT Mode Actions for L4)
+1.  **Fetch L4 Implementation Rule:**
+    a.  State: "Initiating Phased Implementation for L4 system [System Name]."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/Level4/phased-implementation.mdc`.
+2.  **Follow Fetched Rule (`phased-implementation.mdc`):**
+    a.  This rule guides defining implementation phases (Foundation, Core, Extension, Integration, Finalization) in `tasks.md`.
+    b.  For each phase, implement sub-tasks using `edit_file` for code, `run_terminal_cmd` for builds/tests.
+    c.  Perform rigorous verification at each phase gate.
+    d.  Update `tasks.md` and `progress.md` meticulously.
+3.  **Update Context & Recommend:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md`: "Phased Implementation complete for L4 system [System Name]. Ready for Comprehensive Reflection."
+    b.  State: "Level 4 Phased Implementation complete. System built and tested. Recommend REFLECT mode."
+4.  **Milestone:** Phased Implementation complete. Await user confirmation for REFLECT mode.
+
+### Phase 6: COMPREHENSIVE REFLECTION (REFLECT Mode Actions for L4)
+1.  **Fetch L4 Reflection Rule:**
+    a.  State: "Initiating Comprehensive Reflection for L4 system [System Name]."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/Level4/reflection-comprehensive.mdc`.
+2.  **Follow Fetched Rule (`reflection-comprehensive.mdc`):**
+    a.  This rule guides creating an extensive reflection document in `memory-bank/reflection/` using `edit_file`, analyzing all project aspects (performance, architecture, process, lessons, strategic actions).
+3.  **Update Context & Recommend:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md`: "Comprehensive Reflection complete for L4 system [System Name]. Ready for Archiving."
+    b.  State: "Level 4 Comprehensive Reflection complete. Reflection document created. Recommend ARCHIVE mode."
+4.  **Milestone:** Reflection phase complete. Await user confirmation for ARCHIVE mode.
+
+### Phase 7: COMPREHENSIVE ARCHIVING (ARCHIVE Mode Actions for L4)
+1.  **Fetch L4 Archiving Rule:**
+    a.  State: "Initiating Comprehensive Archiving for L4 system [System Name]."
+    b.  `fetch_rules` for `.cursor/rules/isolation_rules/Level4/archive-comprehensive.mdc`.
+2.  **Follow Fetched Rule (`archive-comprehensive.mdc`):**
+    a.  This rule guides creating a detailed system archive document in `memory-bank/archive/` (or `documentation/`) using `edit_file`, consolidating all project artifacts and knowledge.
+    b.  Update `tasks.md` marking the L4 system ARCHIVED.
+3.  **Finalize Context:**
+    a.  Use `edit_file` to update `memory-bank/activeContext.md`: "L4 System [System Name] comprehensively archived. Memory Bank ready for new top-level task (VAN mode)."
+4.  **Milestone:** State "Level 4 System [System Name] fully completed and archived. Recommend VAN mode for new system/project."
+"""
+}
+# --- End of Level 4 Files ---
     ])
 
     if not MDC_FILES_DATA:

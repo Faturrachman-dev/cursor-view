@@ -1,188 +1,64 @@
 ---
-description: Basic task tracking for Level 2 Simple Enhancement tasks
-globs: "**/level2/**", "**/tracking/**", "**/task/**"
+description: Basic task tracking for Level 2 (Simple Enhancement) tasks. Guides AI to structure `tasks.md` using `edit_file`.
+globs: **/Level2/task-tracking-basic.mdc
 alwaysApply: false
 ---
+# BASIC TASK TRACKING FOR LEVEL 2 (AI Instructions)
 
-# BASIC TASK TRACKING FOR LEVEL 2
+> **TL;DR:** This rule outlines a streamlined task tracking approach for Level 2 (Simple Enhancement) tasks. Use `edit_file` to update `memory-bank/tasks.md` with the defined structure.
 
-> **TL;DR:** This document outlines a streamlined task tracking approach for Level 2 (Simple Enhancement) tasks. It provides a balanced framework for managing task progress with minimal overhead.
+This rule is typically fetched by the PLAN mode orchestrator when a task is identified as Level 2.
 
-## 🔍 TASK TRACKING OVERVIEW
+## ⚙️ AI ACTIONS FOR LEVEL 2 TASK TRACKING (Updating `tasks.md`):
 
-Level 2 tasks require a more structured tracking approach than Level 1, but don't need the comprehensive tracking of higher-level tasks. This basic tracking system provides sufficient structure while maintaining efficiency.
+1.  **Acknowledge & Context:**
+    a.  State: "Applying Basic Task Tracking for Level 2 task: [Task Name from activeContext.md]."
+    b.  `read_file memory-bank/tasks.md` to locate the existing entry for this task (likely created minimally by VAN mode).
+2.  **Update Task Entry in `tasks.md` (using `edit_file`):**
+    a.  Ensure the task entry in `memory-bank/tasks.md` includes the following sections. If the task entry is new or minimal, create/populate these sections. If it exists, update them.
 
-## 📋 TASK TRACKING PRINCIPLES
+        **Task Structure for Level 2 (Content for `edit_file` on `tasks.md`):**
+        ```markdown
+        ## Task: [Task Name/ID - e.g., L2-001: Enhance User Profile Page]
 
-1. **Clarity**: Tasks should be clearly defined
-2. **Visibility**: Progress should be visible at a glance
-3. **Structure**: Break work into logical subtasks
-4. **Updates**: Keep progress regularly updated
-5. **Completion**: Clearly mark when tasks are done
+        - **Status:** IN_PROGRESS_PLANNING (or update as planning proceeds)
+        - **Priority:** [High/Medium/Low - user may specify, or default to Medium]
+        - **Estimated Effort:** [Small/Medium - L2 tasks are generally not Large]
+        - **Complexity Level:** 2
+        - **Assigned To:** AI
 
-## 📋 TASK STRUCTURE FOR LEVEL 2
+        ### 1. Description
+        [Brief description of the enhancement. What is the goal? What user problem does it solve? Synthesize from user request or `projectbrief.md`.]
 
-```markdown
-## [Feature Name] Enhancement
+        ### 2. Requirements / Acceptance Criteria
+        [List 2-5 clear, testable requirements or acceptance criteria for the enhancement.]
+        - [ ] Requirement 1: [e.g., User can upload a profile picture.]
+        - [ ] Requirement 2: [e.g., Uploaded picture is displayed on the profile page.]
+        - [ ] Requirement 3: [e.g., Error message shown if upload fails.]
 
-**Status**: [Not Started/In Progress/Complete]
-**Priority**: [High/Medium/Low]
-**Estimated Effort**: [Small/Medium/Large]
+        ### 3. Sub-tasks (Implementation Steps)
+        [Break the enhancement into 3-7 high-level sub-tasks. These are for planning and will be checked off during IMPLEMENT mode.]
+        - [ ] Sub-task 1: [e.g., Add file input field to profile form.]
+        - [ ] Sub-task 2: [e.g., Implement backend endpoint for image upload.]
+        - [ ] Sub-task 3: [e.g., Store image reference in user model.]
+        - [ ] Sub-task 4: [e.g., Display uploaded image on profile page.]
+        - [ ] Sub-task 5: [e.g., Add basic error handling for upload.]
+        - [ ] Sub-task 6: [e.g., Write unit tests for upload endpoint.]
+        - [ ] Sub-task 7: [e.g., Manual test of upload and display.]
 
-### Description
-[Brief description of the enhancement]
+        ### 4. Dependencies (If any)
+        [List any other tasks, modules, or external factors this enhancement depends on. For L2, these should be minimal.]
+        - Dependency 1: [e.g., User authentication module must be functional.]
 
-### Requirements
-- [Requirement 1]
-- [Requirement 2]
-- [Requirement 3]
+        ### 5. Notes
+        [Any additional brief notes, context, or links relevant to planning this enhancement.]
+        - [e.g., Max image size should be 2MB.]
+        ```
+3.  **Log Update:**
+    a.  Use `edit_file` to add a note to `memory-bank/activeContext.md`:
+        `[Timestamp] - Updated `tasks.md` with detailed plan for L2 task: [Task Name].`
+4.  **Completion:**
+    a.  State: "Basic task tracking structure applied to `tasks.md` for Level 2 task [Task Name]."
+    b.  (Control returns to the PLAN mode orchestrator, which will then typically recommend CREATIVE (if any minor design needed and flagged) or IMPLEMENT mode).
 
-### Subtasks
-- [ ] [Subtask 1]
-- [ ] [Subtask 2]
-- [ ] [Subtask 3]
-
-### Dependencies
-- [Dependency 1]
-- [Dependency 2]
-
-### Notes
-[Any additional information or context]
-```
-
-## 📋 TASKS.MD ORGANIZATION
-
-Organize tasks.md with these sections for Level 2 tasks:
-
-```markdown
-# Tasks
-
-## Active Enhancements
-- [Enhancement 1] - [Status]
-- [Enhancement 2] - [Status]
-
-## Enhancement Details
-### [Enhancement 1]
-[Task structure as above]
-
-### [Enhancement 2]
-[Task structure as above]
-
-## Completed Enhancements
-- [X] [Completed Enhancement 1] (YYYY-MM-DD)
-- [X] [Completed Enhancement 2] (YYYY-MM-DD)
-```
-
-## 📋 UPDATING TASK STATUS
-
-Update tasks using this process:
-
-1. **Starting a Task**:
-   - Update Status to "In Progress"
-   - Add start date to Notes
-
-2. **Progress Updates**:
-   - Check off subtasks as completed
-   - Add brief notes about progress
-   - Update any changed requirements
-
-3. **Completing a Task**:
-   - Update Status to "Complete"
-   - Check off all subtasks
-   - Move to Completed Enhancements
-   - Add completion date
-
-## 📋 SUBTASK MANAGEMENT
-
-For Level 2 tasks, subtasks should:
-
-1. Be actionable and specific
-2. Represent approximately 30-60 minutes of work
-3. Follow a logical sequence
-4. Be updated as soon as completed
-5. Include verification steps
-
-Example of well-structured subtasks:
-```markdown
-### Subtasks
-- [ ] Review existing implementation of related features
-- [ ] Create draft UI design for new button
-- [ ] Add HTML structure for new component
-- [ ] Implement button functionality in JavaScript
-- [ ] Add appropriate styling in CSS
-- [ ] Add event handling
-- [ ] Test on desktop browsers
-- [ ] Test on mobile browsers
-- [ ] Update user documentation
-```
-
-## 📋 PROGRESS VISUALIZATION
-
-Use progress indicators to show status:
-
-```markdown
-### Progress
-[###-------] 30% Complete
-```
-
-For subtasks:
-```markdown
-### Subtasks (3/10 Complete)
-- [X] Subtask 1
-- [X] Subtask 2
-- [X] Subtask 3
-- [ ] Subtask 4
-- [ ] Subtask 5
-```
-
-## 📋 TRACKING VERIFICATION CHECKLIST
-
-```
-✓ TASK TRACKING VERIFICATION
-- Task clearly defined? [YES/NO]
-- Requirements listed? [YES/NO]
-- Subtasks created? [YES/NO]
-- Dependencies identified? [YES/NO]
-- Status up-to-date? [YES/NO]
-
-→ If all YES: Task tracking is adequate
-→ If any NO: Update task tracking
-```
-
-## 📋 MINIMAL MODE TRACKING
-
-For minimal mode, use this format:
-
-```
-✓ TASK: [Enhancement name]
-✓ STATUS: [In Progress/Complete]
-✓ SUBTASKS: [X/Y Complete]
-✓ NEXT: [Next action]
-```
-
-## 🔄 INTEGRATION WITH MEMORY BANK
-
-Task tracking integrates with Memory Bank:
-
-```mermaid
-graph TD
-    TasksFile["tasks.md"] --> Active["activeContext.md"]
-    TasksFile --> Progress["progress.md"]
-    
-    Active -->|"Current focus"| TasksFile
-    Progress -->|"Completion status"| TasksFile
-```
-
-## 🚨 TASKS.MD PRIMACY PRINCIPLE
-
-Remember:
-
-```
-┌─────────────────────────────────────────────────────┐
-│ tasks.md is the SINGLE SOURCE OF TRUTH for ALL      │
-│ task tracking. ALL task updates MUST be reflected   │
-│ in tasks.md IMMEDIATELY.                            │
-└─────────────────────────────────────────────────────┘
-```
-
-This ensures everyone has visibility into current task status at all times. 
+**Key Principle:** For L2 tasks, `tasks.md` should provide a clear, actionable plan without excessive detail. Sub-tasks guide implementation.
