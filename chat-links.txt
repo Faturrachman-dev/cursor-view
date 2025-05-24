@@ -1,2 +1,2 @@
 grok=https://grok.com/chat/91447139-b024-42ed-b3ca-41ee71f156dd implementations
-gemini=https://aistudio.google.com/prompts/11sBYNUOLV33uAxUwOqHVV53Mv2K_qUdb improvements
+gemini=https://aistudio.google.com/prompts/1Yjlmt2IbOFxQuEQo_XFN1dv06yg6p_0A improvements
