@@ -34,8 +34,19 @@ Cursor View is a local tool to view, search, and export all your Cursor AI chat 
 - View timestamps of conversations
 - Properly rendered code blocks with syntax highlighting
 - Support for multiple programming languages in code blocks
+- Delete chat sessions from history
 
-## About Code Block Support ( faturrachman-dev forks 14-05-2025 )
+## Recent Improvements (26-05-2025)
+
+The following improvements have been made to enhance the application:
+
+1. **Fixed Delete Chat Functionality**: Users can now successfully delete chat sessions from the history without encountering 404 errors.
+2. **Fixed JSON Export**: Resolved issues with exporting chats as JSON format.
+3. **Improved Error Handling**: Added detailed logging for better debugging and troubleshooting.
+4. **Consistent API Endpoints**: Standardized the way session IDs are accessed across all API endpoints.
+5. **Enhanced Documentation**: Added comprehensive documentation for server.py including API endpoints and database structure.
+
+## About Code Block Support (26-05-2025)
 
 Cursor View now properly extracts and displays code blocks from your Cursor chat conversations. The application:
 
