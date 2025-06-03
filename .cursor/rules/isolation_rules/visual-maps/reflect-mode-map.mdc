@@ -36,8 +36,14 @@ alwaysApply: false
         viii. **Code Quality/Maintainability Assessment (if applicable).**
     b.  Use `edit_file` to meticulously populate the reflection document.
     c.  Update `memory-bank/activeContext.md` with notes like "Reflection in progress for [task_name]."
-5.  **Notify Completion:**
+5.  **Notify Completion & Prompt for Archiving:**
     a.  Once the reflection document is complete as per the fetched rule, state: "REFLECTION COMPLETE for task [task_name]. Reflection document created/updated at `memory-bank/reflection/reflect-[task_name_or_id]-[date].md`."
     b.  Use `edit_file` to update `memory-bank/tasks.md`, marking the REFLECT phase as complete for the task.
     c.  Use `edit_file` to update `memory-bank/activeContext.md`: "Reflection phase complete for [task_name]. Ready for ARCHIVE mode."
-    d.  Recommend: "Recommend transitioning to ARCHIVE mode to finalize and store task documentation." Await user.
+    d.  **State:** "Type 'ARCHIVE NOW' to proceed with archiving this task."
+    e.  **Await User Command:** Wait for the user to type `ARCHIVE NOW`.
+        *   **If user types `ARCHIVE NOW`:**
+            i.  State: "OK, proceeding with ARCHIVE process for [Task Name]."
+            ii. `fetch_rules` for `.cursor/rules/isolation_rules/visual-maps/archive-mode-map.mdc`.
+            iii. (The `archive-mode-map.mdc` will then take over the archiving process).
+        *   **If user types anything else / no command:** Continue to await `ARCHIVE NOW` or further instruction.

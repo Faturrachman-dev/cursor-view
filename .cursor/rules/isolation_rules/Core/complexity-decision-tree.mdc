@@ -5,20 +5,166 @@ alwaysApply: false
 ---
 # TASK COMPLEXITY DETERMINATION
 
-> **TL;DR:** This rule guides you to determine task complexity (Level 1-4). Based on the level, you will then be instructed to `fetch_rules` for the corresponding primary mode map.
+> **TL;DR:** This rule guides you to determine the appropriate complexity level (1-4) for the current task. Based on the level, you will then be instructed to `fetch_rules` for the corresponding primary mode map (e.g., for PLAN or IMPLEMENT).
 
 ## 🌳 COMPLEXITY DECISION TREE (Conceptual for AI)
-**Textual Guide for AI:**
-Based on user's request and initial analysis (e.g., from `read_file` on `README.md`):
 
-1.  **Bug fix/error correction?**
-    *   **Yes:** Single, isolated component? -> **Level 1 (Quick Bug Fix)**
-    *   **Yes:** Multiple components, straightforward fix? -> **Level 2 (Simple Enhancement/Refactor)**
-    *   **Yes:** Complex interactions, architectural impact? -> **Level 3 (Intermediate Feature/Bug)**
-    *   **No (new feature/enhancement):**
-        *   Small, self-contained addition? -> **Level 2 (Simple Enhancement)**
-        *   Complete new feature, multiple components, needs design? -> **Level 3 (Intermediate Feature)**
-        *   System-wide, major subsystem, deep architectural design? -> **Level 4 (Complex System)**
+This decision tree guides you through determining the complexity level of a new task.
+
+**Decision Flow:**
+1.  **Start: New Task**
+2.  **Is it a bug fix or error correction?**
+    *   If "Yes":
+        *   "Affects single file, simple fix, < 30 min coding, no design decisions?":
+            *   If "Yes": **Level 1 (Quick Bug Fix)**
+            *   If "No": "Affects multiple files/components, requires minor analysis, up to 1 day effort?":
+                *   If "Yes": **Level 2 (Simple Bug Fix/Refinement)**
+                *   If "No": "Requires significant analysis, architectural impact, or deep iteration on medium-large codebase?":
+                    *   If "Yes": **Level 3 (Intermediate Bug Fix/Feature)**
+                    *   If "No": (Default to Level 3 if complex bug, but not L4 system-wide)
+    *   If "No": (It's a new feature or enhancement)
+        *   "Is it a small, self-contained addition to an existing component, up to 1 day effort?":
+            *   If "Yes": **Level 2 (Simple Enhancement)**
+            *   If "No": "Is it a new feature involving multiple components, requiring design decisions, or deep iteration on a medium-large codebase?":
+                *   If "Yes": **Level 3 (Intermediate Feature)**
+                *   If "No": "Is it a system-wide change, new major subsystem, or building a new program from scratch on a very large/enterprise codebase?":
+                    *   If "Yes": **Level 4 (Complex System/Enterprise)**
+                    *   If "No": (Default to Level 3 if complex feature, but not L4 systemic)
+
+**Textual Guide for AI:**
+Based on the user's request and your initial analysis (e.g., from reading `README.md` or a high-level task description):
+
+1.  **Is the task primarily a bug fix or error correction?**
+    *   **Yes:**
+        *   Does it affect only a single file, is the fix immediately apparent (e.g., typo, simple logic error), takes less than 30 minutes of direct coding, and requires no design decisions or new dependencies? -> **Level 1 (Quick Bug Fix)**
+        *   Does it affect multiple files/components, require some minor analysis, and is expected to take up to 1 day of effort? -> **Level 2 (Simple Bug Fix/Refinement)**
+        *   Does it require significant analysis, potentially impact architecture, involve deep iteration, or is on a medium-large codebase (e.g., open-source project)? -> **Level 3 (Intermediate Bug Fix/Feature)**
+    *   **No (likely a new feature or enhancement):**
+        *   Is it a small, self-contained addition or modification to an existing component, expected to take up to 1 day of effort? -> **Level 2 (Simple Enhancement)**
+        *   Is it a complete new feature involving multiple new/existing components, requiring design decisions, deep iteration, or is on a medium-large codebase (e.g., open-source project)? -> **Level 3 (Intermediate Feature)**
+        *   Is it a system-wide change, a new major subsystem, or building a new program/application from scratch, especially on a very large codebase (e.g., enterprise application)? -> **Level 4 (Complex System/Enterprise)**
+
+## 📊 COMPLEXITY LEVEL INDICATORS (Refined)
+
+Use these indicators to help determine task complexity:
+
+### Level 1: Quick Bug Fix
+-   **Description:** Easy and fast bug fix, typically involving a single file modification.
+-   **Keywords:** "fix typo", "correct variable", "small error", "UI alignment", "broken link", "hotfix".
+-   **Scope:** Single file, isolated function, minor UI element.
+-   **Effort/Time:** Very fast (minutes to <30 minutes direct coding).
+-   **Risk:** Very low, isolated.
+-   **Process:** Direct implementation, minimal documentation.
+
+### Level 2: Simple Enhancement / Simple Bug Fix & Refinement
+-   **Description:** Easy task or bug fix that might take longer, requiring some refinement or iteration. Adding easy, self-contained features.
+-   **Keywords:** "add simple feature", "improve validation", "update styling", "refactor small module", "fix minor bug across components".
+-   **Scope:** Single component or a few closely related files/components.
+-   **Effort/Time:** Hours to 1 day. May involve a few iterations.
+-   **Risk:** Low to moderate, contained.
+-   **Process:** Basic planning, direct implementation, basic reflection.
+
+### Level 3: Intermediate Feature / Medium-Complex Error on Medium-Large Codebase
+-   **Description:** Medium-complex task that requires comprehensive planning and may need dedicated creative design phases. Could involve initializing a new, moderately sized app/program from scratch, or fixing/modifying a complex error in an open-source or medium-large codebase.
+-   **Keywords:** "implement user auth", "create dashboard", "develop search functionality", "build user profile system", "integrate third-party API", "fix complex data flow", "refactor major module", "build new app prototype".
+-   **Scope:** Multiple components, new distinct functionality, or significant changes across a subsystem. Often involves interaction with existing systems.
+-   **Effort/Time:** Days to 1-2 weeks. Requires iterative refinement and design exploration.
+-   **Codebase Size:** Medium to large (e.g., typical open-source project, internal application).
+-   **Risk:** Moderate to significant, affects multiple areas.
+-   **Process:** Comprehensive planning, mandatory creative phases (if design needed), systematic implementation, detailed reflection, intermediate archiving.
+
+### Level 4: Complex System / Enterprise Application Modification/Fix
+-   **Description:** Highly complex task or modifying/fixing a complex error on a very large codebase, such as an enterprise application. Could involve building a new system/application from scratch that has significant architectural implications.
+-   **Keywords:** "architect new platform", "design microservices", "implement payment processing framework", "major system refactor", "integrate multiple enterprise systems", "build new application from scratch (large scale)".
+-   **Scope:** Multiple subsystems, entire application, or deep architectural redesign. System-wide impact.
+-   **Effort/Time:** Weeks to months. Requires phased implementation.
+-   **Codebase Size:** Very large (e.g., enterprise application, large-scale platform).
+-   **Risk:** High, architectural implications, potential for systemic issues.
+-   **Process:** Comprehensive planning (including architectural), multiple mandatory creative phases, phased implementation, comprehensive reflection, comprehensive archiving.
+
+## 🔍 COMPLEXITY ASSESSMENT QUESTIONS
+
+Answer these questions to determine complexity:
+
+1. **Scope Impact**
+   - How many files/components/subsystems will need to be modified or created?
+   - Are there system-wide implications or external integrations?
+   - What is the size/type of the codebase (small script, medium open-source, large enterprise)?
+
+2. **Design Decisions**
+   - Are complex design decisions required (e.g., architectural patterns, new algorithms, significant UI/UX flows)?
+   - Will it require dedicated creative phases for design exploration?
+
+3. **Risk Assessment**
+   - What is the potential impact if the task fails (e.g., data loss, downtime, security vulnerability)?
+   - Will it affect critical functionality or user experience?
+
+4. **Implementation Effort & Iteration**
+   - How long is it expected to take to implement and test thoroughly?
+   - Is significant iteration, refinement, or phased delivery anticipated?
+
+## 📊 KEYWORD ANALYSIS TABLE
+
+| Keyword | Likely Level | Notes |
+|---------|--------------|-------|
+| "Fix typo", "UI tweak" | Level 1 | Very fast, isolated |
+| "Fix small bug", "Correct variable" | Level 1 | Simple, single file |
+| "Add simple feature" | Level 2 | Self-contained, minor impact |
+| "Improve validation", "Refactor small" | Level 2 | Contained changes, some iteration |
+| "Implement user auth", "Build dashboard" | Level 3 | New functionality, multiple components, design needed |
+| "Fix complex data flow", "Refactor major" | Level 3 | Significant analysis, iterative fixes |
+| "Architect new system", "Design microservices" | Level 4 | System-wide, deep architectural changes |
+| "Build app from scratch (large)", "Enterprise integration" | Level 4 | Extensive effort, high risk, phased delivery |
+
+## 🔄 COMPLEXITY ESCALATION
+
+If during a task you discover it's more complex than initially determined:
+
+```
+⚠️ TASK ESCALATION NEEDED
+Current Level: Level [X]
+Recommended Level: Level [Y]
+Reason: [Brief explanation]
+
+Would you like me to escalate this task to Level [Y]?
+```
+
+If approved, switch to the appropriate higher-level process map.
+
+## 🎯 PROCESS SELECTION
+
+After determining complexity, load the appropriate process map:
+
+| Level | Description | Process Map |
+|-------|-------------|-------------|
+| 1 | Quick Bug Fix | `.cursor/rules/isolation_rules/Level1/workflow-level1.mdc` (or `optimized-workflow-level1.mdc`) |
+| 2 | Simple Enhancement | `.cursor/rules/isolation_rules/Level2/workflow-level2.mdc` |
+| 3 | Intermediate Feature | `.cursor/rules/isolation_rules/Level3/workflow-level3.mdc` |
+| 4 | Complex System | `.cursor/rules/isolation_rules/Level4/workflow-level4.mdc` |
+
+## 📝 COMPLEXITY DETERMINATION TEMPLATE
+
+Use this template to document complexity determination:
+
+```
+## COMPLEXITY DETERMINATION
+
+Task: [Task description]
+
+Assessment:
+- Scope: [Single file/component, Multiple files/components, Subsystem, System-wide]
+- Codebase Size: [Small (script/single app), Medium (open-source), Large (enterprise)]
+- Design decisions: [None, Simple, Moderate, Complex]
+- Risk: [Very Low, Low, Moderate, Significant, High]
+- Implementation effort: [Minutes, Hours, Days, Weeks, Months]
+- Iteration/Refinement: [None, Minor, Moderate, Extensive]
+
+Keywords identified: [List relevant keywords]
+
+Determination: Level [1/2/3/4] - [Quick Bug Fix/Simple Enhancement/Intermediate Feature/Complex System]
+
+Loading process map: [Level X Map Path]
+```
 
 ## 📝 ACTION: DOCUMENT & ANNOUNCE COMPLEXITY
 
@@ -33,5 +179,5 @@ Based on user's request and initial analysis (e.g., from `read_file` on `README.
 3.  **Update `tasks.md`:** Use `edit_file` to update `memory-bank/tasks.md` with the level, e.g., `Level 3: Implement user auth`.
 4.  **Announce & Next Step:**
     *   State: "Assessed as Level [N]: [Name]."
-    *   **Level 1:** "Proceeding with Level 1 workflow. Will `fetch_rules` for `.cursor/rules/isolation_rules/Level1/workflow-level1.mdc` (or directly to IMPLEMENT map if simple enough, e.g., `visual-maps/implement-mode-map.mdc` which might then fetch a Level 1 implement rule)."
-    *   **Level 2-4:** "Requires detailed planning. Transitioning to PLAN mode. Will `fetch_rules` for `.cursor/rules/isolation_rules/visual-maps/plan-mode-map.mdc`."
+    *   **If Level 1:** "Proceeding with Level 1 workflow. Will `fetch_rules` for `.cursor/rules/isolation_rules/Level1/workflow-level1.mdc` (or directly to IMPLEMENT map if simple enough, e.g., `visual-maps/implement-mode-map.mdc` which might then fetch a Level 1 implement rule)."
+    *   **If Level 2, 3, or 4:** "Requires detailed planning. Transitioning to PLAN mode. Will `fetch_rules` for `.cursor/rules/isolation_rules/visual-maps/plan-mode-map.mdc`."
