@@ -64,7 +64,14 @@ You will be told by `van-qa-main.mdc` whether the overall QA passed or failed, a
 
     ⚠️ BUILD MODE IS BLOCKED until these issues are resolved.
     Type 'VAN QA' after fixing the issues to re-validate.
-    ```
+    "@
+    
+    # Save validation status (used by BUILD mode prevention mechanism)
+    "FAIL" | Set-Content -Path "memory-bank\.qa_validation_status"
+    
+    return $report
+}
+```
 4.  **Present Report to User:**
     a.  Display the formatted report directly to the user in the chat.
 5.  **Update `.qa_validation_status` File:**

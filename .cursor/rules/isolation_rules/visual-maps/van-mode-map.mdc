@@ -5,190 +5,152 @@ alwaysApply: false
 ---
 # VAN MODE: INITIALIZATION PROCESS MAP
 
-> **TL;DR:** This visual map defines the VAN mode process for project initialization, task analysis, and technical validation. It guides users through platform detection, file verification, complexity determination, and technical validation to ensure proper setup before implementation.
+> **TL;DR:** This document defines the VAN mode process for project initialization, task analysis, and technical validation. It guides users through platform detection, file verification, complexity determination, and technical validation to ensure proper setup before implementation.
 
-## 🧭 VAN MODE PROCESS FLOW
+## 🧭 VAN MODE PROCESS FLOW (AI Actions)
 
-```mermaid
-graph TD
-    Start["START VAN MODE"] --> PlatformDetect["PLATFORM DETECTION"]
-    PlatformDetect --> DetectOS["Detect Operating System"]
-    DetectOS --> CheckPath["Check Path Separator Format"]
-    CheckPath --> AdaptCmds["Adapt Commands if Needed"]
-    AdaptCmds --> PlatformCP["⛔ PLATFORM CHECKPOINT"]
-    
-    %% Basic File Verification with checkpoint
-    PlatformCP --> BasicFileVerify["BASIC FILE VERIFICATION"]
-    BasicFileVerify --> BatchCheck["Batch Check Essential Components"]
-    BatchCheck --> BatchCreate["Batch Create Essential Structure"]
-    BatchCreate --> BasicFileCP["⛔ BASIC FILE CHECKPOINT"]
-    
-    %% Early Complexity Determination
-    BasicFileCP --> EarlyComplexity["EARLY COMPLEXITY DETERMINATION"]
-    EarlyComplexity --> AnalyzeTask["Analyze Task Requirements"]
-    AnalyzeTask --> EarlyLevelCheck{"Complexity Level?"}
-    
-    %% Level handling paths
-    EarlyLevelCheck -->|"Level 1"| ComplexityCP["⛔ COMPLEXITY CHECKPOINT"]
-    EarlyLevelCheck -->|"Level 2-4"| CRITICALGATE["🚫 CRITICAL GATE: FORCE MODE SWITCH"]
-    CRITICALGATE --> ForceExit["Exit to PLAN mode"]
-    
-    %% Level 1 continues normally
-    ComplexityCP --> InitSystem["INITIALIZE MEMORY BANK"]
-    InitSystem --> Complete1["LEVEL 1 INITIALIZATION COMPLETE"]
-    
-    %% For Level 2+ tasks after PLAN and CREATIVE modes
-    ForceExit -.-> OtherModes["PLAN → CREATIVE modes"]
-    OtherModes -.-> VANQA["VAN QA MODE"]
-    VANQA --> QAProcess["Technical Validation Process"]
-    QAProcess --> QACheck{"All Checks Pass?"}
-    QACheck -->|"Yes"| BUILD["To BUILD MODE"]
-    QACheck -->|"No"| FixIssues["Fix Technical Issues"]
-    FixIssues --> QAProcess
-    
-    %% Style nodes
-    style PlatformCP fill:#f55,stroke:#d44,color:white
-    style BasicFileCP fill:#f55,stroke:#d44,color:white
-    style ComplexityCP fill:#f55,stroke:#d44,color:white
-    style CRITICALGATE fill:#ff0000,stroke:#990000,color:white,stroke-width:3px
-    style ForceExit fill:#ff0000,stroke:#990000,color:white,stroke-width:2px
-    style VANQA fill:#4da6ff,stroke:#0066cc,color:white,stroke-width:3px
-    style QAProcess fill:#4da6ff,stroke:#0066cc,color:white
-    style QACheck fill:#4da6ff,stroke:#0066cc,color:white
-    style FixIssues fill:#ff5555,stroke:#dd3333,color:white
-```
+This flow describes the sequential steps you will take when operating in VAN Mode.
+
+1.  **Acknowledge & Determine Entry Point:**
+    *   If user typed "VAN": Respond "OK VAN - Beginning Initialization Process." Proceed with step 2.
+    *   If user typed "VAN QA": Respond "OK VAN QA - Beginning Technical Validation." Skip to **Step 7 (VAN QA)**.
+
+2.  **Initial Problem Intake & Quick Triage:**
+    a.  State: "Performing initial problem intake and quick triage."
+    b.  `read_file` the user's prompt and any immediately provided context files (like `error-delete-chat.txt`).
+    c.  `read_file` the 1-2 most directly implicated source files if obvious from the error/request (e.g., `server.py` if an API error is mentioned).
+    d.  **Decision Point - Quick Fix Assessment:**
+        *   Based on this *very limited initial review*, can you confidently identify:
+            1.  A highly localized problem (e.g., affects only one function or a few lines in one file)?
+            2.  A clear root cause?
+            3.  A simple, low-risk fix (e.g., correcting a variable name, adjusting a simple conditional, fixing a property access path like in the delete_chat example)?
+            4.  The fix requires no new dependencies or significant design changes?
+        *   **If YES to all above (High Confidence, Simple Fix):**
+            i.  State: "Initial analysis suggests a straightforward Level 0/1 fix for [brief problem description]."
+            ii. `edit_file memory-bank/tasks.md` to create a task: "L0/1 Quick Fix: [Problem Description]".
+            iii. `edit_file memory-bank/activeContext.md` to log: "Focus: L0/1 Quick Fix - [Problem]. Initial diagnosis: [Root Cause]. Proposed fix: [Brief Fix]."
+            iv. `fetch_rules` to load and follow `.cursor/rules/isolation_rules/Level1/optimized-workflow-level1.mdc`.
+                *   (This rule already guides: implement fix, verify, document concisely in `tasks.md`/`activeContext.md`, then state completion and readiness for a new task).
+            v.  **After `Level1/optimized-workflow-level1.mdc` completes, the VAN mode for THIS SPECIFIC QUICK TASK is considered complete.** State this and await further user instruction (e.g., new VAN for another task, or switch to another mode).
+            vi. **SKIP to Step 8 (QA Command Precedence Check & End of VAN for this task).**
+        *   **If NO (Problem is not immediately obvious/simple, or any uncertainty):**
+            i.  State: "Initial triage indicates further analysis is needed. Proceeding with standard VAN initialization."
+            ii. Proceed to Step 3.
+
+3.  **Platform Detection (Sub-Rule - Standard VAN Path):**
+    a.  State: "Performing platform detection."
+    b.  `fetch_rules` to load and follow `.cursor/rules/isolation_rules/visual-maps/van_mode_split/van-platform-detection.mdc`.
+    c.  (This fetched rule will guide OS detection and logging to `activeContext.md`).
+
+4.  **File Verification & Creation (Memory Bank Setup) (Sub-Rule - Standard VAN Path):**
+    a.  State: "Performing Memory Bank file verification and setup."
+    b.  `fetch_rules` to load and follow `.cursor/rules/isolation_rules/Core/file-verification.mdc`.
+    c.  (This fetched rule guides creating/verifying `memory-bank/` structure and core files).
+
+5.  **Full Context Analysis & Complexity Determination (Sub-Rule - Standard VAN Path):**
+    a.  State: "Performing detailed context analysis and determining task complexity."
+    b.  `read_file` relevant project files (README, main source files, etc.) as needed for a broader understanding.
+    c.  `fetch_rules` to load and follow `.cursor/rules/isolation_rules/Core/complexity-decision-tree.mdc`.
+    d.  (This fetched rule guides assessing Level 1-4 and updating `activeContext.md` and `tasks.md`).
+    e.  `read_file memory-bank/activeContext.md` to confirm the determined complexity level.
+
+6.  **Mode Transition based on Complexity (Standard VAN Path):**
+    a.  **If Level 1 determined (and not handled by Quick Triage):**
+        i.  State: "Task assessed as Level 1. Completing VAN initialization."
+        ii. Use `edit_file` to update `memory-bank/activeContext.md` with: "VAN Process Status: Level 1 Initialization Complete. Task ready for IMPLEMENT mode."
+        iii. State: "VAN Initialization Complete for Level 1 task [Task Name]. Recommend IMPLEMENT mode." Await user.
+    b.  **If Level 2, 3, or 4 determined:**
+        i.  State: "🚫 LEVEL [2/3/4] TASK DETECTED: [Task Name]. This task REQUIRES detailed planning."
+        ii. State: "Transitioning to PLAN mode is necessary. Type 'PLAN' to proceed with planning." Await user.
+
+7.  **VAN QA - Technical Validation (Entry point if "VAN QA" was typed, or if called after CREATIVE mode by user):**
+    a.  State: "Initiating VAN QA Technical Validation."
+    b.  `fetch_rules` to load and follow `.cursor/rules/isolation_rules/visual-maps/van_mode_split/van-qa-main.mdc`.
+    c.  (This rule handles the QA process). Await user action based on QA report.
+
+8.  **QA COMMAND PRECEDENCE (If user types "QA" during steps 3-6 of Standard VAN Initialization):**
+    a.  State: "General QA command received, pausing current VAN initialization step ([current step])."
+    b.  `fetch_rules` to load and follow `.cursor/rules/isolation_rules/visual-maps/qa-mode-map.mdc`.
+    c.  After general QA is complete: State "Resuming VAN initialization." Continue from paused step.
 
 ## 🌐 PLATFORM DETECTION PROCESS
 
-```mermaid
-graph TD
-    PD["Platform Detection"] --> CheckOS["Detect Operating System"]
-    CheckOS --> Win["Windows"]
-    CheckOS --> Mac["macOS"]
-    CheckOS --> Lin["Linux"]
-    
-    Win & Mac & Lin --> Adapt["Adapt Commands<br>for Platform"]
-    
-    Win --> WinPath["Path: Backslash (\\)"]
-    Mac --> MacPath["Path: Forward Slash (/)"]
-    Lin --> LinPath["Path: Forward Slash (/)"]
-    
-    Win --> WinCmd["Command Adaptations:<br>dir, icacls, etc."]
-    Mac --> MacCmd["Command Adaptations:<br>ls, chmod, etc."]
-    Lin --> LinCmd["Command Adaptations:<br>ls, chmod, etc."]
-    
-    WinPath & MacPath & LinPath --> PathCP["Path Separator<br>Checkpoint"]
-    WinCmd & MacCmd & LinCmd --> CmdCP["Command<br>Checkpoint"]
-    
-    PathCP & CmdCP --> PlatformComplete["Platform Detection<br>Complete"]
-    
-    style PD fill:#4da6ff,stroke:#0066cc,color:white
-    style PlatformComplete fill:#10b981,stroke:#059669,color:white
-```
+This section describes the platform detection process.
+
+**Process Flow:**
+1.  **Platform Detection.**
+2.  **Detect Operating System:** Branches to Windows, macOS, or Linux detection.
+3.  **Windows, macOS, or Linux -> Adapt Commands for Platform.**
+4.  **Adapt Commands -> Path Separator Detection.**
+    *   Windows Path: Backslash (`\`).
+    *   macOS Path: Forward Slash (`/`).
+    *   Linux Path: Forward Slash (`/`).
+5.  **Path Separator Detection -> Command Checkpoint.**
+    *   Windows Command Adaptations: `dir`, `icacls`, etc.
+    *   macOS Command Adaptations: `ls`, `chmod`, etc.
+    *   Linux Command Adaptations: `ls`, `chmod`, etc.
+6.  **Path Separator Checkpoint & Command Checkpoint -> Platform Detection Complete.**
 
 ## 📁 FILE VERIFICATION PROCESS
 
-```mermaid
-graph TD
-    FV["File Verification"] --> CheckFiles["Check Essential Files"]
-    CheckFiles --> CheckMB["Check Memory Bank<br>Structure"]
-    CheckMB --> MBExists{"Memory Bank<br>Exists?"}
-    
-    MBExists -->|"Yes"| VerifyMB["Verify Memory Bank<br>Contents"]
-    MBExists -->|"No"| CreateMB["Create Memory Bank<br>Structure"]
-    
-    CheckFiles --> CheckDocs["Check Documentation<br>Files"]
-    CheckDocs --> DocsExist{"Docs<br>Exist?"}
-    
-    DocsExist -->|"Yes"| VerifyDocs["Verify Documentation<br>Structure"]
-    DocsExist -->|"No"| CreateDocs["Create Documentation<br>Structure"]
-    
-    VerifyMB & CreateMB --> MBCP["Memory Bank<br>Checkpoint"]
-    VerifyDocs & CreateDocs --> DocsCP["Documentation<br>Checkpoint"]
-    
-    MBCP & DocsCP --> FileComplete["File Verification<br>Complete"]
-    
-    style FV fill:#4da6ff,stroke:#0066cc,color:white
-    style FileComplete fill:#10b981,stroke:#059669,color:white
-    style MBCP fill:#f6546a,stroke:#c30052,color:white
-    style DocsCP fill:#f6546a,stroke:#c30052,color:white
-```
+This section describes the file verification process.
+
+**Process Flow:**
+1.  **File Verification.**
+2.  **Check Essential Files.**
+3.  **Check Memory Bank Structure.**
+4.  **Memory Bank Exists?**
+    *   If "Yes": Verify Memory Bank Contents.
+    *   If "No": Create Memory Bank Structure.
+5.  **Check Essential Files -> Check Documentation Files.**
+6.  **Docs Exist?**
+    *   If "Yes": Verify Documentation Structure.
+    *   If "No": Create Documentation Structure.
+7.  **Verify/Create Memory Bank & Verify/Create Docs -> Memory Bank Checkpoint & Documentation Checkpoint.**
+8.  **Memory Bank Checkpoint & Documentation Checkpoint -> File Verification Complete.**
 
 ## 🧩 COMPLEXITY DETERMINATION PROCESS
 
-```mermaid
-graph TD
-    CD["Complexity<br>Determination"] --> AnalyzeTask["Analyze Task<br>Requirements"]
-    
-    AnalyzeTask --> CheckKeywords["Check Task<br>Keywords"]
-    CheckKeywords --> ScopeCheck["Assess<br>Scope Impact"]
-    ScopeCheck --> RiskCheck["Evaluate<br>Risk Level"]
-    RiskCheck --> EffortCheck["Estimate<br>Implementation Effort"]
-    
-    EffortCheck --> DetermineLevel{"Determine<br>Complexity Level"}
-    DetermineLevel -->|"Level 1"| L1["Level 1:<br>Quick Bug Fix"]
-    DetermineLevel -->|"Level 2"| L2["Level 2:<br>Simple Enhancement"]
-    DetermineLevel -->|"Level 3"| L3["Level 3:<br>Intermediate Feature"]
-    DetermineLevel -->|"Level 4"| L4["Level 4:<br>Complex System"]
-    
-    L1 --> CDComplete["Complexity Determination<br>Complete"]
-    L2 & L3 & L4 --> ModeSwitch["Force Mode Switch<br>to PLAN"]
-    
-    style CD fill:#4da6ff,stroke:#0066cc,color:white
-    style CDComplete fill:#10b981,stroke:#059669,color:white
-    style ModeSwitch fill:#ff0000,stroke:#990000,color:white
-    style DetermineLevel fill:#f6546a,stroke:#c30052,color:white
-```
+This section describes the complexity determination process.
+
+**Process Flow:**
+1.  **Complexity Determination.**
+2.  **Analyze Task Requirements.**
+3.  **Analyze Task Requirements -> Check Task Keywords.**
+4.  **Check Task Keywords -> Assess Scope Impact.**
+5.  **Assess Scope Impact -> Evaluate Risk Level.**
+6.  **Evaluate Risk Level -> Estimate Implementation Effort.**
+7.  **Estimate Implementation Effort -> Determine Complexity Level.**
+    *   If "Level 1": Level 1: Quick Bug Fix.
+    *   If "Level 2": Level 2: Simple Enhancement.
+    *   If "Level 3": Level 3: Intermediate Feature.
+    *   If "Level 4": Level 4: Complex System.
+8.  **Level 1 -> Complexity Determination Complete.**
+9.  **Level 2, 3, or 4 -> Force Mode Switch to PLAN.**
 
 ## 🔄 COMPLETE WORKFLOW WITH QA VALIDATION
 
-The full workflow includes technical validation before implementation:
+This section describes the complete workflow, including QA validation.
 
-```mermaid
-flowchart LR
-    VAN1["VAN MODE 
-    (Initial Analysis)"] --> PLAN["PLAN MODE
-    (Task Planning)"]
-    PLAN --> CREATIVE["CREATIVE MODE
-    (Design Decisions)"]
-    CREATIVE --> VANQA["VAN QA MODE
-    (Technical Validation)"] 
-    VANQA --> BUILD["BUILD MODE
-    (Implementation)"]
-```
+**Workflow Flow:**
+*   VAN MODE (Initial Analysis) -> PLAN MODE (Task Planning) -> CREATIVE MODE (Design Decisions) -> VAN QA MODE (Technical Validation) -> BUILD MODE (Implementation).
 
 ## 🔍 TECHNICAL VALIDATION OVERVIEW
 
-The VAN QA technical validation process consists of four key validation points:
+This section provides an overview of the four-point technical validation process.
 
-```mermaid
-graph TD
-    VANQA["VAN QA MODE"] --> FourChecks["FOUR-POINT VALIDATION"]
-    
-    FourChecks --> DepCheck["1️⃣ DEPENDENCY VERIFICATION<br>Check all required packages"]
-    DepCheck --> ConfigCheck["2️⃣ CONFIGURATION VALIDATION<br>Verify format & compatibility"]
-    ConfigCheck --> EnvCheck["3️⃣ ENVIRONMENT VALIDATION<br>Check build environment"]
-    EnvCheck --> MinBuildCheck["4️⃣ MINIMAL BUILD TEST<br>Test core functionality"]
-    
-    MinBuildCheck --> ValidationResults{"All Checks<br>Passed?"}
-    ValidationResults -->|"Yes"| SuccessReport["GENERATE SUCCESS REPORT"]
-    ValidationResults -->|"No"| FailureReport["GENERATE FAILURE REPORT"]
-    
-    SuccessReport --> BUILD["Proceed to BUILD MODE"]
-    FailureReport --> FixIssues["Fix Technical Issues"]
-    FixIssues --> ReValidate["Re-validate"]
-    ReValidate --> ValidationResults
-    
-    style VANQA fill:#4da6ff,stroke:#0066cc,color:white
-    style FourChecks fill:#f6546a,stroke:#c30052,color:white
-    style ValidationResults fill:#f6546a,stroke:#c30052,color:white
-    style BUILD fill:#10b981,stroke:#059669,color:white
-    style FixIssues fill:#ff5555,stroke:#dd3333,color:white
-```
+**Validation Flow:**
+1.  **VAN QA MODE.**
+2.  **FOUR-POINT VALIDATION.**
+3.  **1️⃣ DEPENDENCY VERIFICATION:** Check all required packages.
+4.  **2️⃣ CONFIGURATION VALIDATION:** Verify format & compatibility.
+5.  **3️⃣ ENVIRONMENT VALIDATION:** Check build environment.
+6.  **4️⃣ MINIMAL BUILD TEST:** Test core functionality.
+7.  **MINIMAL BUILD TEST -> All Checks Passed?**
+    *   If "Yes": GENERATE SUCCESS REPORT -> Proceed to BUILD MODE.
+    *   If "No": GENERATE FAILURE REPORT -> Fix Technical Issues -> Re-validate.
 
 ## 📝 VALIDATION STATUS FORMAT
-
-The QA Validation step includes clear status indicators:
 
 ```
 ╔═════════════════ 🔍 QA VALIDATION STATUS ═════════════════╗
@@ -230,45 +192,29 @@ Type 'BUILD' to begin implementation
 
 ## 🔒 BUILD MODE PREVENTION MECHANISM
 
-The system prevents moving to BUILD mode without passing QA validation:
+This section describes how the system prevents moving to BUILD mode without passing QA validation.
 
-```mermaid
-graph TD
-    Start["User Types: BUILD"] --> CheckQA{"QA Validation<br>Completed?"}
-    CheckQA -->|"Yes and Passed"| AllowBuild["Allow BUILD Mode"]
-    CheckQA -->|"No or Failed"| BlockBuild["BLOCK BUILD MODE"]
-    BlockBuild --> Message["Display:<br>⚠️ QA VALIDATION REQUIRED"]
-    Message --> ReturnToVANQA["Prompt: Type VAN QA"]
-    
-    style CheckQA fill:#f6546a,stroke:#c30052,color:white
-    style BlockBuild fill:#ff0000,stroke:#990000,color:white,stroke-width:3px
-    style Message fill:#ff5555,stroke:#dd3333,color:white
-    style ReturnToVANQA fill:#4da6ff,stroke:#0066cc,color:white
-```
+**Process Flow:**
+1.  **Start: User Types: BUILD.**
+2.  **QA Validation Completed?**
+    *   If "Yes and Passed": Allow BUILD Mode.
+    *   If "No or Failed": BLOCK BUILD MODE.
+3.  **BLOCK BUILD MODE -> Display: ⚠️ QA VALIDATION REQUIRED.**
+4.  **Display -> Prompt: Type VAN QA.**
 
 ## 🔄 QA COMMAND PRECEDENCE
 
-QA validation can be called at any point in the process flow, and takes immediate precedence over any other current steps, including forced mode switches:
+QA validation can be called at any point in the process flow, and takes immediate precedence over any other current steps, including forced mode switches.
 
-```mermaid
-graph TD
-    UserQA["User Types: QA"] --> HighPriority["⚠️ HIGH PRIORITY COMMAND"]
-    HighPriority --> CurrentTask["Pause Current Task/Process"]
-    CurrentTask --> LoadQA["Load QA Mode Map"]
-    LoadQA --> RunQA["Execute QA Validation Process"]
-    RunQA --> QAResults{"QA Results"}
-    
-    QAResults -->|"PASS"| ResumeFlow["Resume Prior Process Flow"]
-    QAResults -->|"FAIL"| FixIssues["Fix Identified Issues"]
-    FixIssues --> ReRunQA["Re-run QA Validation"]
-    ReRunQA --> QAResults
-    
-    style UserQA fill:#f8d486,stroke:#e8b84d,color:black
-    style HighPriority fill:#ff0000,stroke:#cc0000,color:white,stroke-width:3px
-    style LoadQA fill:#4da6ff,stroke:#0066cc,color:white
-    style RunQA fill:#4da6ff,stroke:#0066cc,color:white
-    style QAResults fill:#f6546a,stroke:#c30052,color:white
-```
+**Process Flow:**
+1.  **User Types: QA.**
+2.  **⚠️ HIGH PRIORITY COMMAND.**
+3.  **Pause Current Task/Process.**
+4.  **Load QA Mode Map.**
+5.  **Execute QA Validation Process.**
+6.  **QA Results.**
+    *   If "PASS": Resume Prior Process Flow.
+    *   If "FAIL": Fix Identified Issues -> Re-run QA Validation.
 
 ### QA Interruption Rules
 
@@ -329,29 +275,18 @@ This ensures clear communication about which phase of VAN mode is active.
 
 ### 1️⃣ DEPENDENCY VERIFICATION
 
-This step verifies that all required packages are installed and compatible:
+This step verifies that all required packages are installed and compatible.
 
-```mermaid
-graph TD
-    Start["Dependency Verification"] --> ReadDeps["Read Required Dependencies<br>from Creative Phase"]
-    ReadDeps --> CheckInstalled["Check if Dependencies<br>are Installed"]
-    CheckInstalled --> DepStatus{"All Dependencies<br>Installed?"}
-    
-    DepStatus -->|"Yes"| VerifyVersions["Verify Versions<br>and Compatibility"]
-    DepStatus -->|"No"| InstallMissing["Install Missing<br>Dependencies"]
-    InstallMissing --> VerifyVersions
-    
-    VerifyVersions --> VersionStatus{"Versions<br>Compatible?"}
-    VersionStatus -->|"Yes"| DepSuccess["Dependencies Verified<br>✅ PASS"]
-    VersionStatus -->|"No"| UpgradeVersions["Upgrade/Downgrade<br>as Needed"]
-    UpgradeVersions --> RetryVerify["Retry Verification"]
-    RetryVerify --> VersionStatus
-    
-    style Start fill:#4da6ff,stroke:#0066cc,color:white
-    style DepSuccess fill:#10b981,stroke:#059669,color:white
-    style DepStatus fill:#f6546a,stroke:#c30052,color:white
-    style VersionStatus fill:#f6546a,stroke:#c30052,color:white
-```
+**Process Flow:**
+1.  **Start: Dependency Verification.**
+2.  **Read Required Dependencies:** From Creative Phase.
+3.  **Check if Dependencies are Installed.**
+4.  **All Dependencies Installed?**
+    *   If "Yes": Verify Versions and Compatibility.
+    *   If "No": Install Missing Dependencies -> Verify Versions.
+5.  **Versions Compatible?**
+    *   If "Yes": Dependencies Verified ✅ PASS.
+    *   If "No": Upgrade/Downgrade as Needed -> Retry Verification.
 
 #### Windows (PowerShell) Implementation:
 ```powershell
@@ -462,31 +397,19 @@ verify_dependencies() {
 
 ### 2️⃣ CONFIGURATION VALIDATION
 
-This step validates configuration files format and compatibility:
+This step validates configuration files format and compatibility.
 
-```mermaid
-graph TD
-    Start["Configuration Validation"] --> IdentifyConfigs["Identify Configuration<br>Files"]
-    IdentifyConfigs --> ReadConfigs["Read Configuration<br>Files"]
-    ReadConfigs --> ValidateSyntax["Validate Syntax<br>and Format"]
-    ValidateSyntax --> SyntaxStatus{"Syntax<br>Valid?"}
-    
-    SyntaxStatus -->|"Yes"| CheckCompatibility["Check Compatibility<br>with Platform"]
-    SyntaxStatus -->|"No"| FixSyntax["Fix Syntax<br>Errors"]
-    FixSyntax --> RetryValidate["Retry Validation"]
-    RetryValidate --> SyntaxStatus
-    
-    CheckCompatibility --> CompatStatus{"Compatible with<br>Platform?"}
-    CompatStatus -->|"Yes"| ConfigSuccess["Configurations Validated<br>✅ PASS"]
-    CompatStatus -->|"No"| AdaptConfigs["Adapt Configurations<br>for Platform"]
-    AdaptConfigs --> RetryCompat["Retry Compatibility<br>Check"]
-    RetryCompat --> CompatStatus
-    
-    style Start fill:#4da6ff,stroke:#0066cc,color:white
-    style ConfigSuccess fill:#10b981,stroke:#059669,color:white
-    style SyntaxStatus fill:#f6546a,stroke:#c30052,color:white
-    style CompatStatus fill:#f6546a,stroke:#c30052,color:white
-``` 
+**Process Flow:**
+1.  **Start: Configuration Validation.**
+2.  **Identify Configuration Files.**
+3.  **Read Configuration Files.**
+4.  **Validate Syntax and Format.**
+5.  **Syntax Valid?**
+    *   If "Yes": Check Compatibility with Platform.
+    *   If "No": Fix Syntax Errors -> Retry Validation.
+6.  **Compatible with Platform?**
+    *   If "Yes": Configurations Validated ✅ PASS.
+    *   If "No": Adapt Configurations for Platform -> Retry Compatibility Check.
 
 #### Configuration Validation Implementation:
 ```powershell
@@ -544,30 +467,18 @@ function Validate-Configurations {
 
 ### 3️⃣ ENVIRONMENT VALIDATION
 
-This step checks if the environment is properly set up for the implementation:
+This step checks if the environment is properly set up for the implementation.
 
-```mermaid
-graph TD
-    Start["Environment Validation"] --> CheckEnv["Check Build Environment"]
-    CheckEnv --> VerifyBuildTools["Verify Build Tools"]
-    VerifyBuildTools --> ToolsStatus{"Build Tools<br>Available?"}
-    
-    ToolsStatus -->|"Yes"| CheckPerms["Check Permissions<br>and Access"]
-    ToolsStatus -->|"No"| InstallTools["Install Required<br>Build Tools"]
-    InstallTools --> RetryTools["Retry Verification"]
-    RetryTools --> ToolsStatus
-    
-    CheckPerms --> PermsStatus{"Permissions<br>Sufficient?"}
-    PermsStatus -->|"Yes"| EnvSuccess["Environment Validated<br>✅ PASS"]
-    PermsStatus -->|"No"| FixPerms["Fix Permission<br>Issues"]
-    FixPerms --> RetryPerms["Retry Permission<br>Check"]
-    RetryPerms --> PermsStatus
-    
-    style Start fill:#4da6ff,stroke:#0066cc,color:white
-    style EnvSuccess fill:#10b981,stroke:#059669,color:white
-    style ToolsStatus fill:#f6546a,stroke:#c30052,color:white
-    style PermsStatus fill:#f6546a,stroke:#c30052,color:white
-```
+**Process Flow:**
+1.  **Start: Environment Validation.**
+2.  **Check Build Environment.**
+3.  **Verify Build Tools.**
+4.  **Build Tools Available?**
+    *   If "Yes": Check Permissions and Access.
+    *   If "No": Install Required Build Tools -> Retry Verification.
+5.  **Permissions Sufficient?**
+    *   If "Yes": Environment Validated ✅ PASS.
+    *   If "No": Fix Permission Issues -> Retry Permission Check.
 
 #### Environment Validation Implementation:
 ```powershell
@@ -627,30 +538,18 @@ function Validate-Environment {
 
 ### 4️⃣ MINIMAL BUILD TEST
 
-This step performs a minimal build test to ensure core functionality:
+This step performs a minimal build test to ensure core functionality.
 
-```mermaid
-graph TD
-    Start["Minimal Build Test"] --> CreateTest["Create Minimal<br>Test Project"]
-    CreateTest --> BuildTest["Attempt<br>Build"]
-    BuildTest --> BuildStatus{"Build<br>Successful?"}
-    
-    BuildStatus -->|"Yes"| RunTest["Run Basic<br>Functionality Test"]
-    BuildStatus -->|"No"| FixBuild["Fix Build<br>Issues"]
-    FixBuild --> RetryBuild["Retry Build"]
-    RetryBuild --> BuildStatus
-    
-    RunTest --> TestStatus{"Test<br>Passed?"}
-    TestStatus -->|"Yes"| TestSuccess["Minimal Build Test<br>✅ PASS"]
-    TestStatus -->|"No"| FixTest["Fix Test<br>Issues"]
-    FixTest --> RetryTest["Retry Test"]
-    RetryTest --> TestStatus
-    
-    style Start fill:#4da6ff,stroke:#0066cc,color:white
-    style TestSuccess fill:#10b981,stroke:#059669,color:white
-    style BuildStatus fill:#f6546a,stroke:#c30052,color:white
-    style TestStatus fill:#f6546a,stroke:#c30052,color:white
-```
+**Process Flow:**
+1.  **Start: Minimal Build Test.**
+2.  **Create Minimal Test Project.**
+3.  **Attempt Build.**
+4.  **Build Successful?**
+    *   If "Yes": Run Basic Functionality Test.
+    *   If "No": Fix Build Issues -> Retry Build.
+5.  **Test Passed?**
+    *   If "Yes": Minimal Build Test ✅ PASS.
+    *   If "No": Fix Test Issues -> Retry Test.
 
 #### Minimal Build Test Implementation:
 ```powershell
@@ -787,21 +686,15 @@ Type 'VAN QA' after fixing the issues to re-validate.
 
 ## 🔄 INTEGRATION WITH DESIGN DECISIONS
 
-The VAN QA mode reads and validates design decisions from the CREATIVE phase:
+The VAN QA mode reads and validates design decisions from the CREATIVE phase.
 
-```mermaid
-graph TD
-    Start["Read Design Decisions"] --> ReadCreative["Parse Creative Phase<br>Documentation"]
-    ReadCreative --> ExtractTech["Extract Technology<br>Choices"]
-    ExtractTech --> ExtractDeps["Extract Required<br>Dependencies"]
-    ExtractDeps --> BuildValidationPlan["Build Validation<br>Plan"]
-    BuildValidationPlan --> StartValidation["Start Four-Point<br>Validation Process"]
-    
-    style Start fill:#4da6ff,stroke:#0066cc,color:white
-    style ExtractTech fill:#f6546a,stroke:#c30052,color:white
-    style BuildValidationPlan fill:#10b981,stroke:#059669,color:white
-    style StartValidation fill:#f6546a,stroke:#c30052,color:white
-```
+**Process Flow:**
+1.  **Start: Read Design Decisions.**
+2.  **Parse Creative Phase Documentation.**
+3.  **Extract Technology Choices.**
+4.  **Extract Required Dependencies.**
+5.  **Build Validation Plan.**
+6.  **Start Four-Point Validation Process.**
 
 ### Technology Extraction Process:
 ```powershell
@@ -824,7 +717,7 @@ function Extract-TechnologyChoices {
         }
         
         # Extract state management choice
-        if ($content -match "State Management:\s*([^\\n]+)") {
+        if ($content -match "State Management:\s*([^\n]+)") {
             $techChoices["state_management"] = $Matches[1].Trim()
         }
     }
@@ -835,7 +728,7 @@ function Extract-TechnologyChoices {
 
 ## 🚨 IMPLEMENTATION PREVENTION MECHANISM
 
-If QA validation fails, the system prevents moving to BUILD mode:
+If QA validation fails, the system prevents moving to BUILD mode.
 
 ```powershell
 # Example: Enforce QA validation before allowing BUILD mode
@@ -899,4 +792,4 @@ Here are common fixes for issues encountered during QA validation:
 
 → If all YES: Ready for BUILD mode
 → If any NO: Fix identified issues before proceeding
-``` 
+```

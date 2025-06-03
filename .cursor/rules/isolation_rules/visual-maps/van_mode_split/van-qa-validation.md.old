@@ -1,0 +1,303 @@
+# VAN MODE: QA TECHNICAL VALIDATION (Pre-BUILD)
+
+> **TL;DR:** This map details the technical validation process executed *after* CREATIVE mode and *before* BUILD mode, triggered by the `VAN QA` command. It ensures dependencies, configuration, environment, and basic build functionality are sound.
+
+## 🚀 VAN QA MODE ACTIVATION
+
+After completing CREATIVE mode, when the user types "VAN QA", respond:
+
+```
+User: VAN QA
+
+Response: OK VAN QA - Beginning Technical Validation
+Loading QA Validation map...
+```
+
+## 🔄 QA COMMAND PRECEDENCE (QA Override)
+
+QA validation can be called at any point (`QA` command) and takes immediate precedence:
+
+**Process Flow:**
+1.  **User Types: QA.**
+2.  **⚠️ HIGH PRIORITY COMMAND.**
+3.  **Pause Current Task/Process.**
+4.  **Load QA Validation Map (This File).**
+5.  **Execute QA Validation Process.**
+6.  **QA Results.**
+    *   If "PASS": Resume Prior Process Flow.
+    *   If "FAIL": Fix Identified Issues -> Re-run QA Validation.
+
+### QA Interruption Rules
+
+1. **Immediate Precedence:** `QA` command interrupts everything.
+2. **Load & Execute:** Load this map (`van-qa-validation.mdc`) and run the full process.
+3. **Remediation Priority:** Fixes take priority over pending mode switches.
+4. **Resume:** On PASS, resume the previous flow.
+
+```
+⚠️ QA OVERRIDE ACTIVATED
+All other processes paused
+QA validation checks now running...
+Any issues found MUST be remediated before continuing with normal process flow
+```
+
+## 🔍 TECHNICAL VALIDATION OVERVIEW
+
+Four-point validation process:
+
+**Validation Flow:**
+1.  **VAN QA MODE.**
+2.  **FOUR-POINT VALIDATION.**
+3.  **1️⃣ DEPENDENCY VERIFICATION.**
+4.  **2️⃣ CONFIGURATION VALIDATION.**
+5.  **3️⃣ ENVIRONMENT VALIDATION.**
+6.  **4️⃣ MINIMAL BUILD TEST.**
+7.  **MINIMAL BUILD TEST -> All Checks Passed?**
+    *   If "Yes": GENERATE SUCCESS REPORT -> Trigger BUILD Mode.
+    *   If "No": GENERATE FAILURE REPORT -> Fix Technical Issues -> Re-validate.
+
+## 🔄 INTEGRATION WITH DESIGN DECISIONS
+
+Reads Creative Phase outputs (e.g., `memory-bank/systemPatterns.md`) to inform validation:
+
+**Integration Flow:**
+1.  **Start: Read Design Decisions.**
+2.  **Parse Creative Phase Documentation.**
+3.  **Extract Technology Choices.**
+4.  **Extract Required Dependencies.**
+5.  **Build Validation Plan.**
+6.  **Start Four-Point Validation Process.**
+
+### Example Technology Extraction (PowerShell):
+```powershell
+# Example: Extract technology choices from creative phase documentation
+function Extract-TechnologyChoices {
+    $techChoices = @{}
+    # Read from systemPatterns.md
+    if (Test-Path "memory-bank\systemPatterns.md") {
+        $content = Get-Content "memory-bank\systemPatterns.md" -Raw
+        if ($content -match "Framework:\s*(\w+)") { $techChoices["framework"] = $Matches[1] }
+        if ($content -match "UI Library:\s*(\w+)") { $techChoices["ui_library"] = $Matches[1] }
+        if ($content -match "State Management:\s*([^
+]+)") { $techChoices["state_management"] = $Matches[1].Trim() }
+    }
+    return $techChoices
+}
+```
+
+## 🔍 DETAILED QA VALIDATION STEPS & SCRIPTS
+
+### 1️⃣ DEPENDENCY VERIFICATION
+
+**Mermaid graph for Dependency Verification (as in original file) - replaced by text:**
+**Process Flow:**
+1.  Start: Dependency Verification.
+2.  Read Required Dependencies: From Creative Phase.
+3.  Check if Dependencies are Installed.
+4.  All Dependencies Installed?
+    *   If "Yes": Verify Versions and Compatibility.
+    *   If "No": Install Missing Dependencies -> Verify Versions.
+5.  Versions Compatible?
+    *   If "Yes": Dependencies Verified ✅ PASS.
+    *   If "No": Upgrade/Downgrade as Needed -> Retry Verification.
+
+#### Example Implementation (PowerShell):
+```powershell
+# Verify-Dependencies function (as in original file)
+function Verify-Dependencies {
+    $requiredDeps = @{ "node" = ">=14.0.0"; "npm" = ">=6.0.0" }
+    $missingDeps = @(); $incompatibleDeps = @()
+    try { $nodeVersion = node -v; if ($nodeVersion -match "v(\d+).*") { if ([int]$Matches[1] -lt 14) { $incompatibleDeps += "node" } } } catch { $missingDeps += "node" }
+    try { $npmVersion = npm -v; if ($npmVersion -match "(\d+).*") { if ([int]$Matches[1] -lt 6) { $incompatibleDeps += "npm" } } } catch { $missingDeps += "npm" }
+    if ($missingDeps.Count -eq 0 -and $incompatibleDeps.Count -eq 0) { Write-Output "✅ Deps OK"; return $true } else { Write-Output "❌ Deps FAIL"; return $false }
+}
+```
+
+#### Example Implementation (Bash):
+```bash
+# verify_dependencies function (as in original file)
+verify_dependencies() {
+    local missing_deps=(); local incompatible_deps=()
+    if command -v node &> /dev/null; then node_version=$(node -v); if [[ $node_version =~ v([0-9]+) ]]; then if (( ${BASH_REMATCH[1]} < 14 )); then incompatible_deps+=("node"); fi; fi; else missing_deps+=("node"); fi
+    if command -v npm &> /dev/null; then npm_version=$(npm -v); if [[ $npm_version =~ ([0-9]+) ]]; then if (( ${BASH_REMATCH[1]} < 6 )); then incompatible_deps+=("npm"); fi; fi; else missing_deps+=("npm"); fi
+    if [ ${#missing_deps[@]} -eq 0 ] && [ ${#incompatible_deps[@]} -eq 0 ]; then echo "✅ Deps OK"; return 0; else echo "❌ Deps FAIL"; return 1; fi
+}
+```
+
+### 2️⃣ CONFIGURATION VALIDATION
+
+**Mermaid graph for Configuration Validation (as in original file) - replaced by text:**
+**Process Flow:**
+1.  Start: Configuration Validation.
+2.  Identify Configuration Files.
+3.  Read Configuration Files.
+4.  Validate Syntax.
+5.  Syntax Valid?
+    *   If "Yes": Check Compatibility.
+    *   If "No": Fix Syntax -> Retry.
+6.  Compatible?
+    *   If "Yes": Configs Validated ✅ PASS.
+    *   If "No": Adapt Configs -> Retry Check.
+
+#### Example Implementation (PowerShell):
+```powershell
+# Validate-Configurations function (as in original file)
+function Validate-Configurations {
+    $configFiles = @("package.json", "tsconfig.json", "vite.config.js")
+    $invalidConfigs = @(); $incompatibleConfigs = @()
+    foreach ($configFile in $configFiles) {
+        if (Test-Path $configFile) {
+            if ($configFile -match "\.json$") { try { Get-Content $configFile -Raw | ConvertFrom-Json | Out-Null } catch { $invalidConfigs += "$configFile (JSON)"; continue } }
+            if ($configFile -eq "vite.config.js") { $content = Get-Content $configFile -Raw; if ($content -notmatch "react\(\)") { $incompatibleConfigs += "$configFile (React)" } }
+        } else { $invalidConfigs += "$configFile (missing)" }
+    }
+    if ($invalidConfigs.Count -eq 0 -and $incompatibleConfigs.Count -eq 0) { Write-Output "✅ Configs OK"; return $true } else { Write-Output "❌ Configs FAIL"; return $false }
+}
+```
+
+### 3️⃣ ENVIRONMENT VALIDATION
+
+**Mermaid graph for Environment Validation (as in original file) - replaced by text:**
+**Process Flow:**
+1.  Start: Environment Validation.
+2.  Check Env.
+3.  Verify Tools.
+4.  Available?
+    *   If "Yes": Check Permissions.
+    *   If "No": Install Tools -> Retry.
+5.  Sufficient?
+    *   If "Yes": Environment Validated ✅ PASS.
+    *   If "No": Fix Permissions -> Retry Check.
+
+#### Example Implementation (PowerShell):
+```powershell
+# Validate-Environment function (as in original file)
+function Validate-Environment {
+    $requiredTools = @(@{Name='git';Cmd='git --version'},@{Name='node';Cmd='node --version'},@{Name='npm';Cmd='npm --version'})
+    $missingTools = @(); $permissionIssues = @()
+    foreach ($tool in $requiredTools) { try { Invoke-Expression $tool.Cmd | Out-Null } catch { $missingTools += $tool.Name } }
+    try { $testFile = ".__perm_test"; New-Item $testFile -ItemType File -Force | Out-Null; Remove-Item $testFile -Force } catch { $permissionIssues += "CWD Write" }
+    try { $L = New-Object Net.Sockets.TcpListener([Net.IPAddress]::Loopback, 3000); $L.Start(); $L.Stop() } catch { $permissionIssues += "Port 3000" }
+    if ($missingTools.Count -eq 0 -and $permissionIssues.Count -eq 0) { Write-Output "✅ Env OK"; return $true } else { Write-Output "❌ Env FAIL"; return $false }
+}
+```
+
+### 4️⃣ MINIMAL BUILD TEST
+
+**Mermaid graph for Minimal Build Test (as in original file) - replaced by text:**
+**Process Flow:**
+1.  Start: Minimal Build Test.
+2.  Create Test Proj.
+3.  Attempt Build.
+4.  Success?
+    *   If "Yes": Run Basic Test.
+    *   If "No": Fix Build Issues -> Retry Build.
+5.  Passed?
+    *   If "Yes": Build Test ✅ PASS.
+    *   If "No": Fix Test Issues -> Retry Test.
+
+#### Example Implementation (PowerShell):
+```powershell
+# Perform-MinimalBuildTest function (as in original file)
+function Perform-MinimalBuildTest {
+    $buildSuccess = $false; $testSuccess = $false; $testDir = ".__build_test"
+    if (Test-Path $testDir) { Remove-Item $testDir -Recurse -Force }
+    try {
+        New-Item $testDir -ItemType Directory | Out-Null; Push-Location $testDir
+        '{"name": "build-test","scripts": {"build": "echo Build test successful"}}' | Set-Content package.json
+        npm run build | Out-Null; $buildSuccess = $true
+        'console.log("Test successful");' | Set-Content index.js
+        node index.js | Out-Null; $testSuccess = $true
+    } catch { Write-Output "❌ Build test exception" } finally { Pop-Location; if (Test-Path $testDir) { Remove-Item $testDir -Recurse -Force } }
+    if ($buildSuccess -and $testSuccess) { Write-Output "✅ Build Test OK"; return $true } else { Write-Output "❌ Build Test FAIL"; return $false }
+}
+```
+
+## 📝 VALIDATION REPORT FORMATS
+
+### Comprehensive Success Report:
+```
+╔═════════════════════ 🔍 QA VALIDATION REPORT ══════════════════════╗
+│ PROJECT: [Project Name] | TIMESTAMP: [Current Date/Time]            │
+├─────────────────────────────────────────────────────────────────────┤
+│ 1️⃣ DEPENDENCIES: ✓ Compatible                                       │
+│ 2️⃣ CONFIGURATION: ✓ Valid & Compatible                             │
+│ 3️⃣ ENVIRONMENT: ✓ Ready                                             │
+│ 4️⃣ MINIMAL BUILD: ✓ Successful & Passed                            │
+├─────────────────────────────────────────────────────────────────────┤
+│ 🚨 FINAL VERDICT: PASS                                              │
+│ ➡️ Clear to proceed to BUILD mode                                   │
+╚═════════════════════════════════════════════════════════════════════╝
+```
+
+### Detailed Failure Report:
+```
+⚠️⚠️⚠️ QA VALIDATION FAILED ⚠️⚠️⚠️
+Issues must be resolved before BUILD mode:
+
+1️⃣ DEPENDENCY ISSUES: [Details/Fix]
+2️⃣ CONFIGURATION ISSUES: [Details/Fix]
+3️⃣ ENVIRONMENT ISSUES: [Details/Fix]
+4️⃣ BUILD TEST ISSUES: [Details/Fix]
+
+⚠️ BUILD MODE BLOCKED. Type 'VAN QA' after fixing to re-validate.
+```
+
+## 🧪 COMMON QA VALIDATION FIXES
+
+- **Dependencies:** Install Node/npm, run `npm install`, check versions.
+- **Configuration:** Validate JSON, check required plugins (e.g., React for Vite), ensure TSConfig compatibility.
+- **Environment:** Check permissions (Admin/sudo), ensure ports are free, install missing CLI tools (git, etc.).
+- **Build Test:** Check logs for errors, verify minimal config, check path separators.
+
+## 🔒 BUILD MODE PREVENTION MECHANISM
+
+Logic to check QA status before allowing BUILD mode transition.
+
+**Process Flow:**
+1.  Start: User Types: BUILD.
+2.  QA Validation Passed?
+    *   If "Yes": Allow BUILD Mode.
+    *   If "No": BLOCK BUILD MODE -> Display: ⚠️ QA VALIDATION REQUIRED -> Prompt: Type VAN QA.
+
+### Example Implementation (PowerShell):
+```powershell
+# Example: Check QA status before allowing BUILD
+function Check-QAValidationStatus {
+    $qaStatusFile = "memory-bank\.qa_validation_status" # Assumes status is written here
+    if (Test-Path $qaStatusFile) {
+        if ((Get-Content $qaStatusFile -Raw) -match "PASS") { return $true }
+    }
+    Write-Output "🚫 BUILD MODE BLOCKED: QA VALIDATION REQUIRED. Type 'VAN QA'. 🚫"
+    return $false
+}
+```
+
+## 🚨 MODE TRANSITION TRIGGERS (Relevant to QA)
+
+### CREATIVE to VAN QA Transition:
+```
+⏭️ NEXT MODE: VAN QA
+To validate technical requirements before implementation, please type 'VAN QA'
+```
+
+### VAN QA to BUILD Transition (On Success):
+```
+✅ TECHNICAL VALIDATION COMPLETE
+All prerequisites verified successfully
+You may now proceed to BUILD mode
+Type 'BUILD' to begin implementation
+```
+
+## 📋 FINAL QA VALIDATION CHECKPOINT
+
+```
+✓ SECTION CHECKPOINT: QA VALIDATION
+- Dependency Verification Passed? [YES/NO]
+- Configuration Validation Passed? [YES/NO]
+- Environment Validation Passed? [YES/NO]
+- Minimal Build Test Passed? [YES/NO]
+
+→ If all YES: Ready for BUILD mode transition.
+→ If any NO: Fix identified issues and re-run VAN QA.
+```
